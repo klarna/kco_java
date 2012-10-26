@@ -35,7 +35,7 @@ public class ConnectorOptions {
      *
      * @param newUri new URI to set
      */
-    public void setURI(URI newUri) {
+    public void setURI(final URI newUri) {
         this.uri = newUri;
     }
 
@@ -46,7 +46,7 @@ public class ConnectorOptions {
      *
      * @throws URISyntaxException if newUri could not be parsed.
      */
-    public void setURI(String newUri) throws URISyntaxException {
+    public void setURI(final String newUri) throws URISyntaxException {
         this.uri = new URI(newUri);
     }
 

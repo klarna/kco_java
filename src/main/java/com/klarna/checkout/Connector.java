@@ -176,9 +176,9 @@ public class Connector implements IConnector {
      *
      * @return A new or the existing HttpClient object.
      */
-    protected IHttpClient getClient() {
+    public IHttpClient getClient() {
         if (this.client == null) {
-            this.client = createHttpClient();
+            this.client = this.createHttpClient();
             this.client.addResponseInterceptor(
                     new ResourceLocationInterceptor());
             this.client.addRequestInterceptor(

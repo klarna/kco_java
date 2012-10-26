@@ -13,44 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * File containing the Order object
+ * File containing the Digest class.
  */
 package com.klarna.checkout;
 
-import java.net.URI;
-import java.util.Map;
+import org.apache.http.HttpRequestInterceptor;
+import org.apache.http.HttpResponseInterceptor;
+import org.apache.http.client.HttpClient;
 
 /**
- * Resource Interface.
+ * Extension of the org.apache.http.client.HttpClient interface to ensure we
+ * have response and request interceptors.
  */
-public interface IResource {
+public interface IHttpClient extends HttpClient {
 
     /**
-     * @return the URL of the resource.
-     */
-    URI getLocation();
-
-    /**
-     * Set the URL of the resource.
+     * Add a HttpResponseInterceptor.
      *
-     * @param uri URI object pointing to the resource
+     * @param hri interceptor implementation
      */
-    void setLocation(URI uri);
+    void addResponseInterceptor(HttpResponseInterceptor hri);
 
     /**
-     * @return The content type of the order
-     */
-    String getContentType();
-
-    /**
-     * Update resource with new data.
+     * Add a HttpRequestInterceptor.
      *
-     * @param data new data to update the resource with
+     * @param hri interceptor implementation
      */
-    void parse(Map<String, Object> data);
-
-    /**
-     * @return Basic representation of the object.
-     */
-    Map marshal();
+    void addRequestInterceptor(HttpRequestInterceptor hri);
 }

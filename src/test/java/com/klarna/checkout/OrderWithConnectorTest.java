@@ -19,11 +19,12 @@ package com.klarna.checkout;
 
 import com.klarna.checkout.stubs.ConnectorStub;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -35,11 +36,20 @@ public class OrderWithConnectorTest {
      * Connector Stub.
      */
     private ConnectorStub connector;
-
     /**
      * Order object.
      */
     private Order order;
+
+    /**
+     * Set up the whole class.
+     * Reset static state.
+     */
+    @BeforeClass
+    public static void setUpClass() {
+        Order.baseUri = null;
+        Order.contentType = "";
+    }
 
     /**
      * Set up the tests.
@@ -51,13 +61,23 @@ public class OrderWithConnectorTest {
     }
 
     /**
+     * Reset static state.
+     */
+    @After
+    public void tearDown() {
+        Order.baseUri = null;
+        Order.contentType = "";
+    }
+
+    /**
      * Test create.
      *
-     * @throws URISyntaxException but not really
+     * @throws Exception but not really
      */
     @Test
-    public void testCreate() throws URISyntaxException {
+    public void testCreate() throws Exception {
         URI location = new URI("http://stub");
+
         this.connector.setLocation(location);
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("foo", "boo");
@@ -69,16 +89,17 @@ public class OrderWithConnectorTest {
         assertEquals("POST", connector.getApplied("method"));
         assertEquals(order, connector.getApplied("resource"));
         assertNull(
-            ((ConnectorOptions) this.connector.getApplied("options")).getURI());
+            ((ConnectorOptions) this.connector.getApplied(
+            "options")).getURI());
     }
 
     /**
      * Test fetch.
      *
-     * @throws URISyntaxException if something really weird is going on.
+     * @throws Exception if something really weird is going on.
      */
     @Test
-    public void testFetch() throws URISyntaxException {
+    public void testFetch() throws Exception {
         order.setLocation(new URI("http://klarna.com/foo/bar/15"));
         URI location = order.getLocation();
 
@@ -94,10 +115,10 @@ public class OrderWithConnectorTest {
     /**
      * Test so fetch sets the location when an URI is supplied.
      *
-     * @throws URISyntaxException but it doesn't really.
+     * @throws Exception but it doesn't really.
      */
     @Test
-    public void testFetchSetLocation() throws URISyntaxException {
+    public void testFetchSetLocation() throws Exception {
         URI uri = new URI("http://klarna.com/foo/bar/16");
 
         order.fetch(this.connector, uri);
@@ -116,10 +137,10 @@ public class OrderWithConnectorTest {
     /**
      * Test the Update function.
      *
-     * @throws URISyntaxException it's lying!
+     * @throws Exception but not really
      */
     @Test
-    public void testUpdate() throws URISyntaxException {
+    public void testUpdate() throws Exception {
         order.setLocation(new URI("http://klarna.com/foo/bar/17"));
         URI location = order.getLocation();
 
@@ -135,10 +156,10 @@ public class OrderWithConnectorTest {
     /**
      * Test so update sets the location when an URI is supplied.
      *
-     * @throws URISyntaxException but it doesn't really.
+     * @throws Exception but it doesn't really.
      */
     @Test
-    public void testUpdateSetLocation() throws URISyntaxException {
+    public void testUpdateSetLocation() throws Exception {
         URI uri = new URI("http://klarna.com/foo/bar/18");
 
         order.update(this.connector, uri);
@@ -157,10 +178,10 @@ public class OrderWithConnectorTest {
     /**
      * Test to verify the entry point (Base URI) can be changed.
      *
-     * @throws URISyntaxException but it won't.
+     * @throws Exception but it won't.
      */
     @Test
-    public void testCreateAlternateEntryPoint() throws URISyntaxException {
+    public void testCreateAlternateEntryPoint() throws Exception {
         URI base = new URI("https://checkout.klarna.com/beta/checkout/orders");
         Order.baseUri = base;
 
@@ -169,7 +190,6 @@ public class OrderWithConnectorTest {
         assertEquals(
             "New Base",
             base,
-            ((ConnectorOptions) this.connector.getApplied("options"))
-                .getURI());
+            ((ConnectorOptions) this.connector.getApplied("options")).getURI());
     }
 }

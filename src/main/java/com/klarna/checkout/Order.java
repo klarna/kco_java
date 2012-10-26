@@ -15,11 +15,10 @@
  *
  * File containing the Order object
  */
-
 package com.klarna.checkout;
 
+import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,17 +31,14 @@ public class Order implements IResource {
      * Base URI used to create order resources.
      */
     public static URI baseUri = null;
-
     /**
      * Content type string.
      */
     public static String contentType = "";
-
     /**
      * The location of the resource.
      */
     private URI location;
-
     /**
      * Data of the order.
      */
@@ -109,7 +105,7 @@ public class Order implements IResource {
      *
      * @return object matching the key.
      */
-    public Object get(String key) {
+    public Object get(final String key) {
         return this.data.get(key);
     }
 
@@ -119,18 +115,21 @@ public class Order implements IResource {
      * @param key key to set
      * @param value to add
      */
-    public void set(String key, Object value) {
+    public void set(final String key, final Object value) {
         this.data.put(key, value);
     }
 
     /**
      * Create a new order.
      *
+     * @see Order#baseUri
+     *
      * @param connector An implementation of IConnector interface.
      *
-     * @see Order#baseUri
+     * @throws IOException in case of an I/O error
      */
-    public void create(IConnector connector) {
+    public void create(final IConnector connector)
+            throws IOException {
         ConnectorOptions options = new ConnectorOptions();
         options.setURI(Order.baseUri);
 
@@ -141,8 +140,10 @@ public class Order implements IResource {
      * Fetch order data.
      *
      * @param connector An implementation of IConnector
+     *
+     * @throws IOException in case of an I/O error
      */
-    public void fetch(IConnector connector) {
+    public void fetch(final IConnector connector) throws IOException {
         ConnectorOptions options = new ConnectorOptions();
         options.setURI(this.location);
 
@@ -154,8 +155,11 @@ public class Order implements IResource {
      *
      * @param connector An implementation of IConnector
      * @param newLocation URI
+     *
+     * @throws IOException in case of an I/O error
      */
-    public void fetch(IConnector connector, final URI newLocation) {
+    public void fetch(final IConnector connector, final URI newLocation)
+            throws IOException {
         this.setLocation(newLocation);
         fetch(connector);
     }
@@ -164,8 +168,10 @@ public class Order implements IResource {
      * Update order data.
      *
      * @param connector An implementation of IConnector
+     *
+     * @throws IOException in case of an I/O error
      */
-    public void update(IConnector connector) {
+    public void update(final IConnector connector) throws IOException {
         ConnectorOptions options = new ConnectorOptions();
         options.setURI(this.location);
 
@@ -177,8 +183,11 @@ public class Order implements IResource {
      *
      * @param connector An implementation of IConnector
      * @param newLocation URI
+     *
+     * @throws IOException in case of an I/O error
      */
-    public void update(IConnector connector, final URI newLocation) {
+    public void update(final IConnector connector, final URI newLocation)
+            throws IOException {
         this.setLocation(newLocation);
         update(connector);
     }

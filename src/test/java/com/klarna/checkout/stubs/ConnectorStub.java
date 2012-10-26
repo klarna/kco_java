@@ -21,8 +21,10 @@ package com.klarna.checkout.stubs;
 import com.klarna.checkout.ConnectorOptions;
 import com.klarna.checkout.IConnector;
 import com.klarna.checkout.IResource;
+import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
+import org.apache.http.HttpResponse;
 
 /**
  * Stub implementation of the IConnector interface.
@@ -46,7 +48,7 @@ public class ConnectorStub implements IConnector {
      *
      * @return the applied object.
      */
-    public Object getApplied(String key) {
+    public Object getApplied(final String key) {
         return this.applied.get(key);
     }
 
@@ -56,10 +58,16 @@ public class ConnectorStub implements IConnector {
      * @param method HTTP Method
      * @param resource IResource implementation
      * @param options ConnectorOptions object.
+     *
+     * @return HttpResponse object
+     *
+     * @throws IOException in case of an I/O error
      */
     @Override
-    public void apply(
-            String method, IResource resource, ConnectorOptions options) {
+    public HttpResponse apply(
+            final String method,
+            final IResource resource,
+            final ConnectorOptions options) throws IOException {
         this.applied = new HashMap<String, Object>();
         this.applied.put("method", method);
         this.applied.put("resource", resource);
@@ -68,6 +76,7 @@ public class ConnectorStub implements IConnector {
         if (this.location != null) {
             resource.setLocation(this.location);
         }
+        return null;
     }
 
     /**
@@ -75,9 +84,14 @@ public class ConnectorStub implements IConnector {
      *
      * @param method HTTP Method
      * @param resource IResource implementation
+     *
+     * @return HttpResponse object
+     *
+     * @throws IOException in case of an I/O error
      */
-    public void apply(String method, IResource resource) {
-        apply(method, resource, new ConnectorOptions());
+    public HttpResponse apply(
+            final String method, final IResource resource) throws IOException {
+        return apply(method, resource, new ConnectorOptions());
     }
 
     /**
@@ -85,7 +99,7 @@ public class ConnectorStub implements IConnector {
      *
      * @param newLocation the new location of the resource.
      */
-    public void setLocation(URI newLocation) {
+    public void setLocation(final URI newLocation) {
         this.location = newLocation;
     }
 

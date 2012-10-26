@@ -17,6 +17,8 @@
  */
 package com.klarna.checkout;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
@@ -29,24 +31,74 @@ import org.apache.commons.codec.binary.Base64;
 public class Digest {
 
     /**
+     * Shared secret holder.
+     */
+    private final String secret;
+
+    /**
+     * MessageDigest object.
+     */
+    private MessageDigest md;
+
+    /**
+     * Constructor.
+     *
+     * @param sharedSecret Shared Secret
+     *
+     * @throws NoSuchAlgorithmException if SHA-256 is not supported by
+     * the Java VM.
+     */
+    public Digest(final String sharedSecret) throws NoSuchAlgorithmException {
+        this.secret = sharedSecret;
+        this.md = MessageDigest.getInstance("SHA-256");
+    }
+
+    /**
      * Create a digest from a supplied string.
      *
      * @param message string to hash
      *
      * @return Base64 and SHA256 hashed string
      */
-    public String create(String message) {
-        MessageDigest md;
-        try {
-            md = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(Digest.class.getName()).log(
-                    Level.SEVERE, null, ex);
-            return "";
-        }
+    public String create(final String message) {
+        md.reset();
+
         if (message != null) {
             md.update(message.getBytes());
         }
+
+        md.update(secret.getBytes());
+
+        return new String(Base64.encodeBase64(md.digest()));
+    }
+
+    /**
+     * Create a digest from an input stream.
+     *
+     * @param stream character stream to hash
+     *
+     * @return Base64 and SHA256 hashed string
+     */
+    public String create(final InputStream stream) {
+        md.reset();
+
+        if (stream != null) {
+
+            byte[] b = new byte[1024];
+            int read;
+
+            try {
+                while ((read = stream.read(b)) >= 0) {
+                    md.update(b, 0, read);
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(
+                        Digest.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        md.update(secret.getBytes());
+
         return new String(Base64.encodeBase64(md.digest()));
     }
 }

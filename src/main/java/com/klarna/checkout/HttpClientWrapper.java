@@ -13,30 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * File containing the IConnector interface
+ * File containing the ConnectorOptions class.
  */
 package com.klarna.checkout;
 
-import java.io.IOException;
-import org.apache.http.HttpResponse;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpParams;
 
 /**
- * Interface for the Connector object.
+ * Empty class to enforce Interface.
  */
-public interface IConnector {
+public class HttpClientWrapper extends DefaultHttpClient
+    implements IHttpClient {
 
-    /**
-     * Applying the method on the specific resource.
-     *
-     * @param method HTTP Method
-     * @param resource IResource implementation
-     * @param options Options for Connector
-     *
-     * @return a HTTP Response
-     *
-     * @throws IOException in case of an I/O Error
-     */
-    HttpResponse apply(
-            String method, IResource resource, ConnectorOptions options)
-            throws IOException;
+    public HttpClientWrapper(HttpParams params) {
+        super(params);
+    }
+
+    public HttpClientWrapper(
+            ClientConnectionManager basicClientConnectionManager,
+            HttpParams params) {
+        super(basicClientConnectionManager, params);
+    }
+
 }

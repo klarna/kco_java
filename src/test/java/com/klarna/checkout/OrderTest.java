@@ -51,8 +51,8 @@ public class OrderTest {
     public void testContentType() {
         Order.contentType = "klarna/json";
         assertEquals(
-            "klarna/json",
-            order.getContentType());
+                "klarna/json",
+                order.getContentType());
     }
 
     /**
@@ -119,5 +119,4 @@ public class OrderTest {
         order.set("test", list);
         assertEquals(list, order.get("test"));
     }
-
 }

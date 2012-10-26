@@ -25,7 +25,6 @@ import java.util.Map;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.Mockito.*;
 
 /**
  * Tests for the Order class, basic functionality.
@@ -42,7 +41,7 @@ public class OrderTest {
      */
     @Before
     public void setUp() {
-        order = new Order(mock(IConnector.class));
+        order = new Order();
     }
 
     /**

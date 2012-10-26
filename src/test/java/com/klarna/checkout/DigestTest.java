@@ -17,6 +17,9 @@
  */
 package com.klarna.checkout;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
@@ -25,22 +28,47 @@ import org.junit.Test;
  */
 public class DigestTest {
 
+    /**
+     * Json string.
+     */
+    private static final String JSON = "{\"eid\":1245,"
+            + "\"goods_list\":[{\"artno\":\"id_1\",\"name\":\"product\","
+            + "\"price\":12345,\"vat\":25,\"qty\":1}],"
+            + "\"currency\":\"SEK\","
+            + "\"country\":\"SWE\","
+            + "\"language\":\"SV\"}";
+    /**
+     * Expected digest.
+     */
+    private static final String EXPECTED =
+            "MO/6KvzsY2y+F+/SexH7Hyg16gFpsPDx5A2PtLZd0Zs=";
 
     /**
      * Test to create a Digest from a JSON string.
      */
     @Test
-    public void testDigest() {
-        String json = "{\"eid\":1245,"
-                + "\"goods_list\":[{\"artno\":\"id_1\",\"name\":\"product\","
-                + "\"price\":12345,\"vat\":25,\"qty\":1}],"
-                + "\"currency\":\"SEK\","
-                + "\"country\":\"SWE\","
-                + "\"language\":\"SV\"}";
+    public void testDigestString() {
 
         assertEquals(
                 "Expected digest hash",
-                "MO/6KvzsY2y+F+/SexH7Hyg16gFpsPDx5A2PtLZd0Zs=",
-                (new Digest()).create(json.concat("mySecret")));
+                DigestTest.EXPECTED,
+                (new Digest("mySecret")).create(DigestTest.JSON));
+    }
+
+    /**
+     * Test to create a Digest from a JSON string.
+     *
+     * @throws IOException but should not happen
+     */
+    @Test
+    public void testDigestStream() throws IOException {
+
+        InputStream stream = new ByteArrayInputStream(
+                DigestTest.JSON.getBytes());
+
+        assertEquals(
+                "Expected digest hash",
+                DigestTest.EXPECTED,
+                (new Digest("mySecret")).create(stream));
     }
 }

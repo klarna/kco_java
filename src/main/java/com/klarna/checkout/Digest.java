@@ -17,6 +17,8 @@
  */
 package com.klarna.checkout;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
@@ -29,13 +31,27 @@ import org.apache.commons.codec.binary.Base64;
 public class Digest {
 
     /**
+     * Shared secret holder.
+     */
+    private final String secret;
+
+    /**
+     * Constructor.
+     *
+     * @param sharedSecret Shared Secret
+     */
+    public Digest(final String sharedSecret) {
+        this.secret = sharedSecret;
+    }
+
+    /**
      * Create a digest from a supplied string.
      *
      * @param message string to hash
      *
      * @return Base64 and SHA256 hashed string
      */
-    public String create(String message) {
+    public String create(final String message) {
         MessageDigest md;
         try {
             md = MessageDigest.getInstance("SHA-256");
@@ -47,6 +63,37 @@ public class Digest {
         if (message != null) {
             md.update(message.getBytes());
         }
+        md.update(secret.getBytes());
+        return new String(Base64.encodeBase64(md.digest()));
+    }
+
+    /**
+     * Create a digest from an input stream.
+     *
+     * @param stream character stream to hash
+     *
+     * @return Base64 and SHA256 hashed string
+     */
+    public String create(final InputStream stream) {
+        MessageDigest md;
+        try {
+            md = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(Digest.class.getName()).log(
+                    Level.SEVERE, null, ex);
+            return "";
+        }
+        byte[] b = new byte[1024];
+        int read;
+        try {
+            while ((read = stream.read(b)) >= 0) {
+                md.update(b, 0, read);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(
+                    Digest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        md.update(secret.getBytes());
         return new String(Base64.encodeBase64(md.digest()));
     }
 }

@@ -30,8 +30,8 @@ import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.CircularRedirectException;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.RedirectException;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -49,11 +49,11 @@ public class Connector implements IConnector {
     /**
      * HttpClient implementation.
      */
-    private IHttpClient client;
+    protected IHttpClient client;
     /**
      * Digest instance.
      */
-    private final Digest digest;
+    protected final Digest digest;
 
     /**
      * Constructor.
@@ -61,6 +61,11 @@ public class Connector implements IConnector {
      * @param dig Digest instance
      */
     public Connector(final Digest dig) {
+        if (dig == null) {
+            throw new IllegalArgumentException(
+                    "Digest may not be null.");
+        }
+
         this.digest = dig;
     }
 
@@ -89,8 +94,14 @@ public class Connector implements IConnector {
             final String method, final IResource resource,
             final ConnectorOptions options)
             throws IOException {
+        if (resource == null) {
+            throw new IllegalArgumentException(
+                    "IResource implementation may not be null.");
+        }
+
         if (!method.equals("GET") && !method.equals("POST")) {
-            throw new IllegalArgumentException("Invalid HTTP Method.");
+            throw new IllegalArgumentException(
+                    "Unsupported HTTP Method. (" + method + ")");
         }
 
         URI uri = this.getUri(options, resource);
@@ -283,7 +294,7 @@ public class Connector implements IConnector {
                     "klarna_visited");
             String uri = request.getRequestLine().getUri();
             if (visited.contains(uri)) {
-                throw new RedirectException("Infinite redirect loop detected.");
+                throw new CircularRedirectException();
             }
             visited.add(uri);
         }

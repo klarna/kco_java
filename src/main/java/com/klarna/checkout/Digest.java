@@ -75,6 +75,10 @@ public class Digest {
      * @return Base64 and SHA256 hashed string
      */
     public String create(final InputStream stream) {
+        if (stream == null) {
+            return "";
+        }
+
         MessageDigest md;
         try {
             md = MessageDigest.getInstance("SHA-256");

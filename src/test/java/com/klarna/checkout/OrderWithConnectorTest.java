@@ -21,8 +21,10 @@ import com.klarna.checkout.stubs.ConnectorStub;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -40,16 +42,29 @@ public class OrderWithConnectorTest {
     private Order order;
 
     /**
+     * Set up the whole class.
+     */
+    @BeforeClass
+    public static void setUpClass() {
+        // Reset static state
+        Order.baseUri = null;
+        Order.contentType = "";
+    }
+
+    /**
      * Set up the tests.
      */
     @Before
     public void setUp() {
+        connector = new ConnectorStub();
+        order = new Order(connector);
+    }
+
+    @After
+    public void tearDown() {
         // Reset static state
         Order.baseUri = null;
         Order.contentType = "";
-
-        connector = new ConnectorStub();
-        order = new Order();
     }
 
     /**
@@ -65,7 +80,7 @@ public class OrderWithConnectorTest {
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("foo", "boo");
         order.parse(data);
-        order.create(this.connector);
+        order.create();
 
         assertEquals("boo", order.get("foo"));
         assertEquals("boo", order.marshal().get("foo"));
@@ -86,7 +101,7 @@ public class OrderWithConnectorTest {
         order.setLocation(new URI("http://klarna.com/foo/bar/15"));
         URI location = order.getLocation();
 
-        order.fetch(this.connector);
+        order.fetch();
 
         assertEquals("GET", connector.getApplied("method"));
         assertEquals(order, connector.getApplied("resource"));
@@ -104,7 +119,7 @@ public class OrderWithConnectorTest {
     public void testFetchSetLocation() throws Exception {
         URI uri = new URI("http://klarna.com/foo/bar/16");
 
-        order.fetch(this.connector, uri);
+        order.fetch(uri);
         assertEquals("GET", connector.getApplied("method"));
         assertEquals(order, connector.getApplied("resource"));
         assertEquals(
@@ -120,14 +135,14 @@ public class OrderWithConnectorTest {
     /**
      * Test the Update function.
      *
-     * @throws Exception it's lying!
+     * @throws Exception but it really shouldn't
      */
     @Test
     public void testUpdate() throws Exception {
         order.setLocation(new URI("http://klarna.com/foo/bar/17"));
         URI location = order.getLocation();
 
-        order.update(this.connector);
+        order.update();
         assertEquals("POST", connector.getApplied("method"));
         assertEquals(order, connector.getApplied("resource"));
         assertEquals(
@@ -145,7 +160,7 @@ public class OrderWithConnectorTest {
     public void testUpdateSetLocation() throws Exception {
         URI uri = new URI("http://klarna.com/foo/bar/18");
 
-        order.update(this.connector, uri);
+        order.update(uri);
         assertEquals("POST", connector.getApplied("method"));
         assertEquals(order, connector.getApplied("resource"));
         assertEquals(
@@ -168,8 +183,9 @@ public class OrderWithConnectorTest {
         URI base = new URI("https://checkout.klarna.com/beta/checkout/orders");
         Order.baseUri = base;
 
-        Order o = new Order();
-        o.create(connector);
+        Order o = new Order(this.connector);
+        o.create();
+
         assertEquals(
             "New Base",
             base,

@@ -174,9 +174,9 @@ public class ConnectorGETTest {
     }
 
     /**
-     * Test to verify behavior when getting a 301 redirect to a 200.
+     * Test to verify behavior when getting a 301 redirect to a 503.
      *
-     * @throws Exception but it won't
+     * @throws Exception as it should
      */
     @Test(expected = HttpResponseException.class)
     public void testApplyGet301to503() throws Exception {

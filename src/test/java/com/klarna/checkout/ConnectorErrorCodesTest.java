@@ -128,7 +128,7 @@ public class ConnectorErrorCodesTest {
      * Exception rule.
      */
     @Rule
-    private ExpectedException expectedEx = ExpectedException.none();
+    public ExpectedException expectedEx = ExpectedException.none();
 
     /**
      * Test error codes with GET.

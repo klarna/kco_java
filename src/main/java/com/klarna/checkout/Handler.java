@@ -29,8 +29,8 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 /**
- * ResponseHandler implementation that does not throw exception on status codes
- * 3xx.
+ * ResponseHandler implementation that does not throw exception
+ * on status codes 3xx.
  */
 class Handler implements ResponseHandler<HttpResponse> {
 

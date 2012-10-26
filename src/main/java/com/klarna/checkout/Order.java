@@ -43,14 +43,40 @@ public class Order implements IResource {
      * Data of the order.
      */
     private final Map data;
+    /**
+     * Resource object.
+     */
+    private IConnector connector;
 
     /**
      * Constructor.
+     *
+     * @param conn IConnector implementation.
      */
-    public Order() {
+    public Order(final IConnector conn) {
         this.data = new HashMap<String, Object>();
+        if (conn == null) {
+            throw new IllegalArgumentException(
+                    "IConnector implementation may not be null.");
+        }
+        this.connector = conn;
     }
 
+    /**
+     * Attaches a connector object to the order.
+     *
+     * @param conn IConnector implementation
+     */
+    public void setConnector(final IConnector conn) {
+        this.connector = conn;
+    }
+
+    /**
+     * @return attached resource object.
+     */
+    public IConnector getConnector() {
+        return this.connector;
+    }
     /**
      * @return the URL of the resource.
      */
@@ -124,71 +150,63 @@ public class Order implements IResource {
      *
      * @see Order#baseUri
      *
-     * @param connector An implementation of IConnector interface.
-     *
      * @throws IOException in case of an I/O error
      */
-    public void create(final IConnector connector)
+    public void create()
             throws IOException {
         ConnectorOptions options = new ConnectorOptions();
         options.setURI(Order.baseUri);
 
-        connector.apply("POST", this, options);
+        this.connector.apply("POST", this, options);
     }
 
     /**
      * Fetch order data.
      *
-     * @param connector An implementation of IConnector
-     *
      * @throws IOException in case of an I/O error
      */
-    public void fetch(final IConnector connector) throws IOException {
+    public void fetch() throws IOException {
         ConnectorOptions options = new ConnectorOptions();
         options.setURI(this.location);
 
-        connector.apply("GET", this, options);
+        this.connector.apply("GET", this, options);
     }
 
     /**
      * Fetch order data.
      *
-     * @param connector An implementation of IConnector
      * @param newLocation URI
      *
      * @throws IOException in case of an I/O error
      */
-    public void fetch(final IConnector connector, final URI newLocation)
+    public void fetch(final URI newLocation)
             throws IOException {
         this.setLocation(newLocation);
-        fetch(connector);
+        this.fetch();
     }
 
     /**
      * Update order data.
      *
-     * @param connector An implementation of IConnector
-     *
      * @throws IOException in case of an I/O error
      */
-    public void update(final IConnector connector) throws IOException {
+    public void update() throws IOException {
         ConnectorOptions options = new ConnectorOptions();
         options.setURI(this.location);
 
-        connector.apply("POST", this, options);
+        this.connector.apply("POST", this, options);
     }
 
     /**
      * Update order data.
      *
-     * @param connector An implementation of IConnector
-     * @param newLocation URI
+     * @param newLocation URI to new location.
      *
      * @throws IOException in case of an I/O error
      */
-    public void update(final IConnector connector, final URI newLocation)
+    public void update(final URI newLocation)
             throws IOException {
         this.setLocation(newLocation);
-        update(connector);
+        this.update();
     }
 }

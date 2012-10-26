@@ -36,12 +36,21 @@ public class Digest {
     private final String secret;
 
     /**
+     * MessageDigest object.
+     */
+    private MessageDigest md;
+
+    /**
      * Constructor.
      *
      * @param sharedSecret Shared Secret
+     *
+     * @throws NoSuchAlgorithmException if SHA-256 is not supported by
+     * the Java VM.
      */
-    public Digest(final String sharedSecret) {
+    public Digest(final String sharedSecret) throws NoSuchAlgorithmException {
         this.secret = sharedSecret;
+        this.md = MessageDigest.getInstance("SHA-256");
     }
 
     /**
@@ -52,18 +61,14 @@ public class Digest {
      * @return Base64 and SHA256 hashed string
      */
     public String create(final String message) {
-        MessageDigest md;
-        try {
-            md = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(Digest.class.getName()).log(
-                    Level.SEVERE, null, ex);
-            return "";
-        }
+        md.reset();
+
         if (message != null) {
             md.update(message.getBytes());
         }
+
         md.update(secret.getBytes());
+
         return new String(Base64.encodeBase64(md.digest()));
     }
 
@@ -75,29 +80,25 @@ public class Digest {
      * @return Base64 and SHA256 hashed string
      */
     public String create(final InputStream stream) {
-        if (stream == null) {
-            return "";
+        md.reset();
+
+        if (stream != null) {
+
+            byte[] b = new byte[1024];
+            int read;
+
+            try {
+                while ((read = stream.read(b)) >= 0) {
+                    md.update(b, 0, read);
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(
+                        Digest.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
-        MessageDigest md;
-        try {
-            md = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(Digest.class.getName()).log(
-                    Level.SEVERE, null, ex);
-            return "";
-        }
-        byte[] b = new byte[1024];
-        int read;
-        try {
-            while ((read = stream.read(b)) >= 0) {
-                md.update(b, 0, read);
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(
-                    Digest.class.getName()).log(Level.SEVERE, null, ex);
-        }
         md.update(secret.getBytes());
+
         return new String(Base64.encodeBase64(md.digest()));
     }
 }

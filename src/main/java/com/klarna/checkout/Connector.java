@@ -22,7 +22,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
-import java.util.Set;
 import org.apache.http.Header;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
@@ -30,13 +29,14 @@ import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.CircularRedirectException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.conn.BasicClientConnectionManager;
+import org.apache.http.params.BasicHttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.json.simple.JSONObject;
@@ -75,7 +75,10 @@ public class Connector implements IConnector {
      * @return HTTP Client to use.
      */
     protected IHttpClient createHttpClient() {
-        return new HttpClientWrapper();
+        BasicHttpParams params = new BasicHttpParams();
+        params.setParameter("http.protocol.allow-circular-redirects", false);
+        return new HttpClientWrapper(
+                new BasicClientConnectionManager(), params);
     }
 
     /**
@@ -180,7 +183,6 @@ public class Connector implements IConnector {
                     new ResourceLocationInterceptor());
             this.client.addRequestInterceptor(
                     new AuthorizationInterceptor(this.digest));
-            this.client.addRequestInterceptor(new RedirectLoopInterceptor());
         }
         return this.client;
     }
@@ -268,35 +270,6 @@ public class Connector implements IConnector {
                 digestString = this.digest.create("");
             }
             request.addHeader("Authorization", "Klarna " + digestString);
-        }
-    }
-
-    /**
-     * Interceptor for redirect loops.
-     */
-    private static class RedirectLoopInterceptor
-            implements HttpRequestInterceptor {
-
-        /**
-         * Intercept a redirect loop.
-         *
-         * @param request HTTP Request object
-         * @param context HTTP Context holder
-         *
-         * @throws HttpException If a loop is detected
-         * @throws IOException in case of an I/O error
-         */
-        @Override
-        public void process(
-                final HttpRequest request, final HttpContext context)
-                throws HttpException, IOException {
-            Set<String> visited = (Set<String>) context.getAttribute(
-                    "klarna_visited");
-            String uri = request.getRequestLine().getUri();
-            if (visited.contains(uri)) {
-                throw new CircularRedirectException();
-            }
-            visited.add(uri);
         }
     }
 }

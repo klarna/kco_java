@@ -22,10 +22,13 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.apache.http.Header;
 import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
@@ -34,6 +37,7 @@ import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.ProtocolVersion;
+import org.apache.http.client.CircularRedirectException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
@@ -72,12 +76,37 @@ public class HttpClientStub implements IHttpClient {
     private final ArrayList<HttpRequestInterceptor> requestInterceptors;
 
     /**
+     * HttpParams storage.
+     */
+    private final HttpParams params;
+
+    /**
+     * Visited locations.
+     */
+    private Set<URI> visited;
+
+    /**
      * Constructor.
      */
     public HttpClientStub() {
         responseInterceptors = new ArrayList<HttpResponseInterceptor>();
         requestInterceptors = new ArrayList<HttpRequestInterceptor>();
         responseList = new ArrayList<HTTPResponseStub>();
+        params = null;
+        visited = new HashSet<URI>();
+    }
+
+    /**
+     * Constructor taking an HttpParams argument.
+     *
+     * @param params HttpParams to send in.
+     */
+    public HttpClientStub(HttpParams params) {
+        this.params = params;
+        responseInterceptors = new ArrayList<HttpResponseInterceptor>();
+        requestInterceptors = new ArrayList<HttpRequestInterceptor>();
+        responseList = new ArrayList<HTTPResponseStub>();
+        visited = new HashSet<URI>();
     }
 
     /**
@@ -224,8 +253,12 @@ public class HttpClientStub implements IHttpClient {
                 throw new ClientProtocolException(ex);
             }
 
-            this.lastResponse = this.getResponse();
+            if (!this.visited.add(this.httpUriReq.getURI())) {
+                throw new ClientProtocolException(
+                        new CircularRedirectException());
+            }
 
+            this.lastResponse = this.getResponse();
             try {
                 for (HttpResponseInterceptor hri : responseInterceptors) {
                     hri.process(this.lastResponse, hc);

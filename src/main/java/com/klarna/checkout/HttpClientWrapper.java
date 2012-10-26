@@ -17,12 +17,24 @@
  */
 package com.klarna.checkout;
 
+import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpParams;
 
 /**
  * Empty class to enforce Interface.
  */
 public class HttpClientWrapper extends DefaultHttpClient
     implements IHttpClient {
+
+    public HttpClientWrapper(HttpParams params) {
+        super(params);
+    }
+
+    public HttpClientWrapper(
+            ClientConnectionManager basicClientConnectionManager,
+            HttpParams params) {
+        super(basicClientConnectionManager, params);
+    }
 
 }

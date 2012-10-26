@@ -47,7 +47,7 @@ public class DigestTest {
      * Test to create a Digest from a JSON string.
      */
     @Test
-    public void testDigestString() {
+    public void testDigestString() throws Exception {
 
         assertEquals(
                 "Expected digest hash",
@@ -61,7 +61,7 @@ public class DigestTest {
      * @throws IOException but should not happen
      */
     @Test
-    public void testDigestStream() throws IOException {
+    public void testDigestStream() throws Exception {
 
         InputStream stream = new ByteArrayInputStream(
                 DigestTest.JSON.getBytes());

@@ -15,7 +15,6 @@
  *
  * File containing the Order object
  */
-
 package com.klarna.checkout;
 
 import java.net.URI;

@@ -17,6 +17,9 @@
  */
 package com.klarna.checkout;
 
+import java.io.IOException;
+import org.apache.http.HttpResponse;
+
 /**
  * Interface for the Connector object.
  */
@@ -25,9 +28,15 @@ public interface IConnector {
     /**
      * Applying the method on the specific resource.
      *
-     * @param method HTTP method
-     * @param resource Resource implementation
-     * @param options Connector Options
+     * @param method HTTP Method
+     * @param resource IResource implementation
+     * @param options Options for Connector
+     *
+     * @return a HTTP Response
+     *
+     * @throws IOException in case of an I/O Error
      */
-    void apply(String method, IResource resource, ConnectorOptions options);
+    HttpResponse apply(
+            String method, IResource resource, ConnectorOptions options)
+            throws IOException;
 }

@@ -34,17 +34,14 @@ public class UserAgent {
          * Key of the field.
          */
         private String key;
-
         /**
          * Name of the field.
          */
         private String name;
-
         /**
          * Version of the field.
          */
         private String version;
-
         /**
          * Optional values.
          */
@@ -53,30 +50,37 @@ public class UserAgent {
         /**
          * Constructor.
          *
-         * @param key Key of the field.
-         * @param name Name of the field.
-         * @param version Version of the field.
+         * @param fieldKey Key of the field.
+         * @param fieldName Name of the field.
+         * @param fieldVersion Version of the field.
          */
-        public Field(String key, String name, String version) {
-            this.key = key;
-            this.name = name;
-            this.version = version;
+        public Field(
+                final String fieldKey,
+                final String fieldName,
+                final String fieldVersion) {
+            this.key = fieldKey;
+            this.name = fieldName;
+            this.version = fieldVersion;
             this.options = new String[0];
         }
 
         /**
          * Constructor with optional values.
          *
-         * @param key Key of the field.
-         * @param name Name of the field.
-         * @param version Version of the field.
-         * @param options Extra values.
+         * @param fieldKey Key of the field.
+         * @param fieldName Name of the field.
+         * @param fieldVersion Version of the field.
+         * @param fieldOptions Options for the field.
          */
-        public Field(String key, String name, String version, String... options) {
-            this.key = key;
-            this.name = name;
-            this.version = version;
-            this.options = options;
+        public Field(
+                final String fieldKey,
+                final String fieldName,
+                final String fieldVersion,
+                final String... fieldOptions) {
+            this.key = fieldKey;
+            this.name = fieldName;
+            this.version = fieldVersion;
+            this.options = fieldOptions;
         }
 
         /**
@@ -87,16 +91,14 @@ public class UserAgent {
         @Override
         public final String toString() {
             String result = this.key + "/" + this.name + "_" + this.version;
-            String part = "";
             if (this.options.length > 0) {
-                part = part.format(
+                String part = String.format(
                         "(%s)", UserAgent.implode(this.options, " ; "));
                 result = result.concat(" ").concat(part);
             }
             return result;
         }
     }
-
     /**
      * Fields associated to the UserAgent.
      */
@@ -113,36 +115,36 @@ public class UserAgent {
                 new UserAgent.Field("Library", "Klarna.ApiWrapper", "1.0"));
         this.addField(
                 new UserAgent.Field(
-                    "OS",
-                    System.getProperty("os.name"),
-                    System.getProperty("os.version")));
+                "OS",
+                System.getProperty("os.name"),
+                System.getProperty("os.version")));
         this.addField(
                 new UserAgent.Field(
-                    "Language",
-                    "Java",
-                    System.getProperty("java.version"),
-                    new String[]{
-                        ("Vendor/" + System.getProperty("java.vendor")),
-                        ("VM/" + System.getProperty("java.vm.name"))}));
+                "Language",
+                "Java",
+                System.getProperty("java.version"),
+                new String[]{
+                    ("Vendor/" + System.getProperty("java.vendor")),
+                    ("VM/" + System.getProperty("java.vm.name"))}));
     }
 
     /**
-    * Implode a String array with a glue.
-    *
-    * @param options The strings to implode.
-    * @param glue The glue to use.
-    *
-    * @return String The imploded string.
-    */
-   protected static String implode(String[] options, String glue) {
-       final StringBuilder stringBuilder = new StringBuilder();
-       stringBuilder.append(options[0]);
-       for (int i = 1; i < options.length; i++) {
-           stringBuilder.append(glue);
-           stringBuilder.append(options[i]);
-       }
-       return stringBuilder.toString();
-   }
+     * Implode a String array with a glue.
+     *
+     * @param options The strings to implode.
+     * @param glue The glue to use.
+     *
+     * @return String The imploded string.
+     */
+    protected static String implode(final String[] options, final String glue) {
+        final StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(options[0]);
+        for (int i = 1; i < options.length; i++) {
+            stringBuilder.append(glue);
+            stringBuilder.append(options[i]);
+        }
+        return stringBuilder.toString();
+    }
 
     /**
      * Add a field to the UserAgent.
@@ -151,7 +153,7 @@ public class UserAgent {
      *
      * @throws KlarnaException If the key already exists.
      */
-    public final void addField(UserAgent.Field field)
+    public final void addField(final UserAgent.Field field)
             throws KlarnaException {
         for (UserAgent.Field object : this.fields) {
             if (object.key.compareTo(field.key) == 0) {
@@ -169,8 +171,7 @@ public class UserAgent {
      */
     @Override
     public final String toString() {
-        String[] fields = new String[]{this.fields.toString()};
-        return UserAgent.implode(fields, " ");
+        String[] elements = new String[]{this.fields.toString()};
+        return UserAgent.implode(elements, " ");
     }
-
 }

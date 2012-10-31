@@ -42,27 +42,22 @@ public class ConnectorErrorCodesTest {
      * Exception message.
      */
     private final String message;
-
     /**
      * Status code.
      */
     private int code;
-
     /**
      * IHttpClient Stub.
      */
     private HttpClientStub transport;
-
     /**
      * Connector object.
      */
     private Connector conn;
-
     /**
      * Expected digest string.
      */
     private String digestString;
-
     /**
      * Digest mock.
      */
@@ -90,12 +85,10 @@ public class ConnectorErrorCodesTest {
         this.digestString = "stnaeu\\eu2341aoaaoae==";
         when(digest.create("secret")).thenReturn(digestString);
         this.conn = new Connector(this.digest) {
-
             @Override
             protected IHttpClient createHttpClient() {
                 return transport;
             }
-
         };
     }
 
@@ -104,7 +97,7 @@ public class ConnectorErrorCodesTest {
      */
     @Parameters
     public static Collection<Object[]> data() {
-        Object[][] data = new Object[][] {
+        Object[][] data = new Object[][]{
             {400, "Bad Request"},
             {401, "Unauthorized"},
             {402, "PaymentRequired"},
@@ -123,7 +116,6 @@ public class ConnectorErrorCodesTest {
         };
         return Arrays.asList(data);
     }
-
     /**
      * Exception rule.
      */

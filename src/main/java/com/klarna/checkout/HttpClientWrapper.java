@@ -25,16 +25,26 @@ import org.apache.http.params.HttpParams;
  * Empty class to enforce Interface.
  */
 public class HttpClientWrapper extends DefaultHttpClient
-    implements IHttpClient {
+        implements IHttpClient {
 
-    public HttpClientWrapper(HttpParams params) {
+    /**
+     * Constructor.
+     *
+     * @param params HTTP Parameters to set
+     */
+    public HttpClientWrapper(final HttpParams params) {
         super(params);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param connectionManager A ClientConnectionManager implementation
+     * @param params HTTP Parameters to pass along
+     */
     public HttpClientWrapper(
-            ClientConnectionManager basicClientConnectionManager,
-            HttpParams params) {
-        super(basicClientConnectionManager, params);
+            final ClientConnectionManager connectionManager,
+            final HttpParams params) {
+        super(connectionManager, params);
     }
-
 }

@@ -4,3 +4,5 @@ maven-build.properties
 maven-build.xml
 /examples/nbproject
 /examples/manifest.mf
+/examples/build/
+/examples/dist/

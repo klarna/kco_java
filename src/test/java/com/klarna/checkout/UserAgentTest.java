@@ -70,30 +70,29 @@ public class UserAgentTest {
     /**
      * Test that an added field exist in the string.
      *
-     * @throws KlarnaException
+     * @throws KlarnaException if things go wrong
      */
     @Test
     public void testAddField() throws KlarnaException {
         String[] arr = new String[]{"butter/3", "cheese/0.1"};
         this.agent.addField(
                 new UserAgent.Field(
-                    "Bread", "Crumb", "2.5", arr));
+                "Bread", "Crumb", "2.5", arr));
         final String string = this.agent.toString();
         assertTrue(
                 "New field wasn't found",
                 string.matches(
-                    ".*Bread/Crumb_2\\.5.* \\(butter\\/3 ; cheese\\/0.1\\).*"));
+                ".*Bread/Crumb_2\\.5.* \\(butter\\/3 ; cheese\\/0.1\\).*"));
     }
 
     /**
      * Test that trying to add an already existing field throws an exception.
      *
-     * @throws KlarnaException
+     * @throws KlarnaException if everything went well
      */
-    @Test (expected = KlarnaException.class)
+    @Test(expected = KlarnaException.class)
     public void testAddFieldKeyAlreadyExists() throws KlarnaException {
         this.agent.addField(
                 new UserAgent.Field("Language", "Something", "9"));
     }
-
 }

@@ -42,13 +42,12 @@ public class OrderWithConnectorTest {
     private Order order;
 
     /**
-     * Set up the whole class.
-     * Reset static state.
+     * Set up the whole class. Reset static state.
      */
     @BeforeClass
     public static void setUpClass() {
-        Order.baseUri = null;
-        Order.contentType = "";
+        Order.setBaseUri(null);
+        Order.setContentType("");
     }
 
     /**
@@ -65,8 +64,8 @@ public class OrderWithConnectorTest {
      */
     @After
     public void tearDown() {
-        Order.baseUri = null;
-        Order.contentType = "";
+        Order.setBaseUri(null);
+        Order.setContentType("");
     }
 
     /**
@@ -82,15 +81,14 @@ public class OrderWithConnectorTest {
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("foo", "boo");
         order.parse(data);
-        order.create(this.connector);
+        order.create(connector);
 
         assertEquals("boo", order.get("foo"));
         assertEquals("boo", order.marshal().get("foo"));
         assertEquals("POST", connector.getApplied("method"));
         assertEquals(order, connector.getApplied("resource"));
         assertNull(
-            ((ConnectorOptions) this.connector.getApplied(
-            "options")).getURI());
+                ((ConnectorOptions) connector.getApplied("options")).getURI());
     }
 
     /**
@@ -103,13 +101,13 @@ public class OrderWithConnectorTest {
         order.setLocation(new URI("http://klarna.com/foo/bar/15"));
         URI location = order.getLocation();
 
-        order.fetch(this.connector);
+        order.fetch(connector);
 
         assertEquals("GET", connector.getApplied("method"));
         assertEquals(order, connector.getApplied("resource"));
         assertEquals(
-            location,
-            ((ConnectorOptions) this.connector.getApplied("options")).getURI());
+                location,
+                ((ConnectorOptions) connector.getApplied("options")).getURI());
     }
 
     /**
@@ -121,17 +119,17 @@ public class OrderWithConnectorTest {
     public void testFetchSetLocation() throws Exception {
         URI uri = new URI("http://klarna.com/foo/bar/16");
 
-        order.fetch(this.connector, uri);
+        order.fetch(connector, uri);
         assertEquals("GET", connector.getApplied("method"));
         assertEquals(order, connector.getApplied("resource"));
         assertEquals(
-            "URL Sent",
-            uri,
-            ((ConnectorOptions) this.connector.getApplied("options")).getURI());
+                "URL Sent",
+                uri,
+                ((ConnectorOptions) connector.getApplied("options")).getURI());
         assertEquals(
-            "resource location",
-            uri,
-            order.getLocation());
+                "resource location",
+                uri,
+                order.getLocation());
     }
 
     /**
@@ -144,13 +142,13 @@ public class OrderWithConnectorTest {
         order.setLocation(new URI("http://klarna.com/foo/bar/17"));
         URI location = order.getLocation();
 
-        order.update(this.connector);
+        order.update(connector);
         assertEquals("POST", connector.getApplied("method"));
         assertEquals(order, connector.getApplied("resource"));
         assertEquals(
-            "URL Sent",
-            location,
-            ((ConnectorOptions) this.connector.getApplied("options")).getURI());
+                "URL Sent",
+                location,
+                ((ConnectorOptions) connector.getApplied("options")).getURI());
     }
 
     /**
@@ -162,17 +160,17 @@ public class OrderWithConnectorTest {
     public void testUpdateSetLocation() throws Exception {
         URI uri = new URI("http://klarna.com/foo/bar/18");
 
-        order.update(this.connector, uri);
+        order.update(connector, uri);
         assertEquals("POST", connector.getApplied("method"));
         assertEquals(order, connector.getApplied("resource"));
         assertEquals(
-            "URL Sent",
-            uri,
-            ((ConnectorOptions) this.connector.getApplied("options")).getURI());
+                "URL Sent",
+                uri,
+                ((ConnectorOptions) connector.getApplied("options")).getURI());
         assertEquals(
-            "resource location",
-            uri,
-            order.getLocation());
+                "resource location",
+                uri,
+                order.getLocation());
     }
 
     /**
@@ -183,13 +181,13 @@ public class OrderWithConnectorTest {
     @Test
     public void testCreateAlternateEntryPoint() throws Exception {
         URI base = new URI("https://checkout.klarna.com/beta/checkout/orders");
-        Order.baseUri = base;
+        Order.setBaseUri(base);
 
         Order o = new Order();
         o.create(connector);
         assertEquals(
-            "New Base",
-            base,
-            ((ConnectorOptions) this.connector.getApplied("options")).getURI());
+                "New Base",
+                base,
+                ((ConnectorOptions) connector.getApplied("options")).getURI());
     }
 }

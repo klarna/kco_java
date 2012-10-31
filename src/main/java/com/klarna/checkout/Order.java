@@ -28,14 +28,6 @@ import java.util.Map;
 public class Order implements IResource {
 
     /**
-     * Base URI used to create order resources.
-     */
-    public static URI baseUri = null;
-    /**
-     * Content type string.
-     */
-    public static String contentType = "";
-    /**
      * The location of the resource.
      */
     private URI location;
@@ -43,6 +35,39 @@ public class Order implements IResource {
      * Data of the order.
      */
     private final Map data;
+    /**
+     * Base URI used to create order resources.
+     */
+    private static URI baseUri = null;
+    /**
+     * Content type string.
+     */
+    private static String contentType = "";
+
+    /**
+     * @return the set BaseURI
+     */
+    public static URI getBaseUri() {
+        return Order.baseUri;
+    }
+
+    /**
+     * Set a base URI.
+     *
+     * @param uri URI to set
+     */
+    public static void setBaseUri(final URI uri) {
+        Order.baseUri = uri;
+    }
+
+    /**
+     * Set the content type to be used.
+     *
+     * @param type content type to set
+     */
+    static void setContentType(final String type) {
+        Order.contentType = type;
+    }
 
     /**
      * Constructor.

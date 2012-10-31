@@ -158,12 +158,12 @@ public class Connector implements IConnector {
         if (method.equals("GET")) {
             req = new HttpGet(uri);
         } else {
-            HttpPost post;
-            req = post = new HttpPost(uri);
+            HttpPost post = new HttpPost(uri);
             String payload = JSONObject.toJSONString(resource.marshal());
             post.setEntity(new StringEntity(payload));
 
-            req.setHeader("Content-Type", resource.getContentType());
+            post.setHeader("Content-Type", resource.getContentType());
+            req = post;
         }
 
         req.setHeader("Accept", resource.getContentType());

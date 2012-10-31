@@ -49,7 +49,7 @@ public class OrderTest {
      */
     @Test
     public void testContentType() {
-        Order.contentType = "klarna/json";
+        Order.setContentType("klarna/json");
         assertEquals(
                 "klarna/json",
                 order.getContentType());

@@ -58,8 +58,10 @@ public class Checkout extends BaseExample {
      */
     public Connector setUpExample() {
         try {
-            Order.baseUri = new URI(
-                    "https://klarnacheckout.apiary.io/checkout/orders");
+            Order.setBaseUri(
+                    new URI(
+                        "https://klarnacheckout.apiary.io/checkout/orders")
+                    );
         } catch (URISyntaxException ex) {
             System.err.println("Malformed URI");
             System.exit(0);

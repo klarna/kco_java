@@ -18,8 +18,8 @@
 package com.klarna.checkout;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
+import java.security.NoSuchAlgorithmException;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
@@ -45,9 +45,11 @@ public class DigestTest {
 
     /**
      * Test to create a Digest from a JSON string.
+     *
+     * @throws NoSuchAlgorithmException if SHA-256 isn't supported.
      */
     @Test
-    public void testDigestString() throws Exception {
+    public void testDigestString() throws NoSuchAlgorithmException {
 
         assertEquals(
                 "Expected digest hash",
@@ -58,7 +60,7 @@ public class DigestTest {
     /**
      * Test to create a Digest from a JSON string.
      *
-     * @throws IOException but should not happen
+     * @throws Exception but should not happen
      */
     @Test
     public void testDigestStream() throws Exception {
@@ -70,5 +72,31 @@ public class DigestTest {
                 "Expected digest hash",
                 DigestTest.EXPECTED,
                 (new Digest("mySecret")).create(stream));
+    }
+
+    /**
+     * Test for a null string.
+     *
+     * @throws NoSuchAlgorithmException if SHA-256 isn't supported.
+     */
+    @Test
+    public void testDigestNullString() throws NoSuchAlgorithmException {
+        assertEquals(
+                "Expected digest",
+                "0L5zNClDL38A1CXhqwA0Eq+nXUH+KA2Lsus+gv78VrY=",
+                (new Digest("mySecret")).create((String) null));
+    }
+
+    /**
+     * Test for a null input stream.
+     *
+     * @throws NoSuchAlgorithmException if SHA-256 isn't supported.
+     */
+    @Test
+    public void testDigestNullStream() throws NoSuchAlgorithmException {
+        assertEquals(
+                "Expected digest",
+                "0L5zNClDL38A1CXhqwA0Eq+nXUH+KA2Lsus+gv78VrY=",
+                (new Digest("mySecret")).create((InputStream) null));
     }
 }

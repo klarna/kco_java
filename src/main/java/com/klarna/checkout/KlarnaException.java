@@ -27,7 +27,7 @@ public class KlarnaException extends Exception {
      *
      * @param message Error message to display.
      */
-    public KlarnaException(String message) {
+    public KlarnaException(final String message) {
         super(message);
     }
 }

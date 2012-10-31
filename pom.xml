@@ -71,6 +71,10 @@
                 <version>2.9.1</version>
                 <configuration>
                     <configLocation>misc/checkstyle.xml</configLocation>
+                    <formats>
+                        <format>xml</format>
+                        <format>html</format>
+                    </formats>
                 </configuration>
             </plugin>
         </plugins>

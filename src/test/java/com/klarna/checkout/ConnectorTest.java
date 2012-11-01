@@ -17,9 +17,9 @@
  */
 package com.klarna.checkout;
 
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -50,6 +50,36 @@ public class ConnectorTest {
         this.conn = new BasicConnector(this.digest);
 
         when(this.digest.create(anyString())).thenReturn("bob");
+    }
+
+    /**
+     * Test to ensure we require a Digest object to be passed in.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidDigest() {
+        this.conn = new BasicConnector(null);
+    }
+
+    /**
+     * Test to make sure createHTTPClient returns an implementation
+     * of IHttpClient.
+     */
+    @Test
+    public void testCreateHTTPClient() {
+        IHttpClient httpClient = conn.createHttpClient();
+        assertThat(
+                httpClient,
+                org.hamcrest.Matchers.instanceOf(IHttpClient.class));
+    }
+
+    /**
+     * Test to ensure that getClient reuses the existing client if possible.
+     */
+    @Test
+    public void testGetHttpClient() {
+        IHttpClient httpClient = conn.createHttpClient();
+        conn.client = httpClient;
+        assertSame(httpClient, conn.getClient());
     }
 
     /**

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * File containing the Digest class.
+ * File containing the unit tests for BasicConnector error codes.
  */
 package com.klarna.checkout;
 
@@ -53,7 +53,7 @@ public class ConnectorErrorCodesTest {
     /**
      * Connector object.
      */
-    private Connector conn;
+    private BasicConnector conn;
     /**
      * Expected digest string.
      */
@@ -84,7 +84,7 @@ public class ConnectorErrorCodesTest {
         this.digest = mock(Digest.class);
         this.digestString = "stnaeu\\eu2341aoaaoae==";
         when(digest.create("secret")).thenReturn(digestString);
-        this.conn = new Connector(this.digest) {
+        this.conn = new BasicConnector(this.digest) {
             @Override
             protected IHttpClient createHttpClient() {
                 return transport;

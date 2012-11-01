@@ -56,19 +56,18 @@ public class Checkout extends BaseExample {
      *
      * @return Connector to use.
      */
-    public Connector setUpExample() {
+    public IConnector setUpExample() {
         try {
             Order.setBaseUri(
                     new URI(
-                        "https://klarnacheckout.apiary.io/checkout/orders")
-                    );
+                    "https://klarnacheckout.apiary.io/checkout/orders"));
         } catch (URISyntaxException ex) {
             System.err.println("Malformed URI");
             System.exit(0);
         }
 
         try {
-            return new Connector(new Digest("sharedSecret"));
+            return Connector.create("sharedSecret");
         } catch (NoSuchAlgorithmException ex) {
             System.err.println("SHA-256 digest not supported.");
             System.exit(0);
@@ -80,47 +79,59 @@ public class Checkout extends BaseExample {
      * Create a Checkout instance.
      */
     public void create() {
-        Connector connector = setUpExample();
+        IConnector connector = setUpExample();
 
-        final Map<String, Object> product = new HashMap<String, Object>() {{
-           put("type", "physical") ;
-           put("reference", "BANANA01");
-           put("name", "Banana");
-           put("unit_price", 450);
-           put("discount_rate", 0);
-           put("tax_rate", 2500);
-        }};
+        final Map<String, Object> product = new HashMap<String, Object>() {
+            {
+                put("type", "physical");
+                put("reference", "BANANA01");
+                put("name", "Banana");
+                put("unit_price", 450);
+                put("discount_rate", 0);
+                put("tax_rate", 2500);
+            }
+        };
 
-        final Map<String, Object> shipping = new HashMap<String, Object>() {{
-           put("type", "shipping_fee") ;
-           put("reference", "SHIPPING");
-           put("name", "Shipping Fee");
-           put("unit_price", 450);
-           put("discount_rate", 0);
-           put("tax_rate", 2500);
-        }};
+        final Map<String, Object> shipping = new HashMap<String, Object>() {
+            {
+                put("type", "shipping_fee");
+                put("reference", "SHIPPING");
+                put("name", "Shipping Fee");
+                put("unit_price", 450);
+                put("discount_rate", 0);
+                put("tax_rate", 2500);
+            }
+        };
 
         Order order = new Order();
 
-        order.parse(new HashMap<String, Object>() {{
-            put("purchase_country", "SE");
-            put("purchase_currency", "SEK");
-            put("locale", "sv-se");
-            put("merchant", new HashMap<String, Object>(){{
-                put("id", 2);
-                put("terms_uri", "http://localhost/terms_and_agreements");
-                put("checkout_uri", "http://localhost/checkout");
-                put("confirmation_uri", "http://localhost/thank_you");
-                put("push_uri", "http://localhost/push");
-            }});
-            put("cart", new HashMap<String, Object>(){{
-                put("total_price_including_tax", 9000);
-                put("items", new ArrayList<Map<String, Object>>() {{
-                    add(product);
-                    add(shipping);
-                }});
-            }});
-        }});
+        order.parse(new HashMap<String, Object>() {
+            {
+                put("purchase_country", "SE");
+                put("purchase_currency", "SEK");
+                put("locale", "sv-se");
+                put("merchant", new HashMap<String, Object>() {
+                    {
+                        put("id", 2);
+                        put("terms_uri", "http://localhost/terms_and_agreements");
+                        put("checkout_uri", "http://localhost/checkout");
+                        put("confirmation_uri", "http://localhost/thank_you");
+                        put("push_uri", "http://localhost/push");
+                    }
+                });
+                put("cart", new HashMap<String, Object>() {
+                    {
+                        put("total_price_including_tax", 9000);
+                        put("items", new ArrayList<Map<String, Object>>() {
+                            {
+                                add(product);
+                                add(shipping);
+                            }
+                        });
+                    }
+                });
+            }
+        });
         try {
             order.create(connector);
             order.fetch(connector);
@@ -138,7 +149,7 @@ public class Checkout extends BaseExample {
      */
     public void fetch() {
         Order order = new Order();
-        Connector connector = setUpExample();
+        IConnector connector = setUpExample();
 
         try {
             order.fetch(connector, (URI) session.get("klarna_checkout"));
@@ -156,11 +167,10 @@ public class Checkout extends BaseExample {
      * @param order Checkout Resource
      */
     public void finalizeExample(Order order) {
-        String snippet = (String) ((HashMap)order.get("gui")).get("snippet");
+        String snippet = (String) ((HashMap) order.get("gui")).get("snippet");
 
         System.out.println("<div>");
         System.out.println(snippet);
         System.out.println("</div>");
     }
-
 }

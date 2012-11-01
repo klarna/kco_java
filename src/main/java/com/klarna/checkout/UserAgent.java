@@ -19,6 +19,8 @@ package com.klarna.checkout;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * UserAgent.
@@ -106,26 +108,29 @@ public class UserAgent {
 
     /**
      * Constructor.
-     *
-     * @throws KlarnaException If keys already exists in fields.
      */
-    public UserAgent() throws KlarnaException {
+    public UserAgent() {
         this.fields = new ArrayList<UserAgent.Field>();
-        this.addField(
-                new UserAgent.Field("Library", "Klarna.ApiWrapper", "1.0"));
-        this.addField(
-                new UserAgent.Field(
-                "OS",
-                System.getProperty("os.name"),
-                System.getProperty("os.version")));
-        this.addField(
-                new UserAgent.Field(
-                "Language",
-                "Java",
-                System.getProperty("java.version"),
-                new String[]{
-                    ("Vendor/" + System.getProperty("java.vendor")),
-                    ("VM/" + System.getProperty("java.vm.name"))}));
+        try {
+            this.addField(
+                    new UserAgent.Field("Library", "Klarna.ApiWrapper", "1.0"));
+            this.addField(
+                    new UserAgent.Field(
+                    "OS",
+                    System.getProperty("os.name"),
+                    System.getProperty("os.version")));
+            this.addField(
+                    new UserAgent.Field(
+                    "Language",
+                    "Java",
+                    System.getProperty("java.version"),
+                    new String[]{
+                        ("Vendor/" + System.getProperty("java.vendor")),
+                        ("VM/" + System.getProperty("java.vm.name"))}));
+        } catch (KlarnaException ex) {
+            Logger.getLogger(
+                    UserAgent.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

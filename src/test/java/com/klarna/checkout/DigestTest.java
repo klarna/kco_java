@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * File containing the DigestTest class.
+ * File containing the Digest unit tests.
  */
 package com.klarna.checkout;
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * File containing the ConnectorOptions class.
+ * File containing the HttpClientWrapper class.
  */
 package com.klarna.checkout;
 

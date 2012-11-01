@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * File containing the ConnectorOptions class.
+ * File containing the unit tests for Connector GET calls.
  */
 package com.klarna.checkout;
 
@@ -64,7 +64,7 @@ public class ConnectorGETTest {
     /**
      * Connector object.
      */
-    private Connector conn;
+    private BasicConnector conn;
 
     /**
      * Set up tests.
@@ -76,7 +76,7 @@ public class ConnectorGETTest {
         this.payloadJson = "{\"flobadob\":[\"bobcat\", \"wookie\"]}";
         this.digest = mock(Digest.class);
         this.digestString = "stnaeu\\eu2341aoaaoae==";
-        this.conn = new Connector(this.digest) {
+        this.conn = new BasicConnector(this.digest) {
             @Override
             protected IHttpClient createHttpClient() {
                 return transport;
@@ -232,7 +232,6 @@ public class ConnectorGETTest {
                 put("Location", redirect.toString());
             }
         }, payloadJson));
-
         conn.apply("GET", resource, options);
     }
 

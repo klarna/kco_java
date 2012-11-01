@@ -166,9 +166,19 @@ public class BasicConnector implements IConnector {
             req = post;
         }
 
+        req.setHeader("UserAgent", createtUserAgent().toString());
         req.setHeader("Accept", resource.getContentType());
 
         return req;
+    }
+
+    /**
+     * Creates a new UserAgent.
+     *
+     * @return User Agent information
+     */
+    protected UserAgent createtUserAgent() {
+        return new UserAgent();
     }
 
     /**

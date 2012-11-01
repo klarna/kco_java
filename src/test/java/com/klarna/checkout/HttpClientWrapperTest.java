@@ -13,38 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * File containing the HttpClientWrapper class.
+ * File containing the HttpClientWrapper tests.
  */
 package com.klarna.checkout;
 
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpParams;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
+import org.junit.Test;
+import static org.mockito.Mockito.*;
 
 /**
- * Empty class to enforce Interface.
+ * Unit Tests for HttpClientWrapper.
  */
-public class HttpClientWrapper extends DefaultHttpClient
-        implements IHttpClient {
+public class HttpClientWrapperTest {
 
     /**
-     * Constructor.
-     *
-     * @param params HTTP Parameters to set
+     * Test to ascertain the inheritance of HttpClientWrapper.
      */
-    public HttpClientWrapper(final HttpParams params) {
-        super(params);
-    }
+    @Test
+    public void testInheritance() {
+        HttpClientWrapper hcw = new HttpClientWrapper(mock(HttpParams.class));
+        assertThat(hcw, instanceOf(IHttpClient.class));
+        assertThat(hcw, instanceOf(DefaultHttpClient.class));
 
-    /**
-     * Constructor.
-     *
-     * @param connectionManager A ClientConnectionManager implementation
-     * @param params HTTP Parameters to pass along
-     */
-    public HttpClientWrapper(
-            final ClientConnectionManager connectionManager,
-            final HttpParams params) {
-        super(connectionManager, params);
+        hcw = new HttpClientWrapper(
+                mock(ClientConnectionManager.class), mock(HttpParams.class));
+
+        assertThat(hcw, instanceOf(IHttpClient.class));
+        assertThat(hcw, instanceOf(DefaultHttpClient.class));
     }
 }

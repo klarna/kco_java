@@ -18,7 +18,7 @@
 package examples;
 
 import com.klarna.checkout.Connector;
-import com.klarna.checkout.Digest;
+import com.klarna.checkout.IConnector;
 import com.klarna.checkout.Order;
 import java.io.IOException;
 import java.net.URI;
@@ -57,9 +57,9 @@ class ThankYou extends BaseExample {
     private void thankyou() {
         Order order = new Order();
 
-        Connector connector = null;
+        IConnector connector = null;
         try {
-            connector = new Connector(new Digest("sharedSecret"));
+            connector = Connector.create("sharedSecret");
         } catch (NoSuchAlgorithmException ex) {
             System.err.println("SHA-256 digest not supported.");
             System.exit(0);
@@ -77,7 +77,7 @@ class ThankYou extends BaseExample {
             return;
         }
 
-        String snippet = (String) ((HashMap)order.get("gui")).get("snippet");
+        String snippet = (String) ((HashMap) order.get("gui")).get("snippet");
 
         System.out.println("<div>");
         System.out.println(snippet);
@@ -85,5 +85,4 @@ class ThankYou extends BaseExample {
 
         session.remove("klarna_checkout");
     }
-
 }

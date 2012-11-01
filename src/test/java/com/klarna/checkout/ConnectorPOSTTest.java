@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * File containing the ConnectorOptions class.
+ * File containing the unit tests for Connector POST calls.
  */
 package com.klarna.checkout;
 
@@ -63,7 +63,7 @@ public class ConnectorPOSTTest {
     /**
      * Connector object.
      */
-    private Connector conn;
+    private BasicConnector conn;
 
     /**
      * Set up tests.
@@ -77,7 +77,7 @@ public class ConnectorPOSTTest {
 
         this.digestString = "stnaeu\\eu2341aoaaoae==";
         when(this.digest.create(anyString())).thenReturn(this.digestString);
-        this.conn = new Connector(this.digest) {
+        this.conn = new BasicConnector(this.digest) {
             @Override
             protected IHttpClient createHttpClient() {
                 return transport;

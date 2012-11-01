@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * File containing the Order object
+ * File containing the IResource interface.
  */
 package com.klarna.checkout;
 

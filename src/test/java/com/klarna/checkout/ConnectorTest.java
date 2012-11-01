@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * File containing the ConnectorOptions class.
+ * File containing the unit tests for BasicConnector.
  */
 package com.klarna.checkout;
 
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.Mockito.*;
@@ -33,7 +34,7 @@ public class ConnectorTest {
     /**
      * Connector object.
      */
-    private Connector conn;
+    private BasicConnector conn;
     /**
      * Digest mock.
      */
@@ -46,18 +47,76 @@ public class ConnectorTest {
     public void setUp() {
         this.resource = mock(IResource.class);
         this.digest = mock(Digest.class);
-        this.conn = new Connector(this.digest);
+        this.conn = new BasicConnector(this.digest);
 
         when(this.digest.create(anyString())).thenReturn("bob");
     }
 
     /**
+     * Test to ensure we require a Digest object to be passed in.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidDigest() {
+        this.conn = new BasicConnector(null);
+    }
+
+    /**
+     * Test to make sure createHTTPClient returns an implementation
+     * of IHttpClient.
+     */
+    @Test
+    public void testCreateHTTPClient() {
+        IHttpClient httpClient = conn.createHttpClient();
+        assertThat(
+                httpClient,
+                org.hamcrest.Matchers.instanceOf(IHttpClient.class));
+    }
+
+    /**
+     * Test to ensure that getClient reuses the existing client if possible.
+     */
+    @Test
+    public void testGetHttpClient() {
+        IHttpClient httpClient = conn.createHttpClient();
+        conn.client = httpClient;
+        assertSame(httpClient, conn.getClient());
+    }
+
+    /**
      * Test invalid HTTP Method.
      *
-     * @throws Exception bot no
+     * @throws Exception as expected
      */
     @Test(expected = IllegalArgumentException.class)
     public void testApplyInvalidMethod() throws Exception {
         conn.apply("ABLORG", this.resource, new ConnectorOptions());
+    }
+
+    /**
+     * Test null resource.
+     *
+     * @throws Exception as expected
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testApplyNullResource() throws Exception {
+        conn.apply("GET", null, new ConnectorOptions());
+    }
+
+    /**
+     * Test of create method, of the Connector factory.
+     *
+     * @throws Exception if the JVM doesn't support SHA-256.
+     */
+    @Test
+    public void testCreate() throws Exception {
+        IConnector result = Connector.create("sharedSecret");
+
+        assertThat(
+                result,
+                org.hamcrest.Matchers.instanceOf(IConnector.class));
+
+        assertThat(
+                result,
+                org.hamcrest.Matchers.instanceOf(BasicConnector.class));
     }
 }

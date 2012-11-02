@@ -37,11 +37,7 @@ public class UserAgentTest {
      */
     @Before
     public void setUp() {
-        try {
-            this.agent = new UserAgent();
-        } catch (KlarnaException e) {
-            fail(e.getMessage());
-        }
+        this.agent = new UserAgent();
     }
 
     /**

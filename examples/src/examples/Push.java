@@ -20,71 +20,48 @@ package examples;
 import com.klarna.checkout.Connector;
 import com.klarna.checkout.IConnector;
 import com.klarna.checkout.Order;
-import java.io.IOException;
 import java.net.URI;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.UUID;
 
 /**
  * Push Example.
  */
-public class Push extends BaseExample {
+public class Push {
 
     /**
-     * Run the example file. Called from the menu.
-     *
-     * @param session Session storage.
-     *
-     * @return session
+     * The example.
      */
-    @Override
-    Map<String, Object> run(Map<String, Object> session) {
-        this.session = session;
-        if (this.session.containsKey("klarna_checkout")) {
-            update();
-        } else {
-            System.out.println("No checkout in session.");
-        }
-        return this.session;
-    }
-
-    /**
-     * Update a checkout resource.
-     */
-    private void update() {
-        Order order = new Order();
-
-        IConnector connector = null;
-        try {
-            connector = Connector.create("sharedSecret");
-        } catch (NoSuchAlgorithmException ex) {
-            System.err.println("SHA-256 digest not supported.");
-            System.exit(0);
-        }
+    public void example() {
 
         try {
-            order.fetch(connector, (URI) session.get("klarna_checkout"));
-        } catch (IOException ex) {
-            Logger.getLogger(
-                    Checkout.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            // Shared secret.
+            final String secret = "sharedSecret";
 
-        if (order.get("status").equals("checkout_complete")) {
-            order.set("status", "created");
-            order.set("merchant_reference", new HashMap<String, Object>() {
-                {
-                    put("orderid1", "CheckoutExample");
-                }
-            });
-            try {
+            Order order = new Order();
+            IConnector connector = Connector.create(secret);
+
+            // This is just a placeholder for the example.
+            // For example in jsp you could do
+            //      request.getParameter("checkout_uri");
+            URI checkoutId = new URI(
+                    "https://klarnacheckout.apiary.io/checkout/orders/12");
+
+            order.fetch(connector, checkoutId);
+
+            if (((String) order.get("status")).equals("checkout_complete")) {
+                order.set("status", "created");
+                order.set("merchant_reference",
+                        new HashMap<String, Object>() {
+                            {
+                                put("orderid1", UUID.randomUUID().toString());
+                            }
+                        });
                 order.update(connector);
-            } catch (IOException ex) {
-                ex.printStackTrace();
             }
+        } catch (Exception ex) {
+            // Handle exception.
+            ex.printStackTrace();
         }
-
     }
 }

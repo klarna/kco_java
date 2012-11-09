@@ -69,7 +69,7 @@ public class Order implements IResource {
      *
      * @param type content type to set
      */
-    static void setContentType(final String type) {
+    public static void setContentType(final String type) {
         Order.contentType = type;
     }
 

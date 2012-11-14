@@ -22,6 +22,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
+import java.util.Map;
 import org.apache.http.Header;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
@@ -82,6 +83,22 @@ public class BasicConnector implements IConnector {
     }
 
     /**
+     * Applying the method on the specific resource. No Options.
+     *
+     * @param method HTTP method
+     * @param resource Resource implementation
+     *
+     * @return A HttpResponse object
+     *
+     * @throws IOException In case of an I/O Error.
+     */
+    @Override
+    public HttpResponse apply(final String method, final IResource resource)
+            throws IOException {
+        return apply(method, resource, new ConnectorOptions());
+    }
+
+    /**
      * Applying the method on the specific resource.
      *
      * @param method HTTP method
@@ -107,9 +124,7 @@ public class BasicConnector implements IConnector {
                     "Unsupported HTTP Method. (" + method + ")");
         }
 
-        URI uri = this.getUri(options, resource);
-
-        HttpUriRequest req = createRequest(method, uri, resource);
+        HttpUriRequest req = createRequest(method, resource, options);
 
         HttpContext ctex = new BasicHttpContext();
         ctex.setAttribute("klarna_resource", resource);
@@ -139,11 +154,27 @@ public class BasicConnector implements IConnector {
     }
 
     /**
+     * Get the data to use.
+     *
+     * @param options Options for the Connector
+     * @param resource IResource implementation
+     *
+     * @return Data to use
+     */
+    protected Map<String, Object> getData(
+            final ConnectorOptions options, final IResource resource) {
+        if (options.getData() != null) {
+            return options.getData();
+        }
+        return resource.marshal();
+    }
+
+    /**
      * Create a HttpUriRequest object.
      *
      * @param method HTTP Method
-     * @param uri Target location
-     * @param resource IResource implementation.
+     * @param resource IResource implementation
+     * @param options Options for Connector
      *
      * @return the appropriate HttpUriRequest
      *
@@ -151,15 +182,20 @@ public class BasicConnector implements IConnector {
      * supported
      */
     protected HttpUriRequest createRequest(
-            final String method, final URI uri, final IResource resource)
+            final String method, final IResource resource,
+            final ConnectorOptions options)
             throws UnsupportedEncodingException {
+
+        URI uri = this.getUri(options, resource);
+
         HttpUriRequest req;
 
         if (method.equals("GET")) {
             req = new HttpGet(uri);
         } else {
             HttpPost post = new HttpPost(uri);
-            String payload = JSONObject.toJSONString(resource.marshal());
+            String payload = JSONObject.toJSONString(
+                    getData(options, resource));
             post.setEntity(new StringEntity(payload));
 
             post.setHeader("Content-Type", resource.getContentType());

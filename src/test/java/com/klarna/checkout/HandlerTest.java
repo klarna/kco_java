@@ -119,7 +119,7 @@ public class HandlerTest {
     @Test
     public void testParsePayload() throws IOException {
         String payload = "{\"foo\":\"bar\"}";
-        Order o = new Order();
+        Order o = new Order(mock(IConnector.class));
         Handler instance = new Handler(o);
         instance.parsePayload(payload);
         Map<String, Object> expected;

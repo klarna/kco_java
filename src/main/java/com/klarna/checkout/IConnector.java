@@ -39,4 +39,18 @@ public interface IConnector {
     HttpResponse apply(
             String method, IResource resource, ConnectorOptions options)
             throws IOException;
+
+    /**
+     * Applying the method on the specific resource. No options.
+     *
+     * @param method HTTP Method
+     * @param resource IResource implementation
+     *
+     * @return a HTTP Response
+     *
+     * @throws IOException in case of an I/O Error
+     */
+    HttpResponse apply(
+            String method, IResource resource)
+            throws IOException;
 }

@@ -19,12 +19,12 @@ package com.klarna.checkout;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests for the Order class, basic functionality.
@@ -41,7 +41,8 @@ public class OrderTest {
      */
     @Before
     public void setUp() {
-        order = new Order();
+        IConnector conn = mock(IConnector.class);
+        order = new Order(conn);
     }
 
     /**
@@ -87,6 +88,17 @@ public class OrderTest {
     }
 
     /**
+     * Test so you can get a key that has been parsed.
+     */
+    @Test
+    public void testGet() {
+        HashMap<String, Object> data = new HashMap<String, Object>();
+        data.put("foo", "boo");
+        order.parse(data);
+        assertEquals("boo", order.get("foo"));
+    }
+
+    /**
      * Test that marshal gets the correct keys.
      */
     @Test
@@ -100,23 +112,5 @@ public class OrderTest {
         assertTrue(marshal.containsKey("testKey2"));
         assertEquals("testValue1", marshal.get("testKey1"));
         assertEquals("testValue2", marshal.get("testKey2"));
-    }
-
-    /**
-     * Test getting an unavailable data key.
-     */
-    @Test
-    public void testGetUnavailable() {
-        assertNull(order.get("test"));
-    }
-
-    /**
-     * Test getting an existing data key.
-     */
-    @Test
-    public void testSetData() {
-        ArrayList<String> list = new ArrayList<String>();
-        order.set("test", list);
-        assertEquals(list, order.get("test"));
     }
 }

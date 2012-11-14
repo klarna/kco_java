@@ -38,7 +38,9 @@ public class Push {
             // Shared secret.
             final String secret = "sharedSecret";
 
-            Order order = new Order();
+            Order.setContentType(
+                    "application/vnd.klarna.checkout.aggregated-order-v2+json");
+
             IConnector connector = Connector.create(secret);
 
             // This is just a placeholder for the example.
@@ -47,17 +49,23 @@ public class Push {
             URI checkoutId = new URI(
                     "https://klarnacheckout.apiary.io/checkout/orders/12");
 
-            order.fetch(connector, checkoutId);
+            Order order = new Order(connector, checkoutId);
+
+            order.fetch();
 
             if (((String) order.get("status")).equals("checkout_complete")) {
-                order.set("status", "created");
-                order.set("merchant_reference",
-                        new HashMap<String, Object>() {
+                HashMap<String, Object> updateData;
+
+                updateData = new HashMap<String, Object>() {{
+                    put("status", "created");
+                    put("merchant_reference", new HashMap<String, Object>() {
                             {
                                 put("orderid1", UUID.randomUUID().toString());
                             }
                         });
-                order.update(connector);
+                }};
+
+                order.update(updateData);
             }
         } catch (Exception ex) {
             // Handle exception.

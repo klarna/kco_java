@@ -23,12 +23,11 @@ import com.klarna.checkout.Order;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Thank you example.
  */
-class ThankYou {
+class Confirmation {
 
     /**
      * The example.
@@ -39,7 +38,9 @@ class ThankYou {
             // Shared secret.
             final String secret = "sharedSecret";
 
-            Order order = new Order();
+            Order.setContentType(
+                    "application/vnd.klarna.checkout.aggregated-order-v2+json");
+
             IConnector connector = Connector.create(secret);
 
             // This is just a placeholder for the example.
@@ -48,7 +49,8 @@ class ThankYou {
             URI checkoutId = new URI(
                     "https://klarnacheckout.apiary.io/checkout/orders/12");
 
-            order.fetch(connector, checkoutId);
+            Order order = new Order(connector, checkoutId);
+            order.fetch();
 
             if (!((String) order.get("status")).equals("checkout_complete")) {
                 // Report error

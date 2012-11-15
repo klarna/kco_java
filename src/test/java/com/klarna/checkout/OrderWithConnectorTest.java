@@ -56,7 +56,7 @@ public class OrderWithConnectorTest {
     @Before
     public void setUp() {
         connector = new ConnectorStub();
-        order = new Order();
+        order = new Order(connector);
     }
 
     /**
@@ -80,15 +80,16 @@ public class OrderWithConnectorTest {
         this.connector.setLocation(location);
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("foo", "boo");
-        order.parse(data);
-        order.create(connector);
+        order.create(data);
 
-        assertEquals("boo", order.get("foo"));
-        assertEquals("boo", order.marshal().get("foo"));
         assertEquals("POST", connector.getApplied("method"));
         assertEquals(order, connector.getApplied("resource"));
         assertNull(
                 ((ConnectorOptions) connector.getApplied("options")).getURI());
+        assertEquals(
+                "Data sent",
+                data,
+                ((ConnectorOptions) connector.getApplied("options")).getData());
     }
 
     /**
@@ -101,35 +102,13 @@ public class OrderWithConnectorTest {
         order.setLocation(new URI("http://klarna.com/foo/bar/15"));
         URI location = order.getLocation();
 
-        order.fetch(connector);
+        order.fetch();
 
         assertEquals("GET", connector.getApplied("method"));
         assertEquals(order, connector.getApplied("resource"));
         assertEquals(
                 location,
                 ((ConnectorOptions) connector.getApplied("options")).getURI());
-    }
-
-    /**
-     * Test so fetch sets the location when an URI is supplied.
-     *
-     * @throws Exception but it doesn't really.
-     */
-    @Test
-    public void testFetchSetLocation() throws Exception {
-        URI uri = new URI("http://klarna.com/foo/bar/16");
-
-        order.fetch(connector, uri);
-        assertEquals("GET", connector.getApplied("method"));
-        assertEquals(order, connector.getApplied("resource"));
-        assertEquals(
-                "URL Sent",
-                uri,
-                ((ConnectorOptions) connector.getApplied("options")).getURI());
-        assertEquals(
-                "resource location",
-                uri,
-                order.getLocation());
     }
 
     /**
@@ -142,35 +121,22 @@ public class OrderWithConnectorTest {
         order.setLocation(new URI("http://klarna.com/foo/bar/17"));
         URI location = order.getLocation();
 
-        order.update(connector);
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("foo", "boo");
+
+        order.update(data);
+
         assertEquals("POST", connector.getApplied("method"));
         assertEquals(order, connector.getApplied("resource"));
         assertEquals(
                 "URL Sent",
                 location,
                 ((ConnectorOptions) connector.getApplied("options")).getURI());
-    }
 
-    /**
-     * Test so update sets the location when an URI is supplied.
-     *
-     * @throws Exception but it doesn't really.
-     */
-    @Test
-    public void testUpdateSetLocation() throws Exception {
-        URI uri = new URI("http://klarna.com/foo/bar/18");
-
-        order.update(connector, uri);
-        assertEquals("POST", connector.getApplied("method"));
-        assertEquals(order, connector.getApplied("resource"));
         assertEquals(
-                "URL Sent",
-                uri,
-                ((ConnectorOptions) connector.getApplied("options")).getURI());
-        assertEquals(
-                "resource location",
-                uri,
-                order.getLocation());
+                "Data Sent",
+                data,
+                ((ConnectorOptions) connector.getApplied("options")).getData());
     }
 
     /**
@@ -183,8 +149,8 @@ public class OrderWithConnectorTest {
         URI base = new URI("https://checkout.klarna.com/beta/checkout/orders");
         Order.setBaseUri(base);
 
-        Order o = new Order();
-        o.create(connector);
+        Order o = new Order(connector);
+        o.create(new HashMap<String, Object>());
         assertEquals(
                 "New Base",
                 base,

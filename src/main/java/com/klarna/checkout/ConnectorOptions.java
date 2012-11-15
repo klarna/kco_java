@@ -19,6 +19,8 @@ package com.klarna.checkout;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * ConnectorOptions holds the options needed for the Connector.
@@ -29,6 +31,10 @@ public class ConnectorOptions {
      * URI option.
      */
     private URI uri;
+    /**
+     * Data option.
+     */
+    private Map<String, Object> data = new HashMap<String, Object>();
 
     /**
      * Set a new URI object.
@@ -53,7 +59,24 @@ public class ConnectorOptions {
     /**
      * @return the set URI.
      */
-    URI getURI() {
+    public URI getURI() {
         return this.uri;
+    }
+
+    /**
+     * @return the set Data.
+     */
+    public Map<String, Object> getData() {
+        return this.data;
+    }
+
+    /**
+     * Set data.
+     *
+     * @param newData Map of data to set.
+     */
+    public void setData(final Map<String, Object> newData) {
+        this.data.clear();
+        this.data.putAll(newData);
     }
 }

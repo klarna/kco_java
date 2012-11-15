@@ -108,7 +108,7 @@ public class ConnectorPOSTTest {
 
         when(this.resource.marshal()).thenReturn(payloadMap);
 
-        HttpResponse result = conn.apply("POST", resource, null);
+        HttpResponse result = conn.apply("POST", resource);
 
         assertEquals(
                 "Payload consumed",

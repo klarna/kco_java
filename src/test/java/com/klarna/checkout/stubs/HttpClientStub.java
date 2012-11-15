@@ -23,12 +23,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.http.Header;
 import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
@@ -41,6 +44,7 @@ import org.apache.http.client.CircularRedirectException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.entity.InputStreamEntity;
@@ -48,6 +52,9 @@ import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  * Stubbed implementation of IHttpClient.
@@ -74,16 +81,22 @@ public class HttpClientStub implements IHttpClient {
      * Store for RequestInterceptors.
      */
     private final ArrayList<HttpRequestInterceptor> requestInterceptors;
-
     /**
      * HttpParams storage.
      */
     private final HttpParams params;
-
     /**
      * Visited locations.
      */
     private Set<URI> visited;
+    /**
+     * Expected Location URI.
+     */
+    private URI expecedLocation;
+    /**
+     * Data holder.
+     */
+    private HashMap<String, String> data;
 
     /**
      * Constructor.
@@ -94,15 +107,16 @@ public class HttpClientStub implements IHttpClient {
         responseList = new ArrayList<HTTPResponseStub>();
         params = null;
         visited = new HashSet<URI>();
+        data = new HashMap<String, String>();
     }
 
     /**
      * Constructor taking an HttpParams argument.
      *
-     * @param params HttpParams to send in.
+     * @param parameters HttpParams to send in.
      */
-    public HttpClientStub(HttpParams params) {
-        this.params = params;
+    public HttpClientStub(final HttpParams parameters) {
+        this.params = parameters;
         responseInterceptors = new ArrayList<HttpResponseInterceptor>();
         requestInterceptors = new ArrayList<HttpRequestInterceptor>();
         responseList = new ArrayList<HTTPResponseStub>();
@@ -218,7 +232,45 @@ public class HttpClientStub implements IHttpClient {
     }
 
     /**
-     * Stubbed Execute implementation
+     * Uppercase data to simulate it having passed on to the server.
+     *
+     * @throws IOException in case of an IO error.
+     */
+    private void fixData() throws IOException {
+        if (this.httpUriReq.getMethod().equals("POST")) {
+            HttpPost h = (HttpPost) this.httpUriReq;
+
+            InputStream is = h.getEntity().getContent();
+            java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+
+            String str = "";
+            while (s.hasNext()) {
+                str = str.concat(s.next());
+            }
+            JSONParser jsonParser = new JSONParser();
+            HashMap<String, String> obj = null;
+            try {
+                obj = (HashMap<String, String>) jsonParser.parse(str);
+            } catch (ParseException ex) {
+                Logger.getLogger(
+                        HttpClientStub.class.getName()).log(
+                        Level.SEVERE, null, ex);
+            }
+            if (obj != null && obj.containsKey("test")) {
+                str = obj.get("test").toUpperCase();
+                this.data.put("test", str);
+            }
+
+            ByteArrayInputStream in = new ByteArrayInputStream(
+                    JSONObject.toJSONString(this.data).getBytes());
+
+            this.lastResponse.setEntity(
+                    new InputStreamEntity(in, in.available()));
+        }
+    }
+
+    /**
+     * Stubbed Execute implementation.
      *
      * @param <T> The class ResponseHandler operates on
      * @param hur HttpUriRequest object
@@ -228,20 +280,20 @@ public class HttpClientStub implements IHttpClient {
      * @return ResponseHandler result
      *
      * @throws IOException never
-     * @throws ClientProtocolException if a HTTP Error occurred.
      */
     @Override
     public <T> T execute(
             final HttpUriRequest hur,
             final ResponseHandler<? extends T> rh,
             final HttpContext hc)
-            throws IOException, ClientProtocolException {
+            throws IOException {
         this.httpUriReq = hur;
 
         List<Integer> redirects = new ArrayList();
         redirects.add(301);
         redirects.add(302);
         redirects.add(303);
+        this.visited.clear();
 
         int status;
         do {
@@ -259,6 +311,11 @@ public class HttpClientStub implements IHttpClient {
             }
 
             this.lastResponse = this.getResponse();
+
+            if (this.lastResponse.getStatusLine().getStatusCode() < 400) {
+                fixData();
+            }
+
             try {
                 for (HttpResponseInterceptor hri : responseInterceptors) {
                     hri.process(this.lastResponse, hc);
@@ -272,6 +329,14 @@ public class HttpClientStub implements IHttpClient {
                 this.httpUriReq = new HttpGet(location.getValue());
             }
         } while (redirects.contains(status));
+
+        if (this.data.containsKey("test")) {
+            ByteArrayInputStream bis = new ByteArrayInputStream(
+                    JSONObject.toJSONString(data).getBytes());
+            this.lastResponse.setEntity(
+                    new InputStreamEntity(bis, bis.available()));
+        }
+
         return rh.handleResponse(this.lastResponse);
     }
 
@@ -351,6 +416,23 @@ public class HttpClientStub implements IHttpClient {
     }
 
     /**
+     * Add a Fitnesse response.
+     *
+     * @param uri uri
+     * @param status status
+     * @param headers headers
+     * @throws URISyntaxException if uri could not be parsed.
+     */
+    public void addResponse(
+            final String uri, final int status,
+            final Map<String, String> headers)
+            throws URISyntaxException {
+        this.expecedLocation = new URI(uri);
+        addResponse(
+                new HTTPResponseStub(status, headers, ""));
+    }
+
+    /**
      * @return the first item in the response list.
      */
     public HTTPResponseStub getResponse() {
@@ -422,7 +504,13 @@ public class HttpClientStub implements IHttpClient {
                         payloadJson.getBytes("UTF-8"));
                 this.setEntity(new InputStreamEntity(is, is.available()));
             } catch (UnsupportedEncodingException ex) {
+                Logger.getLogger(
+                        HttpClientStub.class.getName()).log(
+                        Level.SEVERE, null, ex);
             } catch (IOException ex) {
+                Logger.getLogger(
+                        HttpClientStub.class.getName()).log(
+                        Level.SEVERE, null, ex);
             }
         }
     }

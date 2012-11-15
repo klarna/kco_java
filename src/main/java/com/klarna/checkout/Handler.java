@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.util.EntityUtils;
@@ -55,11 +54,10 @@ class Handler implements ResponseHandler<HttpResponse> {
      *
      * @return HttpResponse object
      *
-     * @throws ClientProtocolException in case of an http protocol error
      * @throws IOException in case of a problem or the connection was aborted
      */
     public HttpResponse handleResponse(final HttpResponse response)
-            throws ClientProtocolException, IOException {
+            throws IOException {
 
         this.verifyStatusCode(response);
 

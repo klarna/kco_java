@@ -115,7 +115,7 @@ public class ConnectorPOSTTest {
                 0,
                 result.getEntity().getContent().available());
 
-        verify(this.resource, times(1)).parse(payloadMap);
+        verify(this.resource, times(1)).parse(anyMap());
     }
 
     /**

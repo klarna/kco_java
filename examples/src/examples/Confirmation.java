@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * File containing the Push example.
+ * File containing the thank you example.
  */
 package examples;
 
@@ -22,12 +22,12 @@ import com.klarna.checkout.IConnector;
 import com.klarna.checkout.Order;
 import java.net.URI;
 import java.util.HashMap;
-import java.util.UUID;
+import java.util.Map;
 
 /**
- * Push Example.
+ * Thank you example.
  */
-public class Push {
+class Confirmation {
 
     /**
      * The example.
@@ -50,23 +50,23 @@ public class Push {
                     "https://klarnacheckout.apiary.io/checkout/orders/12");
 
             Order order = new Order(connector, checkoutId);
-
             order.fetch();
 
-            if (((String) order.get("status")).equals("checkout_complete")) {
-                HashMap<String, Object> updateData;
-
-                updateData = new HashMap<String, Object>() {{
-                    put("status", "created");
-                    put("merchant_reference", new HashMap<String, Object>() {
-                            {
-                                put("orderid1", UUID.randomUUID().toString());
-                            }
-                        });
-                }};
-
-                order.update(updateData);
+            if (!((String) order.get("status")).equals("checkout_complete")) {
+                // Report error
+                // System.out.println("Checkout not completed, redirect");
             }
+
+            Map<String, Object> gui;
+            gui = (HashMap<String, Object>) order.get("gui");
+
+            String snippet = gui.get("snippet").toString();
+
+            // Output the snippet to the customer.
+            System.out.println(String.format("<div>%s</div>", snippet));
+            // Clear session object from klarna_checkout data.
+            // session.removeAttribute("klarna_checkout");
+
         } catch (Exception ex) {
             // Handle exception.
             ex.printStackTrace();

@@ -17,160 +17,144 @@
  */
 package examples;
 
-import java.io.IOException;
+import com.klarna.checkout.Connector;
+import com.klarna.checkout.IConnector;
+import com.klarna.checkout.Order;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import com.klarna.checkout.*;
 
 /**
  * Checkout example.
  */
-public class Checkout extends BaseExample {
+public final class Checkout {
 
     /**
-     * Run the example file. Called from the menu.
-     *
-     * @param session Session storage.
-     *
-     * @return session
+     * The example.
      */
-    @Override
-    Map<String, Object> run(Map<String, Object> session) {
-        this.session = session;
-        if (this.session.containsKey("klarna_checkout")) {
-            this.fetch();
-        } else {
-            this.create();
-        }
-        return this.session;
-    }
+    public void example() {
 
-    /**
-     * Set up Example.
-     *
-     * @return Connector to use.
-     */
-    public IConnector setUpExample() {
-        try {
-            Order.setBaseUri(
-                    new URI(
-                    "https://klarnacheckout.apiary.io/checkout/orders"));
-        } catch (URISyntaxException ex) {
-            System.err.println("Malformed URI");
-            System.exit(0);
-        }
+        // NOTE: Only a placeholder session object. Actual session object might
+        // be a javax.servlet.http.HttpSession for JSP for example.
+        Map<String, Object> session = new HashMap<String, Object>();
 
-        try {
-            return Connector.create("sharedSecret");
-        } catch (NoSuchAlgorithmException ex) {
-            System.err.println("SHA-256 digest not supported.");
-            System.exit(0);
-        }
-        return null;
-    }
-
-    /**
-     * Create a Checkout instance.
-     */
-    public void create() {
-        IConnector connector = setUpExample();
-
-        final Map<String, Object> product = new HashMap<String, Object>() {
+        final HashMap<String, Object> cart = new HashMap<String, Object>() {
             {
-                put("type", "physical");
-                put("reference", "BANANA01");
-                put("name", "Banana");
-                put("unit_price", 450);
-                put("discount_rate", 0);
-                put("tax_rate", 2500);
-            }
-        };
-
-        final Map<String, Object> shipping = new HashMap<String, Object>() {
-            {
-                put("type", "shipping_fee");
-                put("reference", "SHIPPING");
-                put("name", "Shipping Fee");
-                put("unit_price", 450);
-                put("discount_rate", 0);
-                put("tax_rate", 2500);
-            }
-        };
-
-        Order order = new Order();
-
-        order.parse(new HashMap<String, Object>() {
-            {
-                put("purchase_country", "SE");
-                put("purchase_currency", "SEK");
-                put("locale", "sv-se");
-                put("merchant", new HashMap<String, Object>() {
+                put("items", new ArrayList<HashMap<String, Object>>() {
                     {
-                        put("id", 2);
-                        put("terms_uri", "http://localhost/terms_and_agreements");
-                        put("checkout_uri", "http://localhost/checkout");
-                        put("confirmation_uri", "http://localhost/thank_you");
-                        put("push_uri", "http://localhost/push");
-                    }
-                });
-                put("cart", new HashMap<String, Object>() {
-                    {
-                        put("total_price_including_tax", 9000);
-                        put("items", new ArrayList<Map<String, Object>>() {
+                        add(new HashMap<String, Object>() {
                             {
-                                add(product);
-                                add(shipping);
+                                put("quantity", 1);
+                                put("reference", "BANAN01");
+                                put("name", "Banana");
+                                put("unit_price", 450);
+                                put("discount_rate", 0);
+                                put("tax_rate", 2500);
+                            }
+                        });
+                        add(new HashMap<String, Object>() {
+                            {
+                                put("quantity", 1);
+                                put("type", "shipping_fee");
+                                put("reference", "SHIPPING");
+                                put("name", "Shipping Fee");
+                                put("unit_price", 450);
+                                put("discount_rate", 0);
+                                put("tax_rate", 2500);
                             }
                         });
                     }
                 });
             }
-        });
+        };
         try {
-            order.create(connector);
-            order.fetch(connector);
-        } catch (IOException ex) {
-            Logger.getLogger(
-                    Checkout.class.getName()).log(Level.SEVERE, null, ex);
+            final String eid = "2";
+            final String secret = "sharedSecret";
+
+            URI uri = new URI(
+                    "https://klarnacheckout.apiary.io/checkout/orders");
+
+            Order.setBaseUri(uri);
+            Order.setContentType(
+                    "application/vnd.klarna.checkout.aggregated-order-v2+json");
+
+            // Retrieve location from session object.
+            IConnector connector = Connector.create(secret);
+
+            Order order = null;
+
+            if (session.containsKey("klarna_checkout")) {
+                try {
+                    // Resume Checkout
+                    order = new Order(
+                            connector, (URI) session.get("klarna_checkout"));
+
+                    order.fetch();
+
+                    HashMap<String, Object> update;
+                    update = new HashMap<String, Object>() {
+                        {
+                            put("cart", cart);
+                        }
+                    };
+                    order.update(update);
+                } catch (Exception ex) {
+                    order = null;
+                    session.remove("klarna_checkout");
+                }
+            }
+
+            if (order == null) {
+                // Start a new session.
+                HashMap<String, Object> create = new HashMap<String, Object>() {
+                    {
+                        put("purchase_country", "SE");
+                        put("purchase_currency", "SEK");
+                        put("locale", "sv-se");
+                    }
+                };
+
+                Map<String, Object> merchant = new HashMap<String, Object>() {
+                    {
+                        put("id", eid);
+                        put("terms_uri", "http://localhost/terms,html");
+                        put("checkout_uri", "http://localhost/checkout");
+                        put("confirmation_uri", "http://localhost/thank-you");
+                        // You can not recieve push notification on a
+                        // non-publicly available uri.
+                        put("push_uri", "http://localhost/push"
+                                + "?checkout_uri={checkout.order.uri}'");
+                    }
+                };
+                create.put("merchant", merchant);
+                create.put("cart", cart);
+
+                order = new Order(connector);
+
+                order.create(create);
+
+                order.fetch();
+            }
+
+            // Store checkout session.
+            //JSP: session.setAttribute("klarna_checkout", order.getLocation());
+            session.put("klarna_checkout", order.getLocation());
+
+            // Display checkout
+            Map<String, Object> gui;
+            gui = (HashMap<String, Object>) order.get("gui");
+
+            String snippet = (String) gui.get("snippet");
+
+            // Output the snippet on your page.
+            System.out.println(String.format("<div>%s</div>", snippet));
+            // DESKTOP: Width of containing block shall be at least 750px
+            // MOBILE: Width of containing block shall be 100% of browser
+            // window (No padding or margin)
+        } catch (Exception ex) {
+            // Handle exception.
+            ex.printStackTrace();
         }
-        this.session.put("klarna_checkout", order.getLocation());
-
-        finalizeExample(order);
-    }
-
-    /**
-     * Fetch a checkout instance.
-     */
-    public void fetch() {
-        Order order = new Order();
-        IConnector connector = setUpExample();
-
-        try {
-            order.fetch(connector, (URI) session.get("klarna_checkout"));
-        } catch (IOException ex) {
-            Logger.getLogger(
-                    Checkout.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        finalizeExample(order);
-    }
-
-    /**
-     * Show client snippet.
-     *
-     * @param order Checkout Resource
-     */
-    public void finalizeExample(Order order) {
-        String snippet = (String) ((HashMap) order.get("gui")).get("snippet");
-
-        System.out.println("<div>");
-        System.out.println(snippet);
-        System.out.println("</div>");
     }
 }

@@ -18,6 +18,7 @@
 package com.klarna.checkout;
 
 import com.klarna.checkout.stubs.HttpClientStub;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
@@ -79,7 +80,7 @@ public class ConnectorErrorCodesTest {
      * Set up tests.
      */
     @Before
-    public void setUp() {
+    public void setUp() throws UnsupportedEncodingException {
         this.transport = new HttpClientStub();
         this.digest = mock(Digest.class);
         this.digestString = "stnaeu\\eu2341aoaaoae==";

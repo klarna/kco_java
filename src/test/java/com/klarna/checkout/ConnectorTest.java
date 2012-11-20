@@ -17,6 +17,7 @@
  */
 package com.klarna.checkout;
 
+import java.io.UnsupportedEncodingException;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,7 +45,7 @@ public class ConnectorTest {
      * Set up tests.
      */
     @Before
-    public void setUp() {
+    public void setUp() throws UnsupportedEncodingException {
         this.resource = mock(IResource.class);
         this.digest = mock(Digest.class);
         this.conn = new BasicConnector(this.digest);

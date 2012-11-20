@@ -35,7 +35,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.conn.BasicClientConnectionManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.protocol.BasicHttpContext;
@@ -196,7 +196,8 @@ public class BasicConnector implements IConnector {
             HttpPost post = new HttpPost(uri);
             String payload = JSONObject.toJSONString(
                     getData(options, resource));
-            post.setEntity(new StringEntity(payload));
+
+            post.setEntity(new ByteArrayEntity(payload.getBytes("UTF-8")));
 
             post.setHeader("Content-Type", resource.getContentType());
             req = post;

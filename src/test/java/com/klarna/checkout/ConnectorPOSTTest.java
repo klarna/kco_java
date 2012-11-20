@@ -20,6 +20,7 @@ package com.klarna.checkout;
 import com.klarna.checkout.stubs.HttpClientStub;
 import com.klarna.checkout.stubs.HttpClientStub.HTTPResponseStub;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,7 +70,7 @@ public class ConnectorPOSTTest {
      * Set up tests.
      */
     @Before
-    public void setUp() {
+    public void setUp() throws UnsupportedEncodingException {
         this.transport = new HttpClientStub();
         this.resource = mock(IResource.class);
         this.payloadJson = "{\"flobadob\":[\"bobcat\",\"wookie\"]}";

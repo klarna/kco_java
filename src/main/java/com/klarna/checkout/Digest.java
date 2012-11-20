@@ -19,6 +19,7 @@ package com.klarna.checkout;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
@@ -59,15 +60,18 @@ public class Digest {
      * @param message string to hash
      *
      * @return Base64 and SHA256 hashed string
+     *
+     * @throws UnsupportedEncodingException if UTF-8 is unsupported
      */
-    public String create(final String message) {
+    public String create(final String message)
+            throws UnsupportedEncodingException {
         md.reset();
 
         if (message != null) {
-            md.update(message.getBytes());
+            md.update(message.getBytes("UTF-8"));
         }
 
-        md.update(secret.getBytes());
+        md.update(secret.getBytes("UTF-8"));
 
         return new String(Base64.encodeBase64(md.digest()));
     }
@@ -78,8 +82,11 @@ public class Digest {
      * @param stream character stream to hash
      *
      * @return Base64 and SHA256 hashed string
+     *
+     * @throws UnsupportedEncodingException if UTF-8 is unsupported
      */
-    public String create(final InputStream stream) {
+    public String create(final InputStream stream)
+            throws UnsupportedEncodingException {
         md.reset();
 
         if (stream != null) {
@@ -97,7 +104,7 @@ public class Digest {
             }
         }
 
-        md.update(secret.getBytes());
+        md.update(secret.getBytes("UTF-8"));
 
         return new String(Base64.encodeBase64(md.digest()));
     }

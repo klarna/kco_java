@@ -46,10 +46,10 @@ public class DigestTest {
     /**
      * Test to create a Digest from a JSON string.
      *
-     * @throws NoSuchAlgorithmException if SHA-256 isn't supported.
+     * @throws Exception if SHA-256 or UTF-8 isn't supported.
      */
     @Test
-    public void testDigestString() throws NoSuchAlgorithmException {
+    public void testDigestString() throws Exception {
 
         assertEquals(
                 "Expected digest hash",
@@ -77,10 +77,10 @@ public class DigestTest {
     /**
      * Test for a null string.
      *
-     * @throws NoSuchAlgorithmException if SHA-256 isn't supported.
+     * @throws Exception if SHA-256 or UTF-8 isn't supported.
      */
     @Test
-    public void testDigestNullString() throws NoSuchAlgorithmException {
+    public void testDigestNullString() throws Exception {
         assertEquals(
                 "Expected digest",
                 "0L5zNClDL38A1CXhqwA0Eq+nXUH+KA2Lsus+gv78VrY=",
@@ -90,10 +90,10 @@ public class DigestTest {
     /**
      * Test for a null input stream.
      *
-     * @throws NoSuchAlgorithmException if SHA-256 isn't supported.
+     * @throws NoSuchAlgorithmException if SHA-256 or UTF-8 isn't supported.
      */
     @Test
-    public void testDigestNullStream() throws NoSuchAlgorithmException {
+    public void testDigestNullStream() throws Exception {
         assertEquals(
                 "Expected digest",
                 "0L5zNClDL38A1CXhqwA0Eq+nXUH+KA2Lsus+gv78VrY=",

@@ -33,12 +33,14 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.http.Header;
+import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
+import org.apache.http.ProtocolException;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.client.CircularRedirectException;
 import org.apache.http.client.ClientProtocolException;
@@ -48,6 +50,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.impl.client.EntityEnclosingRequestWrapper;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.params.HttpParams;
@@ -238,7 +241,7 @@ public class HttpClientStub implements IHttpClient {
      */
     private void fixData() throws IOException {
         if (this.httpUriReq.getMethod().equals("POST")) {
-            HttpPost h = (HttpPost) this.httpUriReq;
+            HttpEntityEnclosingRequest h = (HttpEntityEnclosingRequest) this.httpUriReq;
 
             InputStream is = h.getEntity().getContent();
             java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
@@ -294,7 +297,13 @@ public class HttpClientStub implements IHttpClient {
         redirects.add(302);
         redirects.add(303);
         this.visited.clear();
-
+        if (this.httpUriReq instanceof HttpEntityEnclosingRequest) {
+            try {
+                this.httpUriReq = new EntityEnclosingRequestWrapper((HttpEntityEnclosingRequest) hur);
+            } catch (ProtocolException ex) {
+                throw new IOException(ex);
+            }
+        }
         int status;
         do {
             try {

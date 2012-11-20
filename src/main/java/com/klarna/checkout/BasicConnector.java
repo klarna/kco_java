@@ -24,6 +24,7 @@ import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Map;
 import org.apache.http.Header;
+import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
@@ -31,7 +32,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -306,12 +306,12 @@ public class BasicConnector implements IConnector {
                 final HttpRequest request, final HttpContext context)
                 throws HttpException, IOException {
             String digestString;
-            if (request instanceof HttpEntityEnclosingRequestBase) {
-                HttpEntityEnclosingRequestBase heerb;
-                heerb = (HttpEntityEnclosingRequestBase) request;
 
-                digestString = this.digest.create(
-                        heerb.getEntity().getContent());
+            if (request instanceof HttpEntityEnclosingRequest) {
+                HttpEntityEnclosingRequest her;
+                her = (HttpEntityEnclosingRequest) request;
+
+                digestString = this.digest.create(her.getEntity().getContent());
             } else {
                 digestString = this.digest.create("");
             }

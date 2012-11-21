@@ -78,6 +78,8 @@ public class ConnectorErrorCodesTest {
 
     /**
      * Set up tests.
+     *
+     * @throws UnsupportedEncodingException if UTF-8 is not supported.
      */
     @Before
     public void setUp() throws UnsupportedEncodingException {

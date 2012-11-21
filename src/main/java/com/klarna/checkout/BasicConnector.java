@@ -35,6 +35,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.conn.BasicClientConnectionManager;
 import org.apache.http.params.BasicHttpParams;
@@ -55,6 +56,10 @@ public class BasicConnector implements IConnector {
      * Digest instance.
      */
     protected final Digest digest;
+    /**
+     * ClientConnectionManager instance.
+     */
+    private final ClientConnectionManager manager;
 
     /**
      * Constructor.
@@ -62,14 +67,24 @@ public class BasicConnector implements IConnector {
      * @param dig Digest instance
      */
     public BasicConnector(final Digest dig) {
+        this(dig, new BasicClientConnectionManager());
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param dig Digest instance
+     * @param ccm ClientConnectionManager
+     */
+    public BasicConnector(final Digest dig, final ClientConnectionManager ccm) {
         if (dig == null) {
             throw new IllegalArgumentException(
                     "Digest may not be null.");
         }
 
         this.digest = dig;
+        this.manager = ccm;
     }
-
     /**
      * Create a HTTP Client.
      *
@@ -78,8 +93,7 @@ public class BasicConnector implements IConnector {
     protected IHttpClient createHttpClient() {
         BasicHttpParams params = new BasicHttpParams();
         params.setParameter("http.protocol.allow-circular-redirects", false);
-        return new HttpClientWrapper(
-                new BasicClientConnectionManager(), params);
+        return new HttpClientWrapper(this.manager, params);
     }
 
     /**

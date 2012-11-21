@@ -19,7 +19,6 @@ package com.klarna.checkout;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.security.NoSuchAlgorithmException;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
@@ -90,7 +89,7 @@ public class DigestTest {
     /**
      * Test for a null input stream.
      *
-     * @throws NoSuchAlgorithmException if SHA-256 or UTF-8 isn't supported.
+     * @throws Exception if SHA-256 or UTF-8 isn't supported.
      */
     @Test
     public void testDigestNullStream() throws Exception {

@@ -22,6 +22,7 @@ import com.klarna.checkout.IConnector;
 import com.klarna.checkout.Order;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -47,23 +48,27 @@ public class Push {
             // For example in jsp you could do
             //      request.getParameter("checkout_uri");
             URI checkoutId = new URI(
-                    "https://klarnacheckout.apiary.io/checkout/orders/12");
+                    "https://checkout.testdrive.klarna.com/checkout/orders/12");
 
             Order order = new Order(connector, checkoutId);
 
             order.fetch();
 
             if (((String) order.get("status")).equals("checkout_complete")) {
-                HashMap<String, Object> updateData;
-
-                updateData = new HashMap<String, Object>() {{
-                    put("status", "created");
-                    put("merchant_reference", new HashMap<String, Object>() {
+                final Map<String, Object> reference =
+                        new HashMap<String, Object>() {
                             {
                                 put("orderid1", UUID.randomUUID().toString());
                             }
-                        });
-                }};
+                        };
+
+                Map<String, Object> updateData;
+                updateData = new HashMap<String, Object>() {
+                    {
+                        put("status", "created");
+                        put("merchant_reference", reference);
+                    }
+                };
 
                 order.update(updateData);
             }

@@ -47,18 +47,19 @@ class Confirmation {
             // For example in jsp you could do
             //      request.getParameter("checkout_uri");
             URI checkoutId = new URI(
-                    "https://klarnacheckout.apiary.io/checkout/orders/12");
+                    "https://checkout.testdrive.klarna.com/checkout/orders/12");
 
             Order order = new Order(connector, checkoutId);
+
             order.fetch();
 
-            if (!((String) order.get("status")).equals("checkout_complete")) {
+            String status = (String) order.get("status");
+            if (!status.equals("checkout_complete")) {
                 // Report error
                 // System.out.println("Checkout not completed, redirect");
             }
 
-            Map<String, Object> gui;
-            gui = (HashMap<String, Object>) order.get("gui");
+            Map<String, Object> gui = (Map<String, Object>) order.get("gui");
 
             String snippet = gui.get("snippet").toString();
 

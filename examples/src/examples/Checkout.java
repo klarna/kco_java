@@ -39,17 +39,17 @@ public final class Checkout {
         // be a javax.servlet.http.HttpSession for JSP for example.
         Map<String, Object> session = new HashMap<String, Object>();
 
-        final HashMap<String, Object> cart = new HashMap<String, Object>() {
+        final Map<String, Object> cart = new HashMap<String, Object>() {
             {
                 put("items", new ArrayList<HashMap<String, Object>>() {
                     {
                         add(new HashMap<String, Object>() {
                             {
-                                put("quantity", 1);
-                                put("reference", "BANAN01");
-                                put("name", "Banana");
-                                put("unit_price", 450);
-                                put("discount_rate", 0);
+                                put("quantity", 2);
+                                put("reference", "123456789");
+                                put("name", "Klarna t-shirt");
+                                put("unit_price", 12300);
+                                put("discount_rate", 1000);
                                 put("tax_rate", 2500);
                             }
                         });
@@ -59,8 +59,7 @@ public final class Checkout {
                                 put("type", "shipping_fee");
                                 put("reference", "SHIPPING");
                                 put("name", "Shipping Fee");
-                                put("unit_price", 450);
-                                put("discount_rate", 0);
+                                put("unit_price", 4900);
                                 put("tax_rate", 2500);
                             }
                         });
@@ -69,37 +68,41 @@ public final class Checkout {
             }
         };
         try {
-            final String eid = "2";
+            // Merchant ID
+            final String eid = "0";
             final String secret = "sharedSecret";
 
-            URI uri = new URI(
-                    "https://klarnacheckout.apiary.io/checkout/orders");
-
-            Order.setBaseUri(uri);
             Order.setContentType(
                     "application/vnd.klarna.checkout.aggregated-order-v2+json");
+            URI uri = new URI(
+                    "https://checkout.testdrive.klarna.com/checkout/orders");
 
-            // Retrieve location from session object.
+            Order.setBaseUri(uri);
             IConnector connector = Connector.create(secret);
 
             Order order = null;
 
+            URI resourceURI = null;
+            // Retrieve location from session object.
             if (session.containsKey("klarna_checkout")) {
-                try {
-                    // Resume Checkout
-                    order = new Order(
-                            connector, (URI) session.get("klarna_checkout"));
+                resourceURI = new URI((String) session.get("klarna_checkout"));
+            }
 
+            if (resourceURI != null) {
+                try {
+                    order = new Order(connector, resourceURI);
                     order.fetch();
 
-                    HashMap<String, Object> update;
-                    update = new HashMap<String, Object>() {
+                    // Reset cart
+                    Map<String, Object> data = new HashMap<String, Object>() {
                         {
                             put("cart", cart);
                         }
                     };
-                    order.update(update);
-                } catch (Exception ex) {
+
+                    order.update(data);
+                } catch (Exception e) {
+                    // Reset session
                     order = null;
                     session.remove("klarna_checkout");
                 }
@@ -107,33 +110,35 @@ public final class Checkout {
 
             if (order == null) {
                 // Start a new session.
-                HashMap<String, Object> create = new HashMap<String, Object>() {
+                final Map<String, Object> merchant;
+                merchant = new HashMap<String, Object>() {
+                    {
+                        put("id", eid);
+                        put("terms_uri", "http://example.com/terms,html");
+                        put("checkout_uri", "http://example.com/checkout.jsp");
+                        put("confirmation_uri",
+                                "http://example.com/thank-you.jsp"
+                                + "?sid=123&klarna_order={checkout.order.uri}");
+                        // You can not recieve push notification on a
+                        // non-publicly available uri.
+                        put("push_uri",
+                                "http://example.com/push.jsp"
+                                + "?sid=123&klarna_order={checkout.order.uri}");
+                    }
+                };
+
+                Map<String, Object> data = new HashMap<String, Object>() {
                     {
                         put("purchase_country", "SE");
                         put("purchase_currency", "SEK");
                         put("locale", "sv-se");
+                        put("merchant", merchant);
+                        put("cart", cart);
                     }
                 };
-
-                Map<String, Object> merchant = new HashMap<String, Object>() {
-                    {
-                        put("id", eid);
-                        put("terms_uri", "http://localhost/terms,html");
-                        put("checkout_uri", "http://localhost/checkout");
-                        put("confirmation_uri", "http://localhost/thank-you");
-                        // You can not recieve push notification on a
-                        // non-publicly available uri.
-                        put("push_uri", "http://localhost/push"
-                                + "?checkout_uri={checkout.order.uri}'");
-                    }
-                };
-                create.put("merchant", merchant);
-                create.put("cart", cart);
 
                 order = new Order(connector);
-
-                order.create(create);
-
+                order.create(data);
                 order.fetch();
             }
 
@@ -142,9 +147,7 @@ public final class Checkout {
             session.put("klarna_checkout", order.getLocation());
 
             // Display checkout
-            Map<String, Object> gui;
-            gui = (HashMap<String, Object>) order.get("gui");
-
+            Map<String, Object> gui = (Map<String, Object>) order.get("gui");
             String snippet = (String) gui.get("snippet");
 
             // Output the snippet on your page.

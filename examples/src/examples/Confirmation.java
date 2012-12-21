@@ -15,6 +15,7 @@
  *
  * File containing the thank you example.
  */
+// [[examples-confirmation]]
 package examples;
 
 import com.klarna.checkout.Connector;
@@ -74,3 +75,4 @@ class Confirmation {
         }
     }
 }
+// [[examples-confirmation]]

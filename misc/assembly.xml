@@ -1,0 +1,27 @@
+<assembly>
+    <id>package-libs</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <files>
+        <file>
+            <source>${project.basedir}/target/${project.name}-${project.version}.jar</source>
+        </file>
+        <file>
+            <source>${project.basedir}/README.md</source>
+        </file>
+        <file>
+            <source>${project.basedir}/CHANGELOG</source>
+        </file>
+        <file>
+            <source>${project.basedir}/LICENSE</source>
+        </file>
+    </files>
+    <fileSets>
+        <fileSet>
+            <directory>${project.basedir}/target/dependency</directory>
+            <outputDirectory>lib</outputDirectory>
+        </fileSet>
+    </fileSets>
+</assembly>

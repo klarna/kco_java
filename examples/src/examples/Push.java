@@ -15,6 +15,7 @@
  *
  * File containing the Push example.
  */
+// [[examples-push]]
 package examples;
 
 import com.klarna.checkout.Connector;
@@ -78,3 +79,4 @@ public class Push {
         }
     }
 }
+// [[examples-push]]

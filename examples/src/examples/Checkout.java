@@ -15,6 +15,7 @@
  *
  * File containing the Checkout example.
  */
+// [[examples-checkout]]
 package examples;
 
 import com.klarna.checkout.Connector;
@@ -161,3 +162,4 @@ public final class Checkout {
         }
     }
 }
+// [[examples-checkout]]

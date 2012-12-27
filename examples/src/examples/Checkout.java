@@ -115,12 +115,12 @@ public final class Checkout {
                 merchant = new HashMap<String, Object>() {
                     {
                         put("id", eid);
-                        put("terms_uri", "http://example.com/terms,html");
+                        put("terms_uri", "http://example.com/terms.html");
                         put("checkout_uri", "http://example.com/checkout.jsp");
                         put("confirmation_uri",
                                 "http://example.com/thank-you.jsp"
                                 + "?sid=123&klarna_order={checkout.order.uri}");
-                        // You can not recieve push notification on a
+                        // You can not receive push notification on a
                         // non-publicly available uri.
                         put("push_uri",
                                 "http://example.com/push.jsp"

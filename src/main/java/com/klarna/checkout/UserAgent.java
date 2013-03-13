@@ -113,7 +113,7 @@ public class UserAgent {
         this.fields = new ArrayList<UserAgent.Field>();
         try {
             this.addField(
-                    new UserAgent.Field("Library", "Klarna.ApiWrapper", "1.0"));
+                    new UserAgent.Field("Library", "Klarna.ApiWrapper", "1.1.0"));
             this.addField(
                     new UserAgent.Field(
                     "OS",

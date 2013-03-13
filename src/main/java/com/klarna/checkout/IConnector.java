@@ -53,4 +53,11 @@ public interface IConnector {
     HttpResponse apply(
             String method, IResource resource)
             throws IOException;
+
+    /**
+     * Specify a socket timeout to use.
+     *
+     * @param milliseconds Milliseconds to use as timeout.
+     */
+    void setTimeout(int milliseconds);
 }

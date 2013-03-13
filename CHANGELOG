@@ -2,6 +2,15 @@
 Klarna Checkout Java library
 ===========================
 
+v1.1.0
+----------------
+Date: 2013-03-15
+
+    Klarna <support@klarna.com>
+        Increased default socket timeout value.
+
+        Added a method to set socket timeout on the IConnector interface.
+
 v1.0.0
 ----------------
 Date: 2012-12-21

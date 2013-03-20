@@ -39,6 +39,7 @@ import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.conn.BasicClientConnectionManager;
 import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.json.simple.JSONObject;
@@ -47,6 +48,8 @@ import org.json.simple.JSONObject;
  * Implementation of the connector interface.
  */
 public class BasicConnector implements IConnector {
+
+    public final static int DEFAULT_TIMEOUT = 10000;
 
     /**
      * HttpClient implementation.
@@ -91,9 +94,20 @@ public class BasicConnector implements IConnector {
      * @return HTTP Client to use.
      */
     protected IHttpClient createHttpClient() {
-        BasicHttpParams params = new BasicHttpParams();
+        final BasicHttpParams params = new BasicHttpParams();
         params.setParameter("http.protocol.allow-circular-redirects", false);
+        HttpConnectionParams.setSoTimeout(params, DEFAULT_TIMEOUT);
         return new HttpClientWrapper(this.manager, params);
+    }
+
+    /**
+     * Specify a socket timeout to use.
+     *
+     * @param milliseconds Milliseconds to use as timeout.
+     */
+    public void setTimeout(final int milliseconds) {
+        HttpConnectionParams.setSoTimeout(
+                this.getClient().getParams(), milliseconds);
     }
 
     /**

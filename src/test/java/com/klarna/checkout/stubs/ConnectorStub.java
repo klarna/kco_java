@@ -103,4 +103,13 @@ public class ConnectorStub implements IConnector {
         this.location = newLocation;
     }
 
+    /**
+     * Specify a socket timeout to use.
+     *
+     * @param milliseconds Milliseconds to use as timeout.
+     */
+    public void setTimeout(final int milliseconds) {
+        return;
+    }
+
 }

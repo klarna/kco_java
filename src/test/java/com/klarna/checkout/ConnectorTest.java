@@ -18,6 +18,7 @@
 package com.klarna.checkout;
 
 import java.io.UnsupportedEncodingException;
+import org.apache.http.params.HttpConnectionParams;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -121,5 +122,23 @@ public class ConnectorTest {
         assertThat(
                 result,
                 org.hamcrest.Matchers.instanceOf(BasicConnector.class));
+    }
+
+    /**
+     * Test of the setTimeout method.
+     *
+     * @throws Exception if something went horribly wrong.
+     */
+    @Test
+    public void testSetTimeout() throws Exception {
+        BasicConnector connector;
+        connector = (BasicConnector) Connector.create("sharedSecret");
+        connector.setTimeout(3000);
+
+        assertEquals(
+                "Timeout wasn't set",
+                3000,
+                HttpConnectionParams.getSoTimeout(
+                    connector.getClient().getParams()));
     }
 }

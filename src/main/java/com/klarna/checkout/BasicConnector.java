@@ -49,7 +49,10 @@ import org.json.simple.JSONObject;
  */
 public class BasicConnector implements IConnector {
 
-    public final static int DEFAULT_TIMEOUT = 10000;
+    /**
+     * Default timeout value in milliseconds.
+     */
+    public static final int DEFAULT_TIMEOUT = 10000;
 
     /**
      * HttpClient implementation.

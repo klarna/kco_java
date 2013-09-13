@@ -294,7 +294,7 @@ public class HttpClientStub implements IHttpClient {
             try {
                 this.httpUriReq = new EntityEnclosingRequestWrapper((HttpEntityEnclosingRequest) hur);
             } catch (ProtocolException ex) {
-                throw new IOException(ex);
+                throw new IOException(ex.getMessage());
             }
         }
         int status;

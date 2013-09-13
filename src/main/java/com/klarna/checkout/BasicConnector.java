@@ -120,7 +120,6 @@ public class BasicConnector implements IConnector {
      *
      * @throws IOException In case of an I/O Error.
      */
-    @Override
     public HttpResponse apply(final String method, final IResource resource)
             throws IOException {
         return apply(method, resource, new ConnectorOptions());
@@ -137,7 +136,6 @@ public class BasicConnector implements IConnector {
      *
      * @throws IOException In case of an I/O Error.
      */
-    @Override
     public HttpResponse apply(
             final String method, final IResource resource,
             final ConnectorOptions options)

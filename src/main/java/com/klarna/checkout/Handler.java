@@ -102,7 +102,7 @@ class Handler implements ResponseHandler<HttpResponse> {
             resource.parse((HashMap<String, Object>) json);
         } catch (ParseException ex) {
             // Interface dictates strict exception types.
-            throw new IOException(ex);
+            throw new IOException(ex.getMessage());
         }
     }
 }

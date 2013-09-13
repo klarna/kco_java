@@ -152,7 +152,6 @@ public class HttpClientStub implements IHttpClient {
      * @throws IOException if an I/O error occurs
      * @throws ClientProtocolException if a client protocol violation happened
      */
-    @Override
     public HttpResponse execute(final HttpUriRequest hur)
             throws IOException, ClientProtocolException {
         this.httpUriReq = hur;
@@ -165,7 +164,6 @@ public class HttpClientStub implements IHttpClient {
      *
      * @return nothing.
      */
-    @Override
     public HttpParams getParams() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -175,7 +173,6 @@ public class HttpClientStub implements IHttpClient {
      *
      * @return nothing.
      */
-    @Override
     public ClientConnectionManager getConnectionManager() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -191,7 +188,6 @@ public class HttpClientStub implements IHttpClient {
      * @throws IOException never
      * @throws ClientProtocolException never
      */
-    @Override
     public HttpResponse execute(final HttpUriRequest hur, final HttpContext hc)
             throws IOException, ClientProtocolException {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -208,7 +204,6 @@ public class HttpClientStub implements IHttpClient {
      * @throws IOException never
      * @throws ClientProtocolException never
      */
-    @Override
     public HttpResponse execute(
             final HttpHost hh, final HttpRequest hr)
             throws IOException, ClientProtocolException {
@@ -227,7 +222,6 @@ public class HttpClientStub implements IHttpClient {
      * @throws IOException never
      * @throws ClientProtocolException never
      */
-    @Override
     public HttpResponse execute(
             final HttpHost hh, final HttpRequest hr, final HttpContext hc)
             throws IOException, ClientProtocolException {
@@ -284,7 +278,6 @@ public class HttpClientStub implements IHttpClient {
      *
      * @throws IOException never
      */
-    @Override
     public <T> T execute(
             final HttpUriRequest hur,
             final ResponseHandler<? extends T> rh,
@@ -301,7 +294,7 @@ public class HttpClientStub implements IHttpClient {
             try {
                 this.httpUriReq = new EntityEnclosingRequestWrapper((HttpEntityEnclosingRequest) hur);
             } catch (ProtocolException ex) {
-                throw new IOException(ex);
+                throw new IOException(ex.getMessage());
             }
         }
         int status;
@@ -362,7 +355,6 @@ public class HttpClientStub implements IHttpClient {
      * @throws IOException never
      * @throws ClientProtocolException never
      */
-    @Override
     public <T> T execute(
             final HttpHost hh,
             final HttpRequest hr,
@@ -385,7 +377,6 @@ public class HttpClientStub implements IHttpClient {
      * @throws IOException never
      * @throws ClientProtocolException never
      */
-    @Override
     public <T> T execute(
             final HttpHost hh,
             final HttpRequest hr,

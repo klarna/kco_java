@@ -99,7 +99,6 @@ public class Order implements IResource {
     /**
      * @return the URL of the resource.
      */
-    @Override
     public URI getLocation() {
         return location;
     }
@@ -109,7 +108,6 @@ public class Order implements IResource {
      *
      * @param uri URI object pointing to the resource
      */
-    @Override
     public void setLocation(final URI uri) {
         this.location = uri;
     }
@@ -119,7 +117,6 @@ public class Order implements IResource {
      *
      * @return Content type
      */
-    @Override
     public String getContentType() {
         return Order.contentType;
     }
@@ -129,7 +126,6 @@ public class Order implements IResource {
      *
      * @param newData new data to update the resource with
      */
-    @Override
     public void parse(final Map<String, Object> newData) {
         this.data.clear();
         this.data.putAll(newData);
@@ -138,7 +134,6 @@ public class Order implements IResource {
     /**
      * @return Basic representation of the object.
      */
-    @Override
     public Map marshal() {
         return this.data;
     }

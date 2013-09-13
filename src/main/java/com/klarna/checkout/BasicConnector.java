@@ -49,7 +49,10 @@ import org.json.simple.JSONObject;
  */
 public class BasicConnector implements IConnector {
 
-    public final static int DEFAULT_TIMEOUT = 10000;
+    /**
+     * Default timeout value in milliseconds.
+     */
+    public static final int DEFAULT_TIMEOUT = 10000;
 
     /**
      * HttpClient implementation.
@@ -120,7 +123,6 @@ public class BasicConnector implements IConnector {
      *
      * @throws IOException In case of an I/O Error.
      */
-    @Override
     public HttpResponse apply(final String method, final IResource resource)
             throws IOException {
         return apply(method, resource, new ConnectorOptions());
@@ -137,7 +139,6 @@ public class BasicConnector implements IConnector {
      *
      * @throws IOException In case of an I/O Error.
      */
-    @Override
     public HttpResponse apply(
             final String method, final IResource resource,
             final ConnectorOptions options)

@@ -63,7 +63,6 @@ public class ConnectorStub implements IConnector {
      *
      * @throws IOException in case of an I/O error
      */
-    @Override
     public HttpResponse apply(
             final String method,
             final IResource resource,

@@ -92,13 +92,27 @@ public class UserAgent {
          */
         @Override
         public final String toString() {
-            String result = this.key + "/" + this.name + "_" + this.version;
-            if (this.options.length > 0) {
-                String part = String.format(
-                        "(%s)", UserAgent.implode(this.options, " ; "));
-                result = result.concat(" ").concat(part);
+            StringBuilder builder = new StringBuilder();
+
+            builder.append(
+                    String.format(
+                            "%s/%s_%s", this.key, this.name, this.version));
+
+            if (this.options.length == 0) {
+                return builder.toString();
             }
-            return result;
+
+            builder.append(" (");
+            builder.append(this.options[0]);
+
+            for (int i = 1; i < this.options.length; i++) {
+                builder.append(" ; ");
+                builder.append(this.options[i]);
+            }
+
+            builder.append(")");
+
+            return builder.toString();
         }
     }
     /**
@@ -114,42 +128,27 @@ public class UserAgent {
         try {
             this.addField(
                     new UserAgent.Field(
-                        "Library", "Klarna.ApiWrapper", "1.1.2"));
+                            "Library",
+                            "Klarna.ApiWrapper",
+                            "1.1.3"));
             this.addField(
                     new UserAgent.Field(
-                    "OS",
-                    System.getProperty("os.name"),
-                    System.getProperty("os.version")));
+                            "OS",
+                            System.getProperty("os.name"),
+                            System.getProperty("os.version")));
             this.addField(
                     new UserAgent.Field(
-                    "Language",
-                    "Java",
-                    System.getProperty("java.version"),
-                    new String[]{
-                        ("Vendor/" + System.getProperty("java.vendor")),
-                        ("VM/" + System.getProperty("java.vm.name"))}));
+                            "Language",
+                            "Java",
+                            System.getProperty("java.version"),
+                            "Vendor/" + System.getProperty("java.vendor")
+                                    .replace(" ", "-"),
+                            "VM/" + System.getProperty("java.vm.name")
+                                    .replace(" ", "-")));
         } catch (KlarnaException ex) {
             Logger.getLogger(
                     UserAgent.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    /**
-     * Implode a String array with a glue.
-     *
-     * @param options The strings to implode.
-     * @param glue The glue to use.
-     *
-     * @return String The imploded string.
-     */
-    protected static String implode(final String[] options, final String glue) {
-        final StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(options[0]);
-        for (int i = 1; i < options.length; i++) {
-            stringBuilder.append(glue);
-            stringBuilder.append(options[i]);
-        }
-        return stringBuilder.toString();
     }
 
     /**
@@ -177,7 +176,14 @@ public class UserAgent {
      */
     @Override
     public final String toString() {
-        String[] elements = new String[]{this.fields.toString()};
-        return UserAgent.implode(elements, " ");
+        StringBuilder builder = new StringBuilder();
+        builder.append(this.fields.remove(0));
+
+        for (UserAgent.Field field : this.fields) {
+            builder.append(" ");
+            builder.append(field);
+        }
+
+        return builder.toString();
     }
 }

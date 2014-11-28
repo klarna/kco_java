@@ -232,7 +232,7 @@ public class BasicConnector implements IConnector {
             req = post;
         }
 
-        req.setHeader("UserAgent", createtUserAgent().toString());
+        req.setHeader("User-Agent", createtUserAgent().toString());
         req.setHeader("Accept", resource.getContentType());
 
         return req;

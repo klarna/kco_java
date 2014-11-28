@@ -91,4 +91,16 @@ public class UserAgentTest {
         this.agent.addField(
                 new UserAgent.Field("Language", "Something", "9"));
     }
+
+    /**
+     * Test that the entire User-Agent string looks like it should
+     */
+    @Test
+    public void testCompleteFormat()  {
+        final String string = this.agent.toString();
+        final String format = "^(Library\\/[^\\s]+) (OS\\/[^\\s]+) (Language\\/[^\\s]+) \\((Vendor\\/[^;]+) ; (VM\\/[^;]+)\\)$";
+        assertTrue(
+                "Format is incorrect",
+                string.matches(format));
+    }
 }

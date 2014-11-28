@@ -92,15 +92,17 @@ public class UserAgent {
          */
         @Override
         public final String toString() {
-            String result = String.format(
-                    "%s/%s_%s", this.key, this.name, this.version);
+            StringBuilder builder = new StringBuilder();
+
+            builder.append(
+                    String.format(
+                            "%s/%s_%s", this.key, this.name, this.version));
 
             if (this.options.length == 0) {
-                return result;
+                return builder.toString();
             }
 
-            StringBuilder builder = new StringBuilder();
-            builder.append("(");
+            builder.append(" (");
             builder.append(this.options[0]);
 
             for (int i = 1; i < this.options.length; i++) {
@@ -110,7 +112,7 @@ public class UserAgent {
 
             builder.append(")");
 
-            return result.concat(" ").concat(builder.toString());
+            return builder.toString();
         }
     }
     /**
@@ -126,21 +128,23 @@ public class UserAgent {
         try {
             this.addField(
                     new UserAgent.Field(
-                        "Library", "Klarna.ApiWrapper", "1.1.3"));
+                            "Library",
+                            "Klarna.ApiWrapper",
+                            "1.1.3"));
             this.addField(
                     new UserAgent.Field(
-                        "OS",
-                        System.getProperty("os.name"),
-                        System.getProperty("os.version")));
+                            "OS",
+                            System.getProperty("os.name"),
+                            System.getProperty("os.version")));
             this.addField(
                     new UserAgent.Field(
-                        "Language",
-                        "Java",
-                        System.getProperty("java.version"),
-                        "Vendor/" + System.getProperty("java.vendor")
-                                .replace(" ", "-"),
-                        "VM/" + System.getProperty("java.vm.name")
-                                .replace(" ", "-")));
+                            "Language",
+                            "Java",
+                            System.getProperty("java.version"),
+                            "Vendor/" + System.getProperty("java.vendor")
+                                    .replace(" ", "-"),
+                            "VM/" + System.getProperty("java.vm.name")
+                                    .replace(" ", "-")));
         } catch (KlarnaException ex) {
             Logger.getLogger(
                     UserAgent.class.getName()).log(Level.SEVERE, null, ex);

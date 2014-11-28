@@ -120,7 +120,7 @@ public class ConnectorGETTest {
         assertEquals("GET", this.transport.getHttpUriRequest().getMethod());
 
         HttpUriRequest req = transport.getHttpUriRequest();
-        assertNotNull("UserAgent", req.getLastHeader("UserAgent"));
+        assertNotNull("User-Agent", req.getLastHeader("User-Agent"));
 
         verify(this.resource).parse(this.payloadMap);
     }
@@ -273,7 +273,7 @@ public class ConnectorGETTest {
                 contentType,
                 req.getLastHeader("Accept").getValue());
 
-        assertNotNull("UserAgent", req.getLastHeader("UserAgent"));
+        assertNotNull("User-Agent", req.getLastHeader("User-Agent"));
 
         verify(digest, times(1)).create("");
     }

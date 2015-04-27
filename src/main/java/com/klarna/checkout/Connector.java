@@ -33,14 +33,30 @@ public final class Connector {
     /**
      * Create a Connector to use.
      *
-     * @param sharedSecret string used to sign communications with Klarna
-     *
+     * @param sharedSecret String used to sign communications with Klarna
      * @return a IConnector implementation
-     *
      * @throws NoSuchAlgorithmException if the JVM does not support SHA-256
      */
     public static IConnector create(final String sharedSecret)
             throws NoSuchAlgorithmException {
         return new BasicConnector(new Digest(sharedSecret));
+    }
+
+    /**
+     * Create a Connector to use with a specific base URL.
+     *
+     * @param sharedSecret String used to sign communications with Klarna
+     * @param baseURL      Base URL to use
+     * @return a IConnector implementation
+     * @throws NoSuchAlgorithmException if the JVM does not support SHA-256
+     */
+    public static IConnector create(
+            final String sharedSecret, final String baseURL)
+            throws NoSuchAlgorithmException {
+        return new BasicConnector(new Digest(sharedSecret)) {
+            {
+                setBaseUri(baseURL);
+            }
+        };
     }
 }

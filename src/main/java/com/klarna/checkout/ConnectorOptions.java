@@ -31,6 +31,7 @@ public class ConnectorOptions {
      * URI option.
      */
     private URI uri;
+
     /**
      * Data option.
      */
@@ -49,7 +50,6 @@ public class ConnectorOptions {
      * Set the URI from a string.
      *
      * @param newUri string to parse for new URI location
-     *
      * @throws URISyntaxException if newUri could not be parsed.
      */
     public void setURI(final String newUri) throws URISyntaxException {

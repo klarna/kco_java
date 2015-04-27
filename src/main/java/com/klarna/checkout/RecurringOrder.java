@@ -19,66 +19,53 @@ package com.klarna.checkout;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 
 /**
- * Checkout order resource.
+ * Recurring order resource.
  */
-public class Order extends Resource
-        implements ICreatable, IFetchable, IUpdatable {
+public class RecurringOrder extends Resource implements ICreatable {
 
     /**
      * Resource path.
      */
-    public static final String PATH = "/checkout/orders";
+    public static final String PATH = RecurringStatus.PATH.concat("/orders");
 
     /**
      * Constructor.
      *
-     * @param conn IConnector implementation
+     * @param conn  IConnector implementation
+     * @param token Recurring token
+     * @throws URISyntaxException If URI wasn't created correctly
      */
-    public Order(final IConnector conn) {
-        this(conn, null);
+    public RecurringOrder(final IConnector conn, final String token)
+            throws URISyntaxException {
+        this(conn, new URI(
+                conn.getBaseUri().concat(PATH.replace("TOKEN", token))));
     }
 
     /**
      * Constructor.
      *
      * @param conn IConnector implementation
-     * @param uri  Resource URI
+     * @param uri  Resource uri
      */
-    public Order(final IConnector conn, final URI uri) {
+    public RecurringOrder(final IConnector conn, final URI uri) {
         super(conn, uri);
         this.setContentType(
-                "application/vnd.klarna.checkout.aggregated-order-v2+json");
-        this.setAccept(this.getContentType());
+                "application/vnd.klarna.checkout.recurring-order-v1+json");
+        this.setAccept(
+                "application/vnd.klarna.checkout.recurring-order-accepted-v1+json");
     }
 
     @Override
-    public void create(final Map<String, Object> datum) throws IOException {
-        ConnectorOptions options = new ConnectorOptions();
-
-        options.setURI(URI.create(connector.getBaseUri().concat(PATH)));
-        options.setData(datum);
-
-        connector.apply("POST", this, options);
-    }
-
-    @Override
-    public void fetch() throws IOException {
+    public void create(final Map<String, Object> data)
+            throws IOException, UnsupportedOperationException {
         ConnectorOptions options = new ConnectorOptions();
 
         options.setURI(this.getLocation());
-
-        connector.apply("GET", this, options);
-    }
-
-    @Override
-    public void update(final Map<String, Object> datum) throws IOException {
-        ConnectorOptions options = new ConnectorOptions();
-
-        options.setURI(this.getLocation());
-        options.setData(datum);
+        options.setData(data);
 
         connector.apply("POST", this, options);
     }

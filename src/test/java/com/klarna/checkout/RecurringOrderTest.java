@@ -24,51 +24,55 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
- * Tests for the Order class, basic functionality.
+ * Tests for the RecurringOrderTest class, basic functionality.
  */
-public class OrderTest {
+public class RecurringOrderTest {
     /**
      * Connector mock.
      */
     private IConnector conn;
 
     /**
-     * Set up tests.
+     * Set up for tests.
      */
     @Before
     public void setUp() {
         conn = mock(IConnector.class);
+        when(conn.getBaseUri()).thenReturn("https://mock.com");
     }
 
     /**
-     * Test that location is initialized as null.
+     * Test that location is initialized when using a token in the constructor.
      *
-     * @throws URISyntaxException But no
+     * @throws URISyntaxException But not really
      */
     @Test
-    public void testLocationEmpty() throws URISyntaxException {
-        Order order = new Order(conn);
-
-        assertNull(order.getLocation());
-    }
-
-    /**
-     * Ensure that the location can be initialized.
-     *
-     * @throws URISyntaxException But no
-     */
-    @Test
-    public void testLocationURI() throws URISyntaxException {
-        URI uri = new URI("http://whatever.com");
-        Order order = new Order(conn, uri);
+    public void testLocation() throws URISyntaxException {
+        RecurringOrder recurringOrder = new RecurringOrder(conn, "ABC-123");
 
         assertEquals(
-                "Location should have been set from the constructor",
+                "Location should be set from constructor with token",
+                "https://mock.com/checkout/recurring/ABC-123/orders",
+                recurringOrder.getLocation().toString());
+    }
+
+    /**
+     * Ensure that the location can be set from the constructor.
+     *
+     * @throws URISyntaxException But not really
+     */
+    @Test
+    public void testLocationWithFullURI() throws URISyntaxException {
+        URI uri = new URI("http://example.com");
+        RecurringOrder recurringOrder = new RecurringOrder(conn, uri);
+
+        assertEquals(
+                "Location should be set from constructor with full uri",
                 uri,
-                order.getLocation());
+                recurringOrder.getLocation());
     }
 }

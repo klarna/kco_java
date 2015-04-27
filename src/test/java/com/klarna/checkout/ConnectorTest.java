@@ -37,10 +37,6 @@ public class ConnectorTest {
      * Connector object.
      */
     private BasicConnector conn;
-    /**
-     * Digest mock.
-     */
-    private Digest digest;
 
     /**
      * Set up tests.
@@ -50,10 +46,10 @@ public class ConnectorTest {
     @Before
     public void setUp() throws UnsupportedEncodingException {
         this.resource = mock(IResource.class);
-        this.digest = mock(Digest.class);
-        this.conn = new BasicConnector(this.digest);
+        Digest digest = mock(Digest.class);
+        this.conn = new BasicConnector(digest);
 
-        when(this.digest.create(anyString())).thenReturn("bob");
+        when(digest.create(anyString())).thenReturn("bob");
     }
 
     /**

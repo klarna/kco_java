@@ -17,13 +17,38 @@
  */
 package com.klarna.checkout;
 
-import java.io.IOException;
 import org.apache.http.HttpResponse;
+
+import java.io.IOException;
 
 /**
  * Interface for the Connector object.
  */
 public interface IConnector {
+
+    /**
+     * Live host.
+     */
+    String BASE_URL = "https://checkout.klarna.com";
+
+    /**
+     * Test host.
+     */
+    String TEST_BASE_URL = "https://checkout.testdrive.klarna.com";
+
+    /**
+     * Set connector host.
+     *
+     * @param uri Connector base uri
+     */
+    void setBaseUri(final String uri);
+
+    /**
+     * Get connector host.
+     *
+     * @return Connector host
+     */
+    String getBaseUri();
 
     /**
      * Applying the method on the specific resource.

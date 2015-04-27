@@ -130,7 +130,7 @@ public class UserAgent {
                     new UserAgent.Field(
                             "Library",
                             "Klarna.ApiWrapper",
-                            "1.1.3"));
+                            "2.0.0"));
             this.addField(
                     new UserAgent.Field(
                             "OS",

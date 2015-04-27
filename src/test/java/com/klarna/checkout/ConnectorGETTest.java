@@ -19,18 +19,21 @@ package com.klarna.checkout;
 
 import com.klarna.checkout.stubs.HttpClientStub;
 import com.klarna.checkout.stubs.HttpClientStub.HTTPResponseStub;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpResponseException;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpResponseException;
-import org.apache.http.client.methods.HttpUriRequest;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
 /**
@@ -108,7 +111,7 @@ public class ConnectorGETTest {
 
         transport.addResponse(
                 new HTTPResponseStub(
-                200, new HashMap<String, String>(), payloadJson));
+                        200, new HashMap<String, String>(), payloadJson));
 
         HttpResponse result = conn.apply("GET", this.resource, null);
 
@@ -134,11 +137,10 @@ public class ConnectorGETTest {
     public void testApplyGetWithURIInOptions() throws Exception {
         transport.addResponse(
                 new HTTPResponseStub(
-                200, new HashMap<String, String>(), payloadJson));
+                        200, new HashMap<String, String>(), payloadJson));
         final URI expectedUri = new URI("http://www.foo.bar");
 
-        conn.apply(
-                "GET", resource, new ConnectorOptions() {
+        conn.apply("GET", resource, new ConnectorOptions() {
             {
                 setURI(expectedUri);
             }
@@ -163,14 +165,14 @@ public class ConnectorGETTest {
 
         transport.addResponse(
                 new HTTPResponseStub(301, new HashMap<String, String>() {
-            {
-                put("Location", redirect.toString());
-            }
-        }, payloadJson));
+                    {
+                        put("Location", redirect.toString());
+                    }
+                }, payloadJson));
 
         transport.addResponse(
                 new HTTPResponseStub(
-                200, new HashMap<String, String>(), payloadJson));
+                        200, new HashMap<String, String>(), payloadJson));
 
         conn.apply("GET", resource, options);
 
@@ -195,14 +197,14 @@ public class ConnectorGETTest {
 
         transport.addResponse(
                 new HTTPResponseStub(301, new HashMap<String, String>() {
-            {
-                put("Location", redirect.toString());
-            }
-        }, payloadJson));
+                    {
+                        put("Location", redirect.toString());
+                    }
+                }, payloadJson));
 
         transport.addResponse(
                 new HTTPResponseStub(
-                503, new HashMap<String, String>(), payloadJson));
+                        503, new HashMap<String, String>(), payloadJson));
 
         conn.apply("GET", resource, options);
 
@@ -227,17 +229,17 @@ public class ConnectorGETTest {
 
         transport.addResponse(
                 new HTTPResponseStub(301, new HashMap<String, String>() {
-            {
-                put("Location", redirect.toString());
-            }
-        }, payloadJson));
+                    {
+                        put("Location", redirect.toString());
+                    }
+                }, payloadJson));
 
         transport.addResponse(
                 new HTTPResponseStub(301, new HashMap<String, String>() {
-            {
-                put("Location", redirect.toString());
-            }
-        }, payloadJson));
+                    {
+                        put("Location", redirect.toString());
+                    }
+                }, payloadJson));
         conn.apply("GET", resource, options);
     }
 
@@ -249,14 +251,15 @@ public class ConnectorGETTest {
     @Test
     public void testHeadersSet() throws Exception {
         String authorization = "Klarna ".concat(digestString);
-
         String contentType = "klarna/json";
+        String accept = "klarna/something+json";
 
         when(resource.getContentType()).thenReturn(contentType);
+        when(resource.getAccept()).thenReturn(accept);
 
         transport.addResponse(
                 new HTTPResponseStub(
-                200, new HashMap<String, String>(), payloadJson));
+                        200, new HashMap<String, String>(), payloadJson));
 
         conn.apply("GET", resource, null);
         HttpUriRequest req = transport.getHttpUriRequest();
@@ -267,10 +270,9 @@ public class ConnectorGETTest {
                 "Authorization",
                 authorization,
                 req.getLastHeader("Authorization").getValue());
-
         assertEquals(
                 "Accept header",
-                contentType,
+                accept,
                 req.getLastHeader("Accept").getValue());
 
         assertNotNull("User-Agent", req.getLastHeader("User-Agent"));

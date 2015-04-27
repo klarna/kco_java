@@ -18,6 +18,7 @@
 package com.klarna.checkout;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.http.HttpResponse;
@@ -115,9 +116,10 @@ public class HandlerTest {
      * Test of parsePayload method, of class Handler.
      *
      * @throws IOException if the test fails.
+     * @throws URISyntaxException But not really
      */
     @Test
-    public void testParsePayload() throws IOException {
+    public void testParsePayload() throws IOException, URISyntaxException {
         String payload = "{\"foo\":\"bar\"}";
         Order o = new Order(mock(IConnector.class));
         Handler instance = new Handler(o);

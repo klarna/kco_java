@@ -37,6 +37,29 @@ public class ConnectorStub implements IConnector {
     private URI location;
 
     /**
+     * Host.
+     */
+    private String baseUri = IConnector.TEST_BASE_URL;
+
+    /**
+     * Get base uri.
+     *
+     * @return Base uri
+     */
+    public String getBaseUri() {
+        return baseUri;
+    }
+
+    /**
+     * Set base uri.
+     *
+     * @param base Base uri
+     */
+    public void setBaseUri(final String base) {
+        this.baseUri = base;
+    }
+
+    /**
      * Holder for the data sent to apply.
      */
     private HashMap<String, Object> applied;

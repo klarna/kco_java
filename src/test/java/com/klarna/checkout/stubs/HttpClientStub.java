@@ -46,7 +46,6 @@ import org.apache.http.client.CircularRedirectException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.entity.InputStreamEntity;
@@ -235,7 +234,8 @@ public class HttpClientStub implements IHttpClient {
      */
     private void fixData() throws IOException {
         if (this.httpUriReq.getMethod().equals("POST")) {
-            HttpEntityEnclosingRequest h = (HttpEntityEnclosingRequest) this.httpUriReq;
+            HttpEntityEnclosingRequest h =
+                    (HttpEntityEnclosingRequest) this.httpUriReq;
 
             InputStream is = h.getEntity().getContent();
             java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
@@ -292,7 +292,8 @@ public class HttpClientStub implements IHttpClient {
         this.visited.clear();
         if (this.httpUriReq instanceof HttpEntityEnclosingRequest) {
             try {
-                this.httpUriReq = new EntityEnclosingRequestWrapper((HttpEntityEnclosingRequest) hur);
+                this.httpUriReq = new EntityEnclosingRequestWrapper(
+                        (HttpEntityEnclosingRequest) hur);
             } catch (ProtocolException ex) {
                 throw new IOException(ex.getMessage());
             }

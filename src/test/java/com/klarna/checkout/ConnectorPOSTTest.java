@@ -57,10 +57,7 @@ public class ConnectorPOSTTest {
      * Digest mock.
      */
     private Digest digest;
-    /**
-     * Expected digestString.
-     */
-    private String digestString;
+
     /**
      * Connector object.
      */
@@ -78,8 +75,8 @@ public class ConnectorPOSTTest {
         this.payloadJson = "{\"flobadob\":[\"bobcat\",\"wookie\"]}";
         this.digest = mock(Digest.class);
 
-        this.digestString = "stnaeu\\eu2341aoaaoae==";
-        when(this.digest.create(anyString())).thenReturn(this.digestString);
+        String digestString = "stnaeu\\eu2341aoaaoae==";
+        when(this.digest.create(anyString())).thenReturn(digestString);
         this.conn = new BasicConnector(this.digest) {
             @Override
             protected IHttpClient createHttpClient() {

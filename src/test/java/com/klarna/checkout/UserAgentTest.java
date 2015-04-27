@@ -18,7 +18,6 @@
 package com.klarna.checkout;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -93,12 +92,14 @@ public class UserAgentTest {
     }
 
     /**
-     * Test that the entire User-Agent string looks like it should
+     * Test that the entire User-Agent string looks like it should.
      */
     @Test
     public void testCompleteFormat()  {
         final String string = this.agent.toString();
+
         final String format = "^(Library\\/Klarna\\.ApiWrapper_[^,\\s]+) (OS\\/[^,\\s]+) (Language\\/[^,\\s]+) \\((Vendor\\/[^;]+) ; (VM\\/[^;]+)\\)$";
+
         assertTrue(
                 "Format is incorrect",
                 string.matches(format));

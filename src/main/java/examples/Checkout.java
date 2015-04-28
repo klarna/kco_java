@@ -15,12 +15,12 @@
  *
  * File containing the Checkout example.
  */
-// [[examples-checkout]]
 package examples;
 
 import com.klarna.checkout.Connector;
 import com.klarna.checkout.IConnector;
 import com.klarna.checkout.Order;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,15 +29,24 @@ import java.util.Map;
 /**
  * Checkout example.
  */
-public final class Checkout {
+final class Checkout {
 
     /**
-     * The example.
+     * Empty constructor.
      */
-    public void example() {
+    private Checkout() {
 
-        // NOTE: Only a placeholder session object. Actual session object might
-        // be a javax.servlet.http.HttpSession for JSP for example.
+    }
+
+    /**
+     * Runs the example code.
+     *
+     * @param args Command line arguments
+     */
+    public static void main(final String[] args) {
+
+        // NOTE: Only a placeholder session object. Actual session object
+        // might be a javax.servlet.http.HttpSession for JSP for example.
         Map<String, Object> session = new HashMap<String, Object>();
 
         final Map<String, Object> cart = new HashMap<String, Object>() {
@@ -73,13 +82,8 @@ public final class Checkout {
             final String eid = "0";
             final String secret = "sharedSecret";
 
-            Order.setContentType(
-                    "application/vnd.klarna.checkout.aggregated-order-v2+json");
-            URI uri = new URI(
-                    "https://checkout.testdrive.klarna.com/checkout/orders");
-
-            Order.setBaseUri(uri);
-            IConnector connector = Connector.create(secret);
+            IConnector connector = Connector.create(
+                    secret, IConnector.TEST_BASE_URL);
 
             Order order = null;
 
@@ -111,21 +115,27 @@ public final class Checkout {
 
             if (order == null) {
                 // Start a new session.
-                final Map<String, Object> merchant;
-                merchant = new HashMap<String, Object>() {
+                final Map<String, Object> merchant = new HashMap<String, Object>() {
                     {
                         put("id", eid);
                         put("terms_uri", "http://example.com/terms.html");
                         put("checkout_uri", "http://example.com/checkout.jsp");
                         put("confirmation_uri",
                                 "http://example.com/thank-you.jsp"
-                                + "?sid=123&klarna_order={checkout.order.uri}");
+                                        + "?sid=123&klarna_order={checkout.order.uri}");
                         // You can not receive push notification on a
                         // non-publicly available uri.
                         put("push_uri",
                                 "http://example.com/push.jsp"
-                                + "?sid=123&klarna_order={checkout.order.uri}");
+                                        + "?sid=123&klarna_order={checkout.order.uri}");
                     }
+                };
+
+                // Add gui settings
+                final Map<String, Object> gui = new HashMap<String, Object>() {
+                    {
+                        put("layout", "desktop");
+                    } // or mobile
                 };
 
                 Map<String, Object> data = new HashMap<String, Object>() {
@@ -135,6 +145,7 @@ public final class Checkout {
                         put("locale", "sv-se");
                         put("merchant", merchant);
                         put("cart", cart);
+                        put("gui", gui);
                     }
                 };
 
@@ -144,7 +155,8 @@ public final class Checkout {
             }
 
             // Store checkout session.
-            //JSP: session.setAttribute("klarna_checkout", order.getLocation());
+            // JSP: session.setAttribute(
+            //         "klarna_checkout", order.getLocation());
             session.put("klarna_checkout", order.getLocation());
 
             // Display checkout
@@ -162,4 +174,3 @@ public final class Checkout {
         }
     }
 }
-// [[examples-checkout]]

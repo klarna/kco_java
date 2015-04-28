@@ -13,37 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * File containing the Push example.
+ * File containing the thank you example.
  */
-// [[examples-push]]
 package examples;
 
 import com.klarna.checkout.Connector;
 import com.klarna.checkout.IConnector;
 import com.klarna.checkout.Order;
+
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 /**
- * Push Example.
+ * Thank you example.
  */
-public class Push {
+final class Confirmation {
 
     /**
-     * The example.
+     * Empty constructor.
      */
-    public void example() {
+    private Confirmation() {
+
+    }
+
+    /**
+     * Runs the example code.
+     *
+     * @param args Command line arguments
+     */
+    public static void main(final String[] args) {
 
         try {
             // Shared secret.
             final String secret = "sharedSecret";
 
-            Order.setContentType(
-                    "application/vnd.klarna.checkout.aggregated-order-v2+json");
-
-            IConnector connector = Connector.create(secret);
+            IConnector connector = Connector.create(
+                    secret, IConnector.TEST_BASE_URL);
 
             // This is just a placeholder for the example.
             // For example in jsp you could do
@@ -55,28 +60,24 @@ public class Push {
 
             order.fetch();
 
-            if (((String) order.get("status")).equals("checkout_complete")) {
-                final Map<String, Object> reference =
-                        new HashMap<String, Object>() {
-                            {
-                                put("orderid1", UUID.randomUUID().toString());
-                            }
-                        };
-
-                Map<String, Object> updateData;
-                updateData = new HashMap<String, Object>() {
-                    {
-                        put("status", "created");
-                        put("merchant_reference", reference);
-                    }
-                };
-
-                order.update(updateData);
+            String status = (String) order.get("status");
+            if (!status.equals("checkout_complete")) {
+                // Report error
+                System.out.println("Checkout not completed, redirect");
             }
+
+            Map<String, Object> gui = (Map<String, Object>) order.get("gui");
+
+            String snippet = gui.get("snippet").toString();
+
+            // Output the snippet to the customer.
+            System.out.println(String.format("<div>%s</div>", snippet));
+            // Clear session object from klarna_checkout data.
+            // session.removeAttribute("klarna_checkout");
+
         } catch (Exception ex) {
             // Handle exception.
             ex.printStackTrace();
         }
     }
 }
-// [[examples-push]]

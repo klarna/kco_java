@@ -13,42 +13,54 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * File containing the Fetch example.
+ * File containing the FetchRecurring example.
  */
-// [[examples-fetch]]
 package examples;
 
 import com.klarna.checkout.Connector;
 import com.klarna.checkout.IConnector;
-import com.klarna.checkout.Order;
+import com.klarna.checkout.RecurringStatus;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * The fetch checkout example.
+ * The fetch recurring order status example.
  */
-public final class Fetch {
+final class FetchRecurring {
 
     /**
-     * The example.
+     * Empty constructor.
      */
-    public void example()
+    private FetchRecurring() {
+
+    }
+
+    /**
+     * Runs the example code.
+     *
+     * @param args Command line arguments
+     * @throws URISyntaxException       If URIs are incorrect
+     * @throws NoSuchAlgorithmException If connector couldn't be created
+     * @throws IOException              If api call failed
+     */
+    public static void main(final String[] args)
             throws URISyntaxException, NoSuchAlgorithmException, IOException {
 
         final String secret = "sharedSecret";
 
-        Order.setContentType(
-                "application/vnd.klarna.checkout.aggregated-order-v2+json");
-
-        URI resourceURI = new URI(
-                "https://checkout.testdrive.klarna.com/checkout/orders/ABC123");
+        URI uri = new URI(
+                "https://checkout.testdrive.klarna.com/checkout/recurring/ABC-123");
 
         IConnector connector = Connector.create(secret);
 
-        Order order = new Order(connector, resourceURI);
-        order.fetch();
+        RecurringStatus recurringStatus = new RecurringStatus(
+                connector, uri);
+
+        recurringStatus.fetch();
+
+        System.out.println(recurringStatus.get("payment_method"));
     }
 }
-// [[examples-fetch]]

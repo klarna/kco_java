@@ -16,9 +16,10 @@
 
 package com.klarna.checkout;
 
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * UserAgentTest.
@@ -71,12 +72,12 @@ public class UserAgentTest {
         String[] arr = new String[]{"butter/3", "cheese/0.1"};
         this.agent.addField(
                 new UserAgent.Field(
-                "Bread", "Crumb", "2.5", arr));
+                        "Bread", "Crumb", "2.5", arr));
         final String string = this.agent.toString();
         assertTrue(
                 "New field wasn't found",
                 string.matches(
-                ".*Bread/Crumb_2\\.5.* \\(butter\\/3 ; cheese\\/0.1\\).*"));
+                        ".*Bread/Crumb_2\\.5.* \\(butter\\/3 ; cheese\\/0.1\\).*"));
     }
 
     /**
@@ -94,7 +95,7 @@ public class UserAgentTest {
      * Test that the entire User-Agent string looks like it should.
      */
     @Test
-    public void testCompleteFormat()  {
+    public void testCompleteFormat() {
         final String string = this.agent.toString();
 
         final String format = "^(Library\\/Klarna\\.ApiWrapper_[^,\\s]+) (OS\\/[^,\\s]+) (Language\\/[^,\\s]+) \\((Vendor\\/[^;]+) ; (VM\\/[^;]+)\\)$";

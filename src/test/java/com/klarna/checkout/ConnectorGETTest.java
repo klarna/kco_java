@@ -44,26 +44,32 @@ public class ConnectorGETTest {
      * Resource mock.
      */
     private IResource resource;
+
     /**
      * Payload Map object.
      */
     private Map<String, Object> payloadMap;
+
     /**
      * Payload JSON string.
      */
     private String payloadJson;
+
     /**
      * Stubbed transport.
      */
     private HttpClientStub transport;
+
     /**
      * Digest mock.
      */
     private Digest digest;
+
     /**
      * Expected digest string.
      */
     private String digestString;
+
     /**
      * Connector object.
      */

@@ -39,13 +39,6 @@ public interface IResource {
     void setLocation(URI uri);
 
     /**
-     * Set the content type header.
-     *
-     * @param type Content type of the resource
-     */
-    void setContentType(String type);
-
-    /**
      * Get the content type header.
      *
      * @return The content type of the resource.
@@ -53,11 +46,11 @@ public interface IResource {
     String getContentType();
 
     /**
-     * Set the accept header.
+     * Set the content type header.
      *
-     * @param accept The accept type of the resource.
+     * @param type Content type of the resource
      */
-    void setAccept(String accept);
+    void setContentType(String type);
 
     /**
      * Get the accept header.
@@ -65,6 +58,13 @@ public interface IResource {
      * @return The accept type of the resource.
      */
     String getAccept();
+
+    /**
+     * Set the accept header.
+     *
+     * @param accept The accept type of the resource.
+     */
+    void setAccept(String accept);
 
     /**
      * Update resource with new data.

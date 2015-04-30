@@ -17,12 +17,7 @@
 package com.klarna.checkout;
 
 import com.klarna.checkout.stubs.HttpClientStub;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Collection;
 import org.apache.http.client.HttpResponseException;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,7 +25,15 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import static org.mockito.Mockito.*;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Collection;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Parameterized tests for error codes.
@@ -42,22 +45,33 @@ public class ConnectorErrorCodesTest {
      * Exception message.
      */
     private final String message;
+
+    /**
+     * Exception rule.
+     */
+    @Rule
+    public ExpectedException expectedEx = ExpectedException.none();
+
     /**
      * Status code.
      */
     private int code;
+
     /**
      * IHttpClient Stub.
      */
     private HttpClientStub transport;
+
     /**
      * Connector object.
      */
     private BasicConnector conn;
+
     /**
      * Expected digest string.
      */
     private String digestString;
+
     /**
      * Digest mock.
      */
@@ -66,13 +80,40 @@ public class ConnectorErrorCodesTest {
     /**
      * Constructor. Needed for parameterized running.
      *
-     * @param statusCode status code
+     * @param statusCode       status code
      * @param exceptionMessage exception message
      */
     public ConnectorErrorCodesTest(
             final int statusCode, final String exceptionMessage) {
         this.code = statusCode;
         this.message = exceptionMessage;
+    }
+
+    /**
+     * Test case parameters.
+     *
+     * @return test parameters
+     */
+    @Parameters
+    public static Collection<Object[]> data() {
+        Object[][] data = new Object[][]{
+                {400, "Bad Request"},
+                {401, "Unauthorized"},
+                {402, "PaymentRequired"},
+                {403, "Forbidden"},
+                {404, "Not Found"},
+                {406, "HTTP Error"},
+                {409, "HTTP Error"},
+                {412, "HTTP Error"},
+                {415, "HTTP Error"},
+                {422, "HTTP Error"},
+                {428, "HTTP Error"},
+                {429, "HTTP Error"},
+                {500, "Internal Server Error"},
+                {502, "Service temporarily overloaded"},
+                {503, "Gateway timeout"}
+        };
+        return Arrays.asList(data);
     }
 
     /**
@@ -95,36 +136,6 @@ public class ConnectorErrorCodesTest {
     }
 
     /**
-     * @return test parameters
-     */
-    @Parameters
-    public static Collection<Object[]> data() {
-        Object[][] data = new Object[][]{
-            {400, "Bad Request"},
-            {401, "Unauthorized"},
-            {402, "PaymentRequired"},
-            {403, "Forbidden"},
-            {404, "Not Found"},
-            {406, "HTTP Error"},
-            {409, "HTTP Error"},
-            {412, "HTTP Error"},
-            {415, "HTTP Error"},
-            {422, "HTTP Error"},
-            {428, "HTTP Error"},
-            {429, "HTTP Error"},
-            {500, "Internal Server Error"},
-            {502, "Service temporarily overloaded"},
-            {503, "Gateway timeout"}
-        };
-        return Arrays.asList(data);
-    }
-    /**
-     * Exception rule.
-     */
-    @Rule
-    public ExpectedException expectedEx = ExpectedException.none();
-
-    /**
      * Test error codes with GET.
      *
      * @throws Exception as it should.
@@ -142,10 +153,10 @@ public class ConnectorErrorCodesTest {
 
         conn.apply(
                 "GET", resource, new ConnectorOptions() {
-            {
-                setURI(expectedUri);
-            }
-        });
+                    {
+                        setURI(expectedUri);
+                    }
+                });
 
         assertEquals("GET", transport.getHttpUriRequest().getMethod());
         assertEquals(expectedUri, transport.getHttpUriRequest().getURI());
@@ -168,10 +179,10 @@ public class ConnectorErrorCodesTest {
 
         conn.apply(
                 "POST", resource, new ConnectorOptions() {
-            {
-                setURI(expectedUri);
-            }
-        });
+                    {
+                        setURI(expectedUri);
+                    }
+                });
 
         assertEquals("POST", transport.getHttpUriRequest().getMethod());
         assertEquals(expectedUri, transport.getHttpUriRequest().getURI());

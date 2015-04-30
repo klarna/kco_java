@@ -30,6 +30,7 @@ import static org.mockito.Mockito.mock;
  * Tests for the Order class, basic functionality.
  */
 public class OrderTest {
+
     /**
      * Connector mock.
      */

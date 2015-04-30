@@ -26,16 +26,6 @@ import java.util.Map;
 abstract class Resource implements IResource {
 
     /**
-     * Content type string.
-     */
-    protected String contentType;
-
-    /**
-     * Accept type string.
-     */
-    protected String accept;
-
-    /**
      * Connector.
      */
     protected final IConnector connector;
@@ -44,6 +34,16 @@ abstract class Resource implements IResource {
      * Data of the order.
      */
     protected final Map data;
+
+    /**
+     * Content type string.
+     */
+    protected String contentType;
+
+    /**
+     * Accept type string.
+     */
+    protected String accept;
 
     /**
      * Resource location.
@@ -75,23 +75,23 @@ abstract class Resource implements IResource {
     }
 
     @Override
-    public void setContentType(final String type) {
-        this.contentType = type;
-    }
-
-    @Override
     public String getContentType() {
         return this.contentType;
     }
 
     @Override
-    public void setAccept(final String type) {
-        this.accept = type;
+    public void setContentType(final String type) {
+        this.contentType = type;
     }
 
     @Override
     public String getAccept() {
         return this.accept;
+    }
+
+    @Override
+    public void setAccept(final String type) {
+        this.accept = type;
     }
 
     @Override

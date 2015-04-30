@@ -39,7 +39,7 @@ public class HttpClientWrapper extends DefaultHttpClient
      * Constructor.
      *
      * @param connectionManager A ClientConnectionManager implementation
-     * @param params HTTP Parameters to pass along
+     * @param params            HTTP Parameters to pass along
      */
     public HttpClientWrapper(
             final ClientConnectionManager connectionManager,

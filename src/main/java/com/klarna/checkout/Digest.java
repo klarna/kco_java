@@ -16,6 +16,8 @@
 
 package com.klarna.checkout;
 
+import org.apache.commons.codec.binary.Base64;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -23,7 +25,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.codec.binary.Base64;
 
 /**
  * Class to handle the digesting of hash string.
@@ -44,9 +45,8 @@ public class Digest {
      * Constructor.
      *
      * @param sharedSecret Shared Secret
-     *
      * @throws NoSuchAlgorithmException if SHA-256 is not supported by
-     * the Java VM.
+     *                                  the Java VM.
      */
     public Digest(final String sharedSecret) throws NoSuchAlgorithmException {
         this.secret = sharedSecret;
@@ -57,9 +57,7 @@ public class Digest {
      * Create a digest from a supplied string.
      *
      * @param message string to hash
-     *
      * @return Base64 and SHA256 hashed string
-     *
      * @throws UnsupportedEncodingException if UTF-8 is unsupported
      */
     public String create(final String message)
@@ -79,9 +77,7 @@ public class Digest {
      * Create a digest from an input stream.
      *
      * @param stream character stream to hash
-     *
      * @return Base64 and SHA256 hashed string
-     *
      * @throws UnsupportedEncodingException if UTF-8 is unsupported
      */
     public String create(final InputStream stream)

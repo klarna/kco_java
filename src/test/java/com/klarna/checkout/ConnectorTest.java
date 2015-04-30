@@ -16,11 +16,13 @@
 
 package com.klarna.checkout;
 
-import java.io.UnsupportedEncodingException;
 import org.apache.http.params.HttpConnectionParams;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.UnsupportedEncodingException;
+
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -32,6 +34,7 @@ public class ConnectorTest {
      * Resource mock.
      */
     private IResource resource;
+
     /**
      * Connector object.
      */
@@ -134,6 +137,6 @@ public class ConnectorTest {
                 "Timeout wasn't set",
                 3000,
                 HttpConnectionParams.getSoTimeout(
-                    connector.getClient().getParams()));
+                        connector.getClient().getParams()));
     }
 }

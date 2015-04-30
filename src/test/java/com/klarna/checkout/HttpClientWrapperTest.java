@@ -19,10 +19,11 @@ package com.klarna.checkout;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpParams;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
 import org.junit.Test;
-import static org.mockito.Mockito.*;
+
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
 /**
  * Unit Tests for HttpClientWrapper.

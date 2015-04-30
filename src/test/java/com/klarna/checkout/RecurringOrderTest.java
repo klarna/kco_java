@@ -30,6 +30,7 @@ import static org.mockito.Mockito.when;
  * Tests for the RecurringOrderTest class, basic functionality.
  */
 public class RecurringOrderTest {
+
     /**
      * Connector mock.
      */

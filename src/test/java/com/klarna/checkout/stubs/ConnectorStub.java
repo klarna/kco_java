@@ -19,10 +19,11 @@ package com.klarna.checkout.stubs;
 import com.klarna.checkout.ConnectorOptions;
 import com.klarna.checkout.IConnector;
 import com.klarna.checkout.IResource;
+import org.apache.http.HttpResponse;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
-import org.apache.http.HttpResponse;
 
 /**
  * Stub implementation of the IConnector interface.
@@ -38,6 +39,11 @@ public class ConnectorStub implements IConnector {
      * Host.
      */
     private String baseUri = IConnector.TEST_BASE_URL;
+
+    /**
+     * Holder for the data sent to apply.
+     */
+    private HashMap<String, Object> applied;
 
     /**
      * Get base uri.
@@ -58,15 +64,9 @@ public class ConnectorStub implements IConnector {
     }
 
     /**
-     * Holder for the data sent to apply.
-     */
-    private HashMap<String, Object> applied;
-
-    /**
      * Get an applied argument.
      *
      * @param key method, resource or options
-     *
      * @return the applied object.
      */
     public Object getApplied(final String key) {
@@ -76,12 +76,10 @@ public class ConnectorStub implements IConnector {
     /**
      * Stub of the apply method.
      *
-     * @param method HTTP Method
+     * @param method   HTTP Method
      * @param resource IResource implementation
-     * @param options ConnectorOptions object.
-     *
+     * @param options  ConnectorOptions object.
      * @return HttpResponse object
-     *
      * @throws IOException in case of an I/O error
      */
     public HttpResponse apply(
@@ -102,11 +100,9 @@ public class ConnectorStub implements IConnector {
     /**
      * Stub of the apply method.
      *
-     * @param method HTTP Method
+     * @param method   HTTP Method
      * @param resource IResource implementation
-     *
      * @return HttpResponse object
-     *
      * @throws IOException in case of an I/O error
      */
     public HttpResponse apply(

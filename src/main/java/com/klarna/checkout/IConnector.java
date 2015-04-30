@@ -36,28 +36,26 @@ public interface IConnector {
     String TEST_BASE_URL = "https://checkout.testdrive.klarna.com";
 
     /**
-     * Set connector host.
+     * Get connector base URI string.
      *
-     * @param uri Connector base uri
-     */
-    void setBaseUri(final String uri);
-
-    /**
-     * Get connector host.
-     *
-     * @return Connector host
+     * @return Connector Base URI string
      */
     String getBaseUri();
 
     /**
+     * Set connector base URI string.
+     *
+     * @param uri Connector Base URI string
+     */
+    void setBaseUri(final String uri);
+
+    /**
      * Applying the method on the specific resource.
      *
-     * @param method HTTP Method
+     * @param method   HTTP Method
      * @param resource IResource implementation
-     * @param options Options for Connector
-     *
+     * @param options  Options for Connector
      * @return a HTTP Response
-     *
      * @throws IOException in case of an I/O Error
      */
     HttpResponse apply(
@@ -67,11 +65,9 @@ public interface IConnector {
     /**
      * Applying the method on the specific resource. No options.
      *
-     * @param method HTTP Method
+     * @param method   HTTP Method
      * @param resource IResource implementation
-     *
      * @return a HTTP Response
-     *
      * @throws IOException in case of an I/O Error
      */
     HttpResponse apply(

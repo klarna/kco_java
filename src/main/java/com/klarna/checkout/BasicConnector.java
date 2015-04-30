@@ -43,19 +43,9 @@ import java.util.Map;
 public class BasicConnector implements IConnector {
 
     /**
-     * Connector baseUri.
-     */
-    private String baseUri = IConnector.BASE_URL;
-
-    /**
      * Default timeout value in milliseconds.
      */
     public static final int DEFAULT_TIMEOUT = 10000;
-
-    /**
-     * HttpClient implementation.
-     */
-    protected IHttpClient client;
 
     /**
      * Digest instance.
@@ -66,6 +56,16 @@ public class BasicConnector implements IConnector {
      * ClientConnectionManager instance.
      */
     private final ClientConnectionManager manager;
+
+    /**
+     * HttpClient implementation.
+     */
+    protected IHttpClient client;
+
+    /**
+     * Connector baseUri.
+     */
+    private String baseUri = IConnector.BASE_URL;
 
     /**
      * Constructor.
@@ -91,22 +91,14 @@ public class BasicConnector implements IConnector {
         this.manager = ccm;
     }
 
-    /**
-     * Set connector baseUri.
-     *
-     * @param base Connector baseUri
-     */
-    public void setBaseUri(final String base) {
-        this.baseUri = base;
-    }
-
-    /**
-     * Get connector baseUri.
-     *
-     * @return Connector baseUri
-     */
+    @Override
     public String getBaseUri() {
         return this.baseUri;
+    }
+
+    @Override
+    public void setBaseUri(final String base) {
+        this.baseUri = base;
     }
 
     /**
@@ -121,38 +113,19 @@ public class BasicConnector implements IConnector {
         return new HttpClientWrapper(this.manager, params);
     }
 
-    /**
-     * Specify a socket timeout to use.
-     *
-     * @param milliseconds Milliseconds to use as timeout.
-     */
+    @Override
     public void setTimeout(final int milliseconds) {
         HttpConnectionParams.setSoTimeout(
                 this.getClient().getParams(), milliseconds);
     }
 
-    /**
-     * Applying the method on the specific resource. No Options.
-     *
-     * @param method   HTTP method
-     * @param resource Resource implementation
-     * @return A HttpResponse object
-     * @throws IOException In case of an I/O Error.
-     */
+    @Override
     public HttpResponse apply(final String method, final IResource resource)
             throws IOException {
         return apply(method, resource, new ConnectorOptions());
     }
 
-    /**
-     * Applying the method on the specific resource.
-     *
-     * @param method   HTTP method
-     * @param resource Resource implementation
-     * @param options  Connector Options
-     * @return A HttpResponse object
-     * @throws IOException In case of an I/O Error.
-     */
+    @Override
     public HttpResponse apply(
             final String method,
             final IResource resource,

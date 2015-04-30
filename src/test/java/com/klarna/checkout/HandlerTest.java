@@ -16,17 +16,20 @@
 
 package com.klarna.checkout;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.entity.StringEntity;
-import static org.junit.Assert.*;
 import org.junit.Test;
-import static org.mockito.Mockito.*;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for the Handler class.
@@ -114,7 +117,7 @@ public class HandlerTest {
     /**
      * Test of parsePayload method, of class Handler.
      *
-     * @throws IOException if the test fails.
+     * @throws IOException        if the test fails.
      * @throws URISyntaxException But not really
      */
     @Test

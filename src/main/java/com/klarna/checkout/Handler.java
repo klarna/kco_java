@@ -16,8 +16,6 @@
 
 package com.klarna.checkout;
 
-import java.io.IOException;
-import java.util.HashMap;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpResponseException;
@@ -25,6 +23,9 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.util.EntityUtils;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * ResponseHandler implementation that does not throw exception
@@ -50,9 +51,7 @@ class Handler implements ResponseHandler<HttpResponse> {
      * Handle response and don't throw exception for 3xx codes.
      *
      * @param response Response from HTTP Request
-     *
      * @return HttpResponse object
-     *
      * @throws IOException in case of a problem or the connection was aborted
      */
     public HttpResponse handleResponse(final HttpResponse response)
@@ -73,9 +72,8 @@ class Handler implements ResponseHandler<HttpResponse> {
      * Verify Status Code.
      *
      * @param result HTTP Response object
-     *
      * @throws HttpResponseException if code is between 400 and 599 (inclusive)
-     * @throws IOException if response could not be read
+     * @throws IOException           if response could not be read
      */
     protected void verifyStatusCode(final HttpResponse result)
             throws HttpResponseException, IOException {
@@ -91,7 +89,6 @@ class Handler implements ResponseHandler<HttpResponse> {
      * Parse the payload.
      *
      * @param payload JSON payload to parse.
-     *
      * @throws IOException if parse was unsuccessful.
      */
     protected void parsePayload(final String payload) throws IOException {

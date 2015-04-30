@@ -46,6 +46,15 @@ public class ConnectorOptions {
     }
 
     /**
+     * Get URI object.
+     *
+     * @return the set URI.
+     */
+    public URI getURI() {
+        return this.uri;
+    }
+
+    /**
      * Set the URI from a string.
      *
      * @param newUri string to parse for new URI location
@@ -56,13 +65,8 @@ public class ConnectorOptions {
     }
 
     /**
-     * @return the set URI.
-     */
-    public URI getURI() {
-        return this.uri;
-    }
-
-    /**
+     * Get the data.
+     *
      * @return the set Data.
      */
     public Map<String, Object> getData() {

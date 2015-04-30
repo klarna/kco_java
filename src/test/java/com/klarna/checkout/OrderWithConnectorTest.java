@@ -36,6 +36,7 @@ public class OrderWithConnectorTest {
      * Connector Stub.
      */
     private ConnectorStub connector;
+
     /**
      * Order object.
      */
@@ -65,7 +66,9 @@ public class OrderWithConnectorTest {
         this.connector.setLocation(location);
 
         Map<String, Object> data = new HashMap<String, Object>() {
-            { put("foo", "boo"); }
+            {
+                put("foo", "boo");
+            }
         };
 
         order.create(data);
@@ -109,7 +112,9 @@ public class OrderWithConnectorTest {
         order.setLocation(location);
 
         Map<String, Object> data = new HashMap<String, Object>() {
-            { put("foo", "boo"); }
+            {
+                put("foo", "boo");
+            }
         };
 
         order.update(data);

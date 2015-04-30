@@ -17,30 +17,7 @@
 package com.klarna.checkout.stubs;
 
 import com.klarna.checkout.IHttpClient;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.apache.http.Header;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpException;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpResponseInterceptor;
-import org.apache.http.ProtocolException;
-import org.apache.http.ProtocolVersion;
+import org.apache.http.*;
 import org.apache.http.client.CircularRedirectException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
@@ -57,43 +34,61 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Stubbed implementation of IHttpClient.
  */
 public class HttpClientStub implements IHttpClient {
 
     /**
-     * HttpUriRequest.
-     */
-    private HttpUriRequest httpUriReq;
-    /**
-     * A list holding the expected responses.
-     */
-    private ArrayList<HTTPResponseStub> responseList;
-    /**
-     * Memory for the latest response seen.
-     */
-    private HTTPResponseStub lastResponse;
-    /**
      * Store for ResponseInterceptors.
      */
     private final ArrayList<HttpResponseInterceptor> responseInterceptors;
+
     /**
      * Store for RequestInterceptors.
      */
     private final ArrayList<HttpRequestInterceptor> requestInterceptors;
+
     /**
      * HttpParams storage.
      */
     private final HttpParams params;
+
+    /**
+     * HttpUriRequest.
+     */
+    private HttpUriRequest httpUriReq;
+
+    /**
+     * A list holding the expected responses.
+     */
+    private ArrayList<HTTPResponseStub> responseList;
+
+    /**
+     * Memory for the latest response seen.
+     */
+    private HTTPResponseStub lastResponse;
+
     /**
      * Visited locations.
      */
     private Set<URI> visited;
+
     /**
      * Expected Location URI.
      */
     private URI expecedLocation;
+
     /**
      * Data holder.
      */
@@ -125,6 +120,8 @@ public class HttpClientStub implements IHttpClient {
     }
 
     /**
+     * Get HTTP URI request.
+     *
      * @return the stored HttpUriRequest
      */
     public HttpUriRequest getHttpUriRequest() {
@@ -144,10 +141,8 @@ public class HttpClientStub implements IHttpClient {
      * Basic execution.
      *
      * @param hur HttpUriRequest object
-     *
      * @return first element in the lastResponse list.
-     *
-     * @throws IOException if an I/O error occurs
+     * @throws IOException             if an I/O error occurs
      * @throws ClientProtocolException if a client protocol violation happened
      */
     public HttpResponse execute(final HttpUriRequest hur)
@@ -179,11 +174,9 @@ public class HttpClientStub implements IHttpClient {
      * Unused stub.
      *
      * @param hur HttpUriRequest
-     * @param hc HttpContext
-     *
+     * @param hc  HttpContext
      * @return nothing.
-     *
-     * @throws IOException never
+     * @throws IOException             never
      * @throws ClientProtocolException never
      */
     public HttpResponse execute(final HttpUriRequest hur, final HttpContext hc)
@@ -196,10 +189,8 @@ public class HttpClientStub implements IHttpClient {
      *
      * @param hh HttpHost
      * @param hr HttpRequest
-     *
      * @return nothing.
-     *
-     * @throws IOException never
+     * @throws IOException             never
      * @throws ClientProtocolException never
      */
     public HttpResponse execute(
@@ -214,10 +205,8 @@ public class HttpClientStub implements IHttpClient {
      * @param hh HttpHost
      * @param hr HttpRequest
      * @param hc HttpContext
-     *
      * @return nothing.
-     *
-     * @throws IOException never
+     * @throws IOException             never
      * @throws ClientProtocolException never
      */
     public HttpResponse execute(
@@ -270,11 +259,9 @@ public class HttpClientStub implements IHttpClient {
      *
      * @param <T> The class ResponseHandler operates on
      * @param hur HttpUriRequest object
-     * @param rh ResponseHandler object
-     * @param hc HttpContext holder
-     *
+     * @param rh  ResponseHandler object
+     * @param hc  HttpContext holder
      * @return ResponseHandler result
-     *
      * @throws IOException never
      */
     public <T> T execute(
@@ -346,13 +333,11 @@ public class HttpClientStub implements IHttpClient {
      * Unused stub.
      *
      * @param <T> Class
-     * @param hh HttpHost
-     * @param hr HttpRequest
-     * @param rh ResponseHandler
-     *
+     * @param hh  HttpHost
+     * @param hr  HttpRequest
+     * @param rh  ResponseHandler
      * @return nothing
-     *
-     * @throws IOException never
+     * @throws IOException             never
      * @throws ClientProtocolException never
      */
     public <T> T execute(
@@ -367,14 +352,12 @@ public class HttpClientStub implements IHttpClient {
      * Unused stub.
      *
      * @param <T> Class
-     * @param hh HttpHost
-     * @param hr HttpRequest
-     * @param rh ResponseHandler
-     * @param hc HttpContext
-     *
+     * @param hh  HttpHost
+     * @param hr  HttpRequest
+     * @param rh  ResponseHandler
+     * @param hc  HttpContext
      * @return nothing
-     *
-     * @throws IOException never
+     * @throws IOException             never
      * @throws ClientProtocolException never
      */
     public <T> T execute(
@@ -398,7 +381,7 @@ public class HttpClientStub implements IHttpClient {
     /**
      * Add a response with a status code and a payload.
      *
-     * @param i status code
+     * @param i   status code
      * @param str payload string
      */
     public void addResponse(final int i, final String str) {
@@ -418,8 +401,8 @@ public class HttpClientStub implements IHttpClient {
     /**
      * Add a Fitnesse response.
      *
-     * @param uri uri
-     * @param status status
+     * @param uri     uri
+     * @param status  status
      * @param headers headers
      * @throws URISyntaxException if uri could not be parsed.
      */
@@ -433,6 +416,8 @@ public class HttpClientStub implements IHttpClient {
     }
 
     /**
+     * Get response.
+     *
      * @return the first item in the response list.
      */
     public HTTPResponseStub getResponse() {
@@ -444,11 +429,9 @@ public class HttpClientStub implements IHttpClient {
      *
      * @param <T> Class
      * @param hur HttpUriRequest
-     * @param rh ResponseHandler
-     *
+     * @param rh  ResponseHandler
      * @return nothing
-     *
-     * @throws IOException never
+     * @throws IOException             never
      * @throws ClientProtocolException never
      */
     public <T> T execute(
@@ -484,8 +467,8 @@ public class HttpClientStub implements IHttpClient {
         /**
          * Constructor.
          *
-         * @param code status code
-         * @param headers http header map
+         * @param code        status code
+         * @param headers     http header map
          * @param payloadJson payload string
          */
         public HTTPResponseStub(

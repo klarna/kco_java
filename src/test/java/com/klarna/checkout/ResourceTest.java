@@ -37,29 +37,11 @@ import static org.mockito.Mockito.when;
  */
 @RunWith(Parameterized.class)
 public class ResourceTest {
+
     /**
      * Resource under test.
      */
     private Resource resource;
-
-    /**
-     * Get a list of resources to test.
-     *
-     * @return Resource The resource to test
-     *
-     * @throws URISyntaxException But not really
-     */
-    @Parameterized.Parameters
-    public static Collection<Resource[]> data() throws URISyntaxException {
-        IConnector conn = mock(IConnector.class);
-        when(conn.getBaseUri()).thenReturn("http://zoidberg.com/");
-
-        return Arrays.asList(new Resource[][] {
-                {new Order(conn)},
-                {new RecurringStatus(conn, "ABC")},
-                {new RecurringOrder(conn, "ABC")}
-        });
-    }
 
     /**
      * Constructor.
@@ -68,6 +50,24 @@ public class ResourceTest {
      */
     public ResourceTest(final Resource current) {
         this.resource = current;
+    }
+
+    /**
+     * Get a list of resources to test.
+     *
+     * @return Resource The resource to test
+     * @throws URISyntaxException But not really
+     */
+    @Parameterized.Parameters
+    public static Collection<Resource[]> data() throws URISyntaxException {
+        IConnector conn = mock(IConnector.class);
+        when(conn.getBaseUri()).thenReturn("http://zoidberg.com/");
+
+        return Arrays.asList(new Resource[][]{
+                {new Order(conn)},
+                {new RecurringStatus(conn, "ABC")},
+                {new RecurringOrder(conn, "ABC")}
+        });
     }
 
     /**
@@ -114,7 +114,9 @@ public class ResourceTest {
     @Test
     public void testParseMarshalIdentity() {
         HashMap<String, Object> data = new HashMap<String, Object>() {
-            { put("foo", "boo"); }
+            {
+                put("foo", "boo");
+            }
         };
 
         this.resource.parse(data);
@@ -128,7 +130,9 @@ public class ResourceTest {
     @Test
     public void testGet() {
         HashMap<String, Object> data = new HashMap<String, Object>() {
-            { put("foo", "boo"); }
+            {
+                put("foo", "boo");
+            }
         };
 
         this.resource.parse(data);
@@ -142,8 +146,13 @@ public class ResourceTest {
     @Test
     public void testMarshalHasCorrectKeys() {
         HashMap<String, Object> data = new HashMap<String, Object>() {
-            { put("testKey1", "testValue1"); }
-            { put("testKey2", "testValue2"); }
+            {
+                put("testKey1", "testValue1");
+            }
+
+            {
+                put("testKey2", "testValue2");
+            }
         };
 
         this.resource.parse(data);

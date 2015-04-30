@@ -16,10 +16,12 @@
 
 package com.klarna.checkout;
 
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import static org.junit.Assert.*;
-import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Unit Tests for Digest.
@@ -35,6 +37,7 @@ public class DigestTest {
             + "\"currency\":\"SEK\","
             + "\"country\":\"SWE\","
             + "\"language\":\"SV\"}";
+
     /**
      * Expected digest.
      */

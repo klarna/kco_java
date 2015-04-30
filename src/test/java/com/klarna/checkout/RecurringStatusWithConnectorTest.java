@@ -29,6 +29,7 @@ import static org.junit.Assert.assertEquals;
  * Tests for the Order class, interactions with connector.
  */
 public class RecurringStatusWithConnectorTest {
+
     /**
      * Connector Stub.
      */

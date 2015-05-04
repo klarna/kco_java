@@ -20,13 +20,12 @@ import com.klarna.checkout.stubs.ConnectorStub;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
 
 /**
- * Tests for the Order class, interactions with connector.
+ * Tests for the RecurringStatus class, interactions with connector.
  */
 public class RecurringStatusWithConnectorTest {
 
@@ -36,12 +35,7 @@ public class RecurringStatusWithConnectorTest {
     private ConnectorStub connector;
 
     /**
-     * Uri stub.
-     */
-    private URI uri;
-
-    /**
-     * Order object.
+     * RecurringStatus object.
      */
     private RecurringStatus recurringStatus;
 
@@ -52,9 +46,12 @@ public class RecurringStatusWithConnectorTest {
      */
     @Before
     public void setUp() throws URISyntaxException {
-        connector = new ConnectorStub();
-        uri = new URI("http://klarna.com/foo/bar/15");
-        recurringStatus = new RecurringStatus(connector, uri);
+        connector = new ConnectorStub() {
+            {
+                setBaseUri("http://test.com");
+            }
+        };
+        recurringStatus = new RecurringStatus(connector, "15");
         recurringStatus.setContentType("");
     }
 
@@ -69,8 +66,10 @@ public class RecurringStatusWithConnectorTest {
 
         assertEquals("GET", connector.getApplied("method"));
         assertEquals(recurringStatus, connector.getApplied("resource"));
+        ConnectorOptions options = (
+                (ConnectorOptions) connector.getApplied("options"));
         assertEquals(
-                uri,
-                ((ConnectorOptions) connector.getApplied("options")).getURI());
+                "http://test.com/checkout/recurring/15",
+                options.getURI().toString());
     }
 }

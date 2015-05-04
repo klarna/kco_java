@@ -28,7 +28,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Tests for the Order class, interactions with connector.
+ * Tests for the RecurringOrder class, interactions with connector.
  */
 public class RecurringOrderWithConnectorTest {
 
@@ -38,7 +38,7 @@ public class RecurringOrderWithConnectorTest {
     private ConnectorStub connector;
 
     /**
-     * Order object.
+     * RecurringOrder object.
      */
     private RecurringOrder recurringOrder;
 
@@ -49,9 +49,12 @@ public class RecurringOrderWithConnectorTest {
      */
     @Before
     public void setUp() throws URISyntaxException {
-        connector = new ConnectorStub();
-        recurringOrder = new RecurringOrder(
-                connector, new URI("http://example.com/123"));
+        connector = new ConnectorStub() {
+            {
+                setBaseUri("http://example.com");
+            }
+        };
+        recurringOrder = new RecurringOrder(connector, "123");
         recurringOrder.setContentType("");
     }
 

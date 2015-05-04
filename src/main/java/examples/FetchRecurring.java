@@ -21,7 +21,6 @@ import com.klarna.checkout.IConnector;
 import com.klarna.checkout.RecurringStatus;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 
@@ -49,14 +48,13 @@ final class FetchRecurring {
             throws URISyntaxException, NoSuchAlgorithmException, IOException {
 
         final String secret = "sharedSecret";
+        final String recurringToken = "ABC-123";
 
-        URI uri = new URI(
-                "https://checkout.testdrive.klarna.com/checkout/recurring/ABC-123");
-
-        IConnector connector = Connector.create(secret);
+        IConnector connector = Connector.create(
+                secret, IConnector.TEST_BASE_URL);
 
         RecurringStatus recurringStatus = new RecurringStatus(
-                connector, uri);
+                connector, recurringToken);
 
         recurringStatus.fetch();
 

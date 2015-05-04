@@ -19,7 +19,6 @@ package com.klarna.checkout;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
@@ -27,7 +26,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests for the RecurringOrderTest class, basic functionality.
+ * Tests for the RecurringOrder class, basic functionality.
  */
 public class RecurringOrderTest {
 
@@ -58,21 +57,5 @@ public class RecurringOrderTest {
                 "Location should be set from constructor with token",
                 "https://mock.com/checkout/recurring/ABC-123/orders",
                 recurringOrder.getLocation().toString());
-    }
-
-    /**
-     * Ensure that the location can be set from the constructor.
-     *
-     * @throws URISyntaxException But not really
-     */
-    @Test
-    public void testLocationWithFullURI() throws URISyntaxException {
-        URI uri = new URI("http://example.com");
-        RecurringOrder recurringOrder = new RecurringOrder(conn, uri);
-
-        assertEquals(
-                "Location should be set from constructor with full uri",
-                uri,
-                recurringOrder.getLocation());
     }
 }

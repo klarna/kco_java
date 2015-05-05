@@ -18,6 +18,7 @@ package com.klarna.checkout;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.util.EntityUtils;
@@ -26,6 +27,8 @@ import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * ResponseHandler implementation that does not throw exception
@@ -69,19 +72,39 @@ class Handler implements ResponseHandler<HttpResponse> {
     }
 
     /**
-     * Verify Status Code.
+     * Verify the status code and throw an exception if the API responded with
+     * a status code between 400 and 599.
      *
      * @param result HTTP Response object
-     * @throws HttpResponseException if code is between 400 and 599 (inclusive)
-     * @throws IOException           if response could not be read
+     * @throws HttpResponseException If the API responded with a error.
      */
     protected void verifyStatusCode(final HttpResponse result)
-            throws HttpResponseException, IOException {
-        if (result.getStatusLine().getStatusCode() >= 400
-                && result.getStatusLine().getStatusCode() <= 599) {
-            throw new HttpResponseException(
-                    result.getStatusLine().getStatusCode(),
-                    EntityUtils.toString(result.getEntity()));
+            throws HttpResponseException {
+        final StatusLine statusLine = result.getStatusLine();
+        final int statusCode = statusLine.getStatusCode();
+
+        if (statusCode >= 400 && statusCode <= 599) {
+            final JSONParser jsonParser = new JSONParser();
+            Object payload = "";
+
+            try {
+                final String entity = EntityUtils.toString(result.getEntity());
+                payload = jsonParser.parse(entity);
+            } catch (IOException e) {
+                Logger.getLogger(Handler.class.getName()).log(
+                        Level.SEVERE, "Failed to parse response", e);
+
+                throw new HttpResponseException(
+                        statusCode, statusLine.getReasonPhrase());
+            } catch (ParseException e) {
+                Logger.getLogger(Handler.class.getName()).log(
+                        Level.SEVERE, "Invalid JSON response", e);
+
+                throw new HttpResponseException(
+                        statusCode, statusLine.getReasonPhrase());
+            }
+
+            throw new ErrorResponseException(statusLine, payload);
         }
     }
 

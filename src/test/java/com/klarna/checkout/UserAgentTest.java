@@ -19,6 +19,13 @@ package com.klarna.checkout;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.util.logging.Logger;
+import java.util.logging.StreamHandler;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -64,11 +71,9 @@ public class UserAgentTest {
 
     /**
      * Test that an added field exist in the string.
-     *
-     * @throws KlarnaException if things go wrong
      */
     @Test
-    public void testAddField() throws KlarnaException {
+    public void testAddField() {
         String[] arr = new String[]{"butter/3", "cheese/0.1"};
         this.agent.addField(
                 new UserAgent.Field(
@@ -81,14 +86,26 @@ public class UserAgentTest {
     }
 
     /**
-     * Test that trying to add an already existing field throws an exception.
-     *
-     * @throws KlarnaException if everything went well
+     * Test that trying to add an already existing field logs a message.
      */
-    @Test(expected = KlarnaException.class)
-    public void testAddFieldKeyAlreadyExists() throws KlarnaException {
+    @Test
+    public void testAddFieldKeyAlreadyExists() {
+        Logger logger = Logger.getLogger(UserAgent.class.getName());
+        OutputStream logCapturingStream = new ByteArrayOutputStream();
+        StreamHandler customLogHandler = new StreamHandler(
+                logCapturingStream,
+                logger.getParent().getHandlers()[0].getFormatter());
+
+        logger.addHandler(customLogHandler);
+
         this.agent.addField(
                 new UserAgent.Field("Language", "Something", "9"));
+
+        customLogHandler.flush();
+
+        assertThat(
+                logCapturingStream.toString(),
+                containsString("SEVERE: Unable to redefine field Language"));
     }
 
     /**

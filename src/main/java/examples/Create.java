@@ -17,8 +17,10 @@
 package examples;
 
 import com.klarna.checkout.Connector;
+import com.klarna.checkout.ErrorResponseException;
 import com.klarna.checkout.IConnector;
 import com.klarna.checkout.Order;
+import org.json.simple.JSONObject;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -124,6 +126,15 @@ final class Create {
             }
         };
 
-        order.create(data);
+        try {
+            order.create(data);
+
+            System.out.println(order.getLocation());
+        } catch (ErrorResponseException e) {
+            JSONObject json = (JSONObject) e.getJson();
+
+            System.out.println(json.get("http_status_message"));
+            System.out.println(json.get("internal_message"));
+        }
     }
 }

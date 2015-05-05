@@ -17,8 +17,10 @@
 package examples;
 
 import com.klarna.checkout.Connector;
+import com.klarna.checkout.ErrorResponseException;
 import com.klarna.checkout.IConnector;
 import com.klarna.checkout.RecurringOrder;
+import org.json.simple.JSONObject;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -70,23 +72,19 @@ final class CreateRecurring {
         final Map<String, Object> merchant = new HashMap<String, Object>() {
             {
                 put("id", eid);
-                put("terms_uri", "http://example.com/terms.html");
-                put("checkout_uri", "http://example.com/checkout.jsp");
-                put("confirmation_uri",
-                        "http://example.com/thank-you.jsp"
-                                + "?sid=123&klarna_order={checkout.order.uri}");
-                // You can not receive push notification on a
-                // non-publicly available uri.
-                put("push_uri",
-                        "http://example.com/push.jsp"
-                                + "?sid=123&klarna_order={checkout.order.uri}");
             }
         };
+
+        /**
+         * For testing purposes you can state either 'accept' or 'reject' at
+         * the end of the email addresses to trigger different responses,
+         */
+        final String email = "checkout-se@testdrive.klarna.accept";
 
         final Map<String, String> address = new HashMap<String, String>() {
             {
                 put("postal_code", "12345");
-                put("email", "checkout-se@testdrive.klarna.com");
+                put("email", email);
                 put("country", "se");
                 put("city", "Ankeborg");
                 put("family_name", "Approved");
@@ -143,9 +141,14 @@ final class CreateRecurring {
             }
         };
 
-        recurringOrder.create(data);
+        try {
+            recurringOrder.create(data);
+            System.out.println(
+                    recurringOrder.get(activate ? "invoice" : "reservation"));
+        } catch (ErrorResponseException e) {
+            JSONObject json = (JSONObject) e.getJson();
 
-        System.out.println(
-                recurringOrder.get(activate ? "invoice" : "reservation"));
+            System.out.println(json.get("reason"));
+        }
     }
 }

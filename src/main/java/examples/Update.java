@@ -17,8 +17,10 @@
 package examples;
 
 import com.klarna.checkout.Connector;
+import com.klarna.checkout.ErrorResponseException;
 import com.klarna.checkout.IConnector;
 import com.klarna.checkout.Order;
+import org.json.simple.JSONObject;
 
 import java.io.IOException;
 import java.net.URI;
@@ -58,7 +60,7 @@ final class Update {
         IConnector connector = Connector.create(secret);
 
         URI resourceURI = new URI(
-                "https://checkout.testdrive.klarna.com/checkout/orders/12");
+                "https://checkout.testdrive.klarna.com/checkout/orders/123");
         Order order = new Order(connector, resourceURI);
 
         final Map<String, Object> cart = new HashMap<String, Object>() {
@@ -96,6 +98,13 @@ final class Update {
             }
         };
 
-        order.update(data);
+        try {
+            order.update(data);
+        } catch (ErrorResponseException e) {
+            JSONObject json = (JSONObject) e.getJson();
+
+            System.out.println(json.get("http_status_message"));
+            System.out.println(json.get("internal_message"));
+        }
     }
 }

@@ -390,6 +390,18 @@ public class HttpClientStub implements IHttpClient {
     }
 
     /**
+     * Add a response with a status code, a reason phrase and a payload.
+     *
+     * @param statusLine Status line
+     * @param str        payload string
+     */
+    public void addResponse(final StatusLine statusLine, final String str) {
+        addResponse(
+                new HTTPResponseStub(statusLine, new HashMap<String, String>(), str)
+        );
+    }
+
+    /**
      * Add a complete response.
      *
      * @param httpResponseStub response to set
@@ -468,6 +480,44 @@ public class HttpClientStub implements IHttpClient {
          * Constructor.
          *
          * @param code        status code
+         * @param reason      reason phrase
+         * @param headers     http header map
+         * @param payloadJson payload string
+         */
+        public HTTPResponseStub(
+                final int code,
+                final String reason,
+                final Map<String, String> headers,
+                final String payloadJson) {
+
+            super(new BasicStatusLine(
+                    new ProtocolVersion("HTTP", 1, 1), code, reason));
+
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                this.setHeader(entry.getKey(), entry.getValue());
+            }
+
+            if (payloadJson != null) {
+                try {
+                    InputStream is = new ByteArrayInputStream(
+                            payloadJson.getBytes("UTF-8"));
+                    this.setEntity(new InputStreamEntity(is, is.available()));
+                } catch (UnsupportedEncodingException ex) {
+                    Logger.getLogger(
+                            HttpClientStub.class.getName()).log(
+                            Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(
+                            HttpClientStub.class.getName()).log(
+                            Level.SEVERE, null, ex);
+                }
+            }
+        }
+
+        /**
+         * Constructor.
+         *
+         * @param code        status code
          * @param headers     http header map
          * @param payloadJson payload string
          */
@@ -475,26 +525,25 @@ public class HttpClientStub implements IHttpClient {
                 final int code,
                 final Map<String, String> headers,
                 final String payloadJson) {
+            this(code, "ok", headers, payloadJson);
+        }
 
-            super(new BasicStatusLine(
-                    new ProtocolVersion("HTTP", 1, 1), code, "ok"));
-            for (Map.Entry<String, String> entry : headers.entrySet()) {
-                this.setHeader(entry.getKey(), entry.getValue());
-            }
-
-            try {
-                InputStream is = new ByteArrayInputStream(
-                        payloadJson.getBytes("UTF-8"));
-                this.setEntity(new InputStreamEntity(is, is.available()));
-            } catch (UnsupportedEncodingException ex) {
-                Logger.getLogger(
-                        HttpClientStub.class.getName()).log(
-                        Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(
-                        HttpClientStub.class.getName()).log(
-                        Level.SEVERE, null, ex);
-            }
+        /**
+         * Constructor.
+         *
+         * @param statusLine  Status line
+         * @param headers     http header map
+         * @param payloadJson payload string
+         */
+        public HTTPResponseStub(
+                final StatusLine statusLine,
+                final Map<String, String> headers,
+                final String payloadJson) {
+            this(
+                    statusLine.getStatusCode(),
+                    statusLine.getReasonPhrase(),
+                    headers,
+                    payloadJson);
         }
     }
 }

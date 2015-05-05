@@ -17,10 +17,15 @@
 package examples;
 
 import com.klarna.checkout.Connector;
+import com.klarna.checkout.ErrorResponseException;
 import com.klarna.checkout.IConnector;
 import com.klarna.checkout.Order;
+import org.json.simple.JSONObject;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 /**
@@ -39,27 +44,31 @@ final class Confirmation {
      * Runs the example code.
      *
      * @param args Command line arguments
+     * @throws URISyntaxException       If URIs are incorrect
+     * @throws NoSuchAlgorithmException If connector couldn't be created
+     * @throws IOException              If api call failed
      */
-    public static void main(final String[] args) {
+    public static void main(final String[] args)
+            throws URISyntaxException, NoSuchAlgorithmException, IOException {
+
+        // Shared secret.
+        final String secret = "sharedSecret";
+
+        IConnector connector = Connector.create(
+                secret, IConnector.TEST_BASE_URL);
+
+        // This is just a placeholder for the example.
+        // For example in jsp you could do
+        //      request.getParameter("checkout_uri");
+        URI checkoutId = new URI(
+                "https://checkout.testdrive.klarna.com/checkout/orders/123");
+
+        Order order = new Order(connector, checkoutId);
 
         try {
-            // Shared secret.
-            final String secret = "sharedSecret";
-
-            IConnector connector = Connector.create(
-                    secret, IConnector.TEST_BASE_URL);
-
-            // This is just a placeholder for the example.
-            // For example in jsp you could do
-            //      request.getParameter("checkout_uri");
-            URI checkoutId = new URI(
-                    "https://checkout.testdrive.klarna.com/checkout/orders/12");
-
-            Order order = new Order(connector, checkoutId);
-
             order.fetch();
 
-            String status = (String) order.get("status");
+            final String status = (String) order.get("status");
             if (!status.equals("checkout_complete")) {
                 // Report error
                 System.out.println("Checkout not completed, redirect");
@@ -73,10 +82,11 @@ final class Confirmation {
             System.out.println(String.format("<div>%s</div>", snippet));
             // Clear session object from klarna_checkout data.
             // session.removeAttribute("klarna_checkout");
+        } catch (ErrorResponseException e) {
+            JSONObject json = (JSONObject) e.getJson();
 
-        } catch (Exception ex) {
-            // Handle exception.
-            ex.printStackTrace();
+            System.out.println(json.get("http_status_message"));
+            System.out.println(json.get("internal_message"));
         }
     }
 }

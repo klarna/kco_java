@@ -17,8 +17,10 @@
 package examples;
 
 import com.klarna.checkout.Connector;
+import com.klarna.checkout.ErrorResponseException;
 import com.klarna.checkout.IConnector;
 import com.klarna.checkout.Order;
+import org.json.simple.JSONObject;
 
 import java.io.IOException;
 import java.net.URI;
@@ -54,17 +56,25 @@ final class Push {
         // Shared secret.
         final String secret = "sharedSecret";
 
-        IConnector connector = Connector.create(secret);
+        IConnector connector = Connector.create(
+                secret, IConnector.TEST_BASE_URL);
 
         // This is just a placeholder for the example.
         // For example in jsp you could do
         //      request.getParameter("checkout_uri");
-        URI checkoutId = new URI(
-                "https://checkout.testdrive.klarna.com/checkout/orders/12");
+        URI resourceURI = new URI(
+                "https://checkout.testdrive.klarna.com/checkout/orders/123");
 
-        Order order = new Order(connector, checkoutId);
+        Order order = new Order(connector, resourceURI);
 
-        order.fetch();
+        try {
+            order.fetch();
+        } catch (ErrorResponseException e) {
+            JSONObject json = (JSONObject) e.getJson();
+
+            System.out.println(json.get("http_status_message"));
+            System.out.println(json.get("internal_message"));
+        }
 
         if ((order.get("status")).equals("checkout_complete")) {
             final Map<String, Object> reference =
@@ -82,7 +92,14 @@ final class Push {
                 }
             };
 
-            order.update(updateData);
+            try {
+                order.update(updateData);
+            } catch (ErrorResponseException e) {
+                JSONObject json = (JSONObject) e.getJson();
+
+                System.out.println(json.get("http_status_message"));
+                System.out.println(json.get("internal_message"));
+            }
         }
     }
 }

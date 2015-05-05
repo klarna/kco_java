@@ -17,11 +17,12 @@
 package com.klarna.checkout;
 
 import com.klarna.checkout.stubs.HttpClientStub;
+import org.apache.http.ProtocolVersion;
+import org.apache.http.StatusLine;
 import org.apache.http.client.HttpResponseException;
+import org.apache.http.message.BasicStatusLine;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -42,20 +43,14 @@ import static org.mockito.Mockito.when;
 public class ConnectorErrorCodesTest {
 
     /**
-     * Exception message.
+     * Exception status line.
      */
-    private final String message;
+    private final StatusLine statusLine;
 
     /**
-     * Exception rule.
+     * Exception payload.
      */
-    @Rule
-    public ExpectedException expectedEx = ExpectedException.none();
-
-    /**
-     * Status code.
-     */
-    private int code;
+    private final String payload;
 
     /**
      * IHttpClient Stub.
@@ -80,13 +75,14 @@ public class ConnectorErrorCodesTest {
     /**
      * Constructor. Needed for parameterized running.
      *
-     * @param statusCode       status code
-     * @param exceptionMessage exception message
+     * @param line        Status code & reason phrase
+     * @param jsonPayload JSON response
      */
     public ConnectorErrorCodesTest(
-            final int statusCode, final String exceptionMessage) {
-        this.code = statusCode;
-        this.message = exceptionMessage;
+            final StatusLine line,
+            final String jsonPayload) {
+        this.statusLine = line;
+        this.payload = jsonPayload;
     }
 
     /**
@@ -96,22 +92,68 @@ public class ConnectorErrorCodesTest {
      */
     @Parameters
     public static Collection<Object[]> data() {
+        ProtocolVersion version = new ProtocolVersion("HTTP", 1, 1);
         Object[][] data = new Object[][]{
-                {400, "Bad Request"},
-                {401, "Unauthorized"},
-                {402, "PaymentRequired"},
-                {403, "Forbidden"},
-                {404, "Not Found"},
-                {406, "HTTP Error"},
-                {409, "HTTP Error"},
-                {412, "HTTP Error"},
-                {415, "HTTP Error"},
-                {422, "HTTP Error"},
-                {428, "HTTP Error"},
-                {429, "HTTP Error"},
-                {500, "Internal Server Error"},
-                {502, "Service temporarily overloaded"},
-                {503, "Gateway timeout"}
+                {
+                        new BasicStatusLine(version, 400, "Bad Request"),
+                        "{\"derp\":\"flerp\"}"
+                },
+                {
+                        new BasicStatusLine(version, 401, "Unauthorized"),
+                        "{\"some\":\"thing\"}"
+                },
+                {
+                        new BasicStatusLine(version, 402, "PaymentRequired"),
+                        "{\"zoid\":\"berg\"}"
+                },
+                {
+                        new BasicStatusLine(version, 403, "Forbidden"),
+                        "{\"hammer\":\"time\"}"
+                },
+                {
+                        new BasicStatusLine(version, 404, "Not Found"),
+                        "{\"fish\":\"tank\"}"
+                },
+                {
+                        new BasicStatusLine(version, 406, "Not Acceptable"),
+                        "{\"sand\":\"wich\"}"
+                },
+                {
+                        new BasicStatusLine(version, 409, "Conflict"),
+                        "{\"what\":\"ever\"}"
+                },
+                {
+                        new BasicStatusLine(version, 412, "Precondition Failed"),
+                        "{\"win\":\"dows\"}"
+                },
+                {
+                        new BasicStatusLine(version, 415, "Unsupported Media Type"),
+                        "{\"bo\":\"ring\"}"
+                },
+                {
+                        new BasicStatusLine(version, 422, "HTTP Error"),
+                        "{\"no\":\"op\"}"
+                },
+                {
+                        new BasicStatusLine(version, 428, "HTTP Error"),
+                        "{\"need\":\"coffee\"}"
+                },
+                {
+                        new BasicStatusLine(version, 429, "HTTP Error"),
+                        "{\"much\":\"better\"}"
+                },
+                {
+                        new BasicStatusLine(version, 500, "Internal Server Error"),
+                        "{\"are\":\"we\"}"
+                },
+                {
+                        new BasicStatusLine(version, 502, "Bad Gateway"),
+                        "{\"there\":\"yet\"}"
+                },
+                {
+                        new BasicStatusLine(version, 503, "Service Unavailable"),
+                        ""
+                }
         };
         return Arrays.asList(data);
     }
@@ -142,21 +184,23 @@ public class ConnectorErrorCodesTest {
      */
     @Test
     public void testGetErrorCode() throws Exception {
-        expectedEx.expect(HttpResponseException.class);
-        expectedEx.expectMessage(this.message);
-
         when(digest.create("secret")).thenReturn(digestString);
         IResource resource = mock(IResource.class);
-        transport.addResponse(this.code, this.message);
+        transport.addResponse(statusLine, payload);
 
         final URI expectedUri = new URI("http://www.foo.bar");
 
-        conn.apply(
-                "GET", resource, new ConnectorOptions() {
-                    {
-                        setURI(expectedUri);
-                    }
-                });
+        try {
+            conn.apply("GET", resource, new ConnectorOptions() {
+                {
+                    setURI(expectedUri);
+                }
+            });
+        } catch (ErrorResponseException e) {
+            assertEquals(payload, e.getJson().toString());
+        } catch (HttpResponseException e) {
+            assertEquals(statusLine.getReasonPhrase(), e.getMessage());
+        }
 
         assertEquals("GET", transport.getHttpUriRequest().getMethod());
         assertEquals(expectedUri, transport.getHttpUriRequest().getURI());
@@ -169,20 +213,23 @@ public class ConnectorErrorCodesTest {
      */
     @Test
     public void testPostErrorCode() throws Exception {
-        expectedEx.expect(HttpResponseException.class);
-        expectedEx.expectMessage(this.message);
-
         IResource resource = mock(IResource.class);
-        transport.addResponse(this.code, this.message);
+
+        transport.addResponse(statusLine, payload);
 
         final URI expectedUri = new URI("http://www.foo.bar");
 
-        conn.apply(
-                "POST", resource, new ConnectorOptions() {
-                    {
-                        setURI(expectedUri);
-                    }
-                });
+        try {
+            conn.apply("POST", resource, new ConnectorOptions() {
+                {
+                    setURI(expectedUri);
+                }
+            });
+        } catch (ErrorResponseException e) {
+            assertEquals(payload, e.getJson().toString());
+        } catch (HttpResponseException e) {
+            assertEquals(statusLine.getReasonPhrase(), e.getMessage());
+        }
 
         assertEquals("POST", transport.getHttpUriRequest().getMethod());
         assertEquals(expectedUri, transport.getHttpUriRequest().getURI());

@@ -36,44 +36,40 @@ public class UserAgent {
      */
     public UserAgent() {
         this.fields = new ArrayList<UserAgent.Field>();
-        try {
-            this.addField(
-                    new UserAgent.Field(
-                            "Library",
-                            "Klarna.ApiWrapper",
-                            "2.0.0"));
-            this.addField(
-                    new UserAgent.Field(
-                            "OS",
-                            System.getProperty("os.name"),
-                            System.getProperty("os.version")));
-            this.addField(
-                    new UserAgent.Field(
-                            "Language",
-                            "Java",
-                            System.getProperty("java.version"),
-                            "Vendor/" + System.getProperty("java.vendor")
-                                    .replace(" ", "-"),
-                            "VM/" + System.getProperty("java.vm.name")
-                                    .replace(" ", "-")));
-        } catch (KlarnaException ex) {
-            Logger.getLogger(
-                    UserAgent.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
+        this.addField(
+                new UserAgent.Field(
+                        "Library",
+                        "Klarna.ApiWrapper",
+                        "2.0.0"));
+        this.addField(
+                new UserAgent.Field(
+                        "OS",
+                        System.getProperty("os.name"),
+                        System.getProperty("os.version")));
+        this.addField(
+                new UserAgent.Field(
+                        "Language",
+                        "Java",
+                        System.getProperty("java.version"),
+                        "Vendor/" + System.getProperty("java.vendor")
+                                .replace(" ", "-"),
+                        "VM/" + System.getProperty("java.vm.name")
+                                .replace(" ", "-")));
     }
 
     /**
      * Add a field to the UserAgent.
      *
      * @param field The UserAgentField to add.
-     * @throws KlarnaException If the key already exists.
+     * @throws RuntimeException If the key already exists.
      */
-    public final void addField(final UserAgent.Field field)
-            throws KlarnaException {
+    public final void addField(final UserAgent.Field field) {
         for (UserAgent.Field object : this.fields) {
             if (object.key.compareTo(field.key) == 0) {
-                throw new KlarnaException(
-                        "Unable to redefine field " + field.key);
+                Logger.getLogger(UserAgent.class.getName()).log(
+                        Level.SEVERE, "Unable to redefine field " + field.key);
+                return;
             }
         }
         this.fields.add(field);
@@ -100,7 +96,7 @@ public class UserAgent {
     /**
      * UserAgentField.
      */
-    protected static class Field {
+    public static class Field {
 
         /**
          * Key of the field.

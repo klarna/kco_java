@@ -17,8 +17,10 @@
 package examples;
 
 import com.klarna.checkout.Connector;
+import com.klarna.checkout.ErrorResponseException;
 import com.klarna.checkout.IConnector;
 import com.klarna.checkout.Order;
+import org.json.simple.JSONObject;
 
 import java.io.IOException;
 import java.net.URI;
@@ -51,13 +53,20 @@ final class Fetch {
         final String secret = "sharedSecret";
 
         URI resourceURI = new URI(
-                "https://checkout.testdrive.klarna.com/checkout/orders/ABC123");
+                "https://checkout.testdrive.klarna.com/checkout/orders/123");
 
-        IConnector connector = Connector.create(secret);
+        IConnector connector = Connector.create(
+                secret, IConnector.TEST_BASE_URL);
 
         Order order = new Order(connector, resourceURI);
-        order.fetch();
 
-        System.out.println(order.get("recurring_token"));
+        try {
+            order.fetch();
+        } catch (ErrorResponseException e) {
+            JSONObject json = (JSONObject) e.getJson();
+
+            System.out.println(json.get("http_status_message"));
+            System.out.println(json.get("internal_message"));
+        }
     }
 }

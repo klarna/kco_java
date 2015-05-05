@@ -17,8 +17,10 @@
 package examples;
 
 import com.klarna.checkout.Connector;
+import com.klarna.checkout.ErrorResponseException;
 import com.klarna.checkout.IConnector;
 import com.klarna.checkout.RecurringStatus;
+import org.json.simple.JSONObject;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -56,8 +58,15 @@ final class FetchRecurring {
         RecurringStatus recurringStatus = new RecurringStatus(
                 connector, recurringToken);
 
-        recurringStatus.fetch();
+        try {
+            recurringStatus.fetch();
 
-        System.out.println(recurringStatus.get("payment_method"));
+            System.out.println(recurringStatus.get("payment_method"));
+        } catch (ErrorResponseException e) {
+            JSONObject json = (JSONObject) e.getJson();
+
+            System.out.println(json.get("http_status_message"));
+            System.out.println(json.get("internal_message"));
+        }
     }
 }

@@ -17,10 +17,15 @@
 package examples;
 
 import com.klarna.checkout.Connector;
+import com.klarna.checkout.ErrorResponseException;
 import com.klarna.checkout.IConnector;
 import com.klarna.checkout.Order;
+import org.json.simple.JSONObject;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,12 +46,23 @@ final class Checkout {
      * Runs the example code.
      *
      * @param args Command line arguments
+     * @throws URISyntaxException       If URIs are incorrect
+     * @throws NoSuchAlgorithmException If connector couldn't be created
+     * @throws IOException              If api call failed
      */
-    public static void main(final String[] args) {
+    public static void main(final String[] args)
+            throws URISyntaxException, NoSuchAlgorithmException, IOException {
 
         // NOTE: Only a placeholder session object. Actual session object
         // might be a javax.servlet.http.HttpSession for JSP for example.
         Map<String, Object> session = new HashMap<String, Object>();
+
+        // Merchant ID
+        final String eid = "0";
+        final String secret = "sharedSecret";
+
+        IConnector connector = Connector.create(
+                secret, IConnector.TEST_BASE_URL);
 
         final Map<String, Object> cart = new HashMap<String, Object>() {
             {
@@ -76,14 +92,8 @@ final class Checkout {
                 });
             }
         };
+
         try {
-            // Merchant ID
-            final String eid = "0";
-            final String secret = "sharedSecret";
-
-            IConnector connector = Connector.create(
-                    secret, IConnector.TEST_BASE_URL);
-
             Order order = null;
 
             URI resourceURI = null;
@@ -167,9 +177,11 @@ final class Checkout {
             // DESKTOP: Width of containing block shall be at least 750px
             // MOBILE: Width of containing block shall be 100% of browser
             // window (No padding or margin)
-        } catch (Exception ex) {
-            // Handle exception.
-            ex.printStackTrace();
+        } catch (ErrorResponseException e) {
+            JSONObject json = (JSONObject) e.getJson();
+
+            System.out.println(json.get("http_status_message"));
+            System.out.println(json.get("internal_message"));
         }
     }
 }

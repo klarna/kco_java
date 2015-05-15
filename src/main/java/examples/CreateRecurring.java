@@ -146,7 +146,7 @@ final class CreateRecurring {
             System.out.println(
                     recurringOrder.get(activate ? "invoice" : "reservation"));
         } catch (ErrorResponseException e) {
-            JSONObject json = (JSONObject) e.getJson();
+            JSONObject json = e.getJson();
 
             System.out.println(json.get("reason"));
         }

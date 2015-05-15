@@ -83,7 +83,7 @@ final class Confirmation {
             // Clear session object from klarna_checkout data.
             // session.removeAttribute("klarna_checkout");
         } catch (ErrorResponseException e) {
-            JSONObject json = (JSONObject) e.getJson();
+            JSONObject json = e.getJson();
 
             System.out.println(json.get("http_status_message"));
             System.out.println(json.get("internal_message"));

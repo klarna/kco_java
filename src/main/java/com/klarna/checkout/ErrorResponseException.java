@@ -18,6 +18,7 @@ package com.klarna.checkout;
 
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpResponseException;
+import org.json.simple.JSONObject;
 
 /**
  * Exception for API error responses.
@@ -27,7 +28,7 @@ public class ErrorResponseException extends HttpResponseException {
     /**
      * JSON object.
      */
-    private Object json;
+    private JSONObject json;
 
     /**
      * Constructor.
@@ -36,7 +37,7 @@ public class ErrorResponseException extends HttpResponseException {
      * @param jsonPayload JSON payload.
      */
     public ErrorResponseException(
-            final StatusLine statusLine, final Object jsonPayload) {
+            final StatusLine statusLine, final JSONObject jsonPayload) {
         super(
                 statusLine.getStatusCode(),
                 statusLine.getReasonPhrase());
@@ -49,7 +50,7 @@ public class ErrorResponseException extends HttpResponseException {
      *
      * @return JSON object.
      */
-    public Object getJson() {
+    public JSONObject getJson() {
         return json;
     }
 }

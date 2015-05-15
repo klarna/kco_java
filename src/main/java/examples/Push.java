@@ -95,7 +95,7 @@ final class Push {
             try {
                 order.update(updateData);
             } catch (ErrorResponseException e) {
-                JSONObject json = (JSONObject) e.getJson();
+                JSONObject json = e.getJson();
 
                 System.out.println(json.get("http_status_message"));
                 System.out.println(json.get("internal_message"));

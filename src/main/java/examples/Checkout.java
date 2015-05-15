@@ -178,7 +178,7 @@ final class Checkout {
             // MOBILE: Width of containing block shall be 100% of browser
             // window (No padding or margin)
         } catch (ErrorResponseException e) {
-            JSONObject json = (JSONObject) e.getJson();
+            JSONObject json = e.getJson();
 
             System.out.println(json.get("http_status_message"));
             System.out.println(json.get("internal_message"));

@@ -63,7 +63,7 @@ final class Fetch {
         try {
             order.fetch();
         } catch (ErrorResponseException e) {
-            JSONObject json = (JSONObject) e.getJson();
+            JSONObject json = e.getJson();
 
             System.out.println(json.get("http_status_message"));
             System.out.println(json.get("internal_message"));

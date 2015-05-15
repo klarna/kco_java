@@ -22,6 +22,7 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.util.EntityUtils;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
@@ -85,11 +86,11 @@ class Handler implements ResponseHandler<HttpResponse> {
 
         if (statusCode >= 400 && statusCode <= 599) {
             final JSONParser jsonParser = new JSONParser();
-            Object payload = "";
+            JSONObject payload;
 
             try {
                 final String entity = EntityUtils.toString(result.getEntity());
-                payload = jsonParser.parse(entity);
+                payload = (JSONObject) jsonParser.parse(entity);
             } catch (IOException e) {
                 Logger.getLogger(Handler.class.getName()).log(
                         Level.SEVERE, "Failed to parse response", e);

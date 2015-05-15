@@ -131,7 +131,7 @@ final class Create {
 
             System.out.println(order.getLocation());
         } catch (ErrorResponseException e) {
-            JSONObject json = (JSONObject) e.getJson();
+            JSONObject json = e.getJson();
 
             System.out.println(json.get("http_status_message"));
             System.out.println(json.get("internal_message"));

@@ -63,7 +63,7 @@ final class FetchRecurring {
 
             System.out.println(recurringStatus.get("payment_method"));
         } catch (ErrorResponseException e) {
-            JSONObject json = (JSONObject) e.getJson();
+            JSONObject json = e.getJson();
 
             System.out.println(json.get("http_status_message"));
             System.out.println(json.get("internal_message"));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Klarna AB
+ * Copyright 2015 Klarna AB
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,15 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * File containing the UserAgent unit tests
  */
+
 package com.klarna.checkout;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.util.logging.Logger;
+import java.util.logging.StreamHandler;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.assertTrue;
 
 /**
  * UserAgentTest.
@@ -65,40 +71,52 @@ public class UserAgentTest {
 
     /**
      * Test that an added field exist in the string.
-     *
-     * @throws KlarnaException if things go wrong
      */
     @Test
-    public void testAddField() throws KlarnaException {
+    public void testAddField() {
         String[] arr = new String[]{"butter/3", "cheese/0.1"};
         this.agent.addField(
                 new UserAgent.Field(
-                "Bread", "Crumb", "2.5", arr));
+                        "Bread", "Crumb", "2.5", arr));
         final String string = this.agent.toString();
         assertTrue(
                 "New field wasn't found",
                 string.matches(
-                ".*Bread/Crumb_2\\.5.* \\(butter\\/3 ; cheese\\/0.1\\).*"));
+                        ".*Bread/Crumb_2\\.5.* \\(butter\\/3 ; cheese\\/0.1\\).*"));
     }
 
     /**
-     * Test that trying to add an already existing field throws an exception.
-     *
-     * @throws KlarnaException if everything went well
-     */
-    @Test(expected = KlarnaException.class)
-    public void testAddFieldKeyAlreadyExists() throws KlarnaException {
-        this.agent.addField(
-                new UserAgent.Field("Language", "Something", "9"));
-    }
-
-    /**
-     * Test that the entire User-Agent string looks like it should
+     * Test that trying to add an already existing field logs a message.
      */
     @Test
-    public void testCompleteFormat()  {
+    public void testAddFieldKeyAlreadyExists() {
+        Logger logger = Logger.getLogger(UserAgent.class.getName());
+        OutputStream logCapturingStream = new ByteArrayOutputStream();
+        StreamHandler customLogHandler = new StreamHandler(
+                logCapturingStream,
+                logger.getParent().getHandlers()[0].getFormatter());
+
+        logger.addHandler(customLogHandler);
+
+        this.agent.addField(
+                new UserAgent.Field("Language", "Something", "9"));
+
+        customLogHandler.flush();
+
+        assertThat(
+                logCapturingStream.toString(),
+                containsString("SEVERE: Unable to redefine field Language"));
+    }
+
+    /**
+     * Test that the entire User-Agent string looks like it should.
+     */
+    @Test
+    public void testCompleteFormat() {
         final String string = this.agent.toString();
+
         final String format = "^(Library\\/Klarna\\.ApiWrapper_[^,\\s]+) (OS\\/[^,\\s]+) (Language\\/[^,\\s]+) \\((Vendor\\/[^;]+) ; (VM\\/[^;]+)\\)$";
+
         assertTrue(
                 "Format is incorrect",
                 string.matches(format));

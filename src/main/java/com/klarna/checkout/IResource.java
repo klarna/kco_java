@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Klarna AB
+ * Copyright 2015 Klarna AB
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,9 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * File containing the IResource interface.
  */
+
 package com.klarna.checkout;
 
 import java.net.URI;
@@ -26,6 +25,8 @@ import java.util.Map;
 public interface IResource {
 
     /**
+     * Get the location.
+     *
      * @return the URL of the resource.
      */
     URI getLocation();
@@ -38,9 +39,32 @@ public interface IResource {
     void setLocation(URI uri);
 
     /**
-     * @return The content type of the order
+     * Get the content type header.
+     *
+     * @return The content type of the resource.
      */
     String getContentType();
+
+    /**
+     * Set the content type header.
+     *
+     * @param type Content type of the resource
+     */
+    void setContentType(String type);
+
+    /**
+     * Get the accept header.
+     *
+     * @return The accept type of the resource.
+     */
+    String getAccept();
+
+    /**
+     * Set the accept header.
+     *
+     * @param accept The accept type of the resource.
+     */
+    void setAccept(String accept);
 
     /**
      * Update resource with new data.
@@ -50,7 +74,9 @@ public interface IResource {
     void parse(Map<String, Object> data);
 
     /**
-     * @return Basic representation of the object.
+     * Get the basic representation of the resource.
+     *
+     * @return Basic representation of the resource.
      */
     Map marshal();
 }

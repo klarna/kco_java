@@ -16,27 +16,17 @@
 
 package com.klarna.checkout;
 
-import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.HttpResponseInterceptor;
-import org.apache.http.client.HttpClient;
+import java.io.IOException;
 
 /**
- * Extension of the org.apache.http.client.HttpClient interface to ensure we
- * have response and request interceptors.
+ * Interface for resources that makes them fetchable.
  */
-public interface IHttpClient extends HttpClient {
+public interface IFetchable {
 
     /**
-     * Add a HttpResponseInterceptor.
+     * Fetch the resource and update its internal data.
      *
-     * @param hri interceptor implementation
+     * @throws IOException in case of an I/O error
      */
-    void addResponseInterceptor(HttpResponseInterceptor hri);
-
-    /**
-     * Add a HttpRequestInterceptor.
-     *
-     * @param hri interceptor implementation
-     */
-    void addRequestInterceptor(HttpRequestInterceptor hri);
+    void fetch() throws IOException;
 }

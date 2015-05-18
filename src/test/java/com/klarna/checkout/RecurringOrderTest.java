@@ -19,17 +19,16 @@ package com.klarna.checkout;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
- * Tests for the Order class, basic functionality.
+ * Tests for the RecurringOrder class, basic functionality.
  */
-public class OrderTest {
+public class RecurringOrderTest {
 
     /**
      * Connector mock.
@@ -37,38 +36,26 @@ public class OrderTest {
     private IConnector conn;
 
     /**
-     * Set up tests.
+     * Set up for tests.
      */
     @Before
     public void setUp() {
         conn = mock(IConnector.class);
+        when(conn.getBaseUri()).thenReturn("https://mock.com");
     }
 
     /**
-     * Test that location is initialized as null.
+     * Test that location is initialized when using a token in the constructor.
      *
-     * @throws URISyntaxException But no
+     * @throws URISyntaxException But not really
      */
     @Test
-    public void testLocationEmpty() throws URISyntaxException {
-        Order order = new Order(conn);
-
-        assertNull(order.getLocation());
-    }
-
-    /**
-     * Ensure that the location can be initialized.
-     *
-     * @throws URISyntaxException But no
-     */
-    @Test
-    public void testLocationURI() throws URISyntaxException {
-        URI uri = new URI("http://whatever.com");
-        Order order = new Order(conn, uri);
+    public void testLocation() throws URISyntaxException {
+        RecurringOrder recurringOrder = new RecurringOrder(conn, "ABC-123");
 
         assertEquals(
-                "Location should have been set from the constructor",
-                uri,
-                order.getLocation());
+                "Location should be set from constructor with token",
+                "https://mock.com/checkout/recurring/ABC-123/orders",
+                recurringOrder.getLocation().toString());
     }
 }

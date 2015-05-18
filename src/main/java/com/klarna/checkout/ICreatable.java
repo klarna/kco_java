@@ -16,27 +16,19 @@
 
 package com.klarna.checkout;
 
-import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.HttpResponseInterceptor;
-import org.apache.http.client.HttpClient;
+import java.io.IOException;
+import java.util.Map;
 
 /**
- * Extension of the org.apache.http.client.HttpClient interface to ensure we
- * have response and request interceptors.
+ * Interface for resources that makes them creatable.
  */
-public interface IHttpClient extends HttpClient {
+public interface ICreatable {
 
     /**
-     * Add a HttpResponseInterceptor.
+     * Create a new resource with the given fields.
      *
-     * @param hri interceptor implementation
+     * @param createData Data to create with
+     * @throws IOException in case of an I/O error
      */
-    void addResponseInterceptor(HttpResponseInterceptor hri);
-
-    /**
-     * Add a HttpRequestInterceptor.
-     *
-     * @param hri interceptor implementation
-     */
-    void addRequestInterceptor(HttpRequestInterceptor hri);
+    void create(final Map<String, Object> createData) throws IOException;
 }

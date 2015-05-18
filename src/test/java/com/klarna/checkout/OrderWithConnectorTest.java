@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Klarna AB
+ * Copyright 2015 Klarna AB
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,20 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * File containing the Order unittests when interacting with the connector.
  */
+
 package com.klarna.checkout;
 
 import com.klarna.checkout.stubs.ConnectorStub;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.After;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests for the Order class, interactions with connector.
@@ -36,36 +36,22 @@ public class OrderWithConnectorTest {
      * Connector Stub.
      */
     private ConnectorStub connector;
+
     /**
      * Order object.
      */
     private Order order;
 
     /**
-     * Set up the whole class. Reset static state.
-     */
-    @BeforeClass
-    public static void setUpClass() {
-        Order.setBaseUri(null);
-        Order.setContentType("");
-    }
-
-    /**
      * Set up the tests.
+     *
+     * @throws URISyntaxException but not really
      */
     @Before
-    public void setUp() {
+    public void setUp() throws URISyntaxException {
         connector = new ConnectorStub();
         order = new Order(connector);
-    }
-
-    /**
-     * Reset static state.
-     */
-    @After
-    public void tearDown() {
-        Order.setBaseUri(null);
-        Order.setContentType("");
+        order.setContentType("");
     }
 
     /**
@@ -75,17 +61,21 @@ public class OrderWithConnectorTest {
      */
     @Test
     public void testCreate() throws Exception {
-        URI location = new URI("http://stub");
-
+        URI location = new URI("http://stub/12345");
+        this.connector.setBaseUri("http://stub");
         this.connector.setLocation(location);
-        Map<String, Object> data = new HashMap<String, Object>();
-        data.put("foo", "boo");
+
+        Map<String, Object> data = new HashMap<String, Object>() {
+            {
+                put("foo", "boo");
+            }
+        };
+
         order.create(data);
 
         assertEquals("POST", connector.getApplied("method"));
         assertEquals(order, connector.getApplied("resource"));
-        assertNull(
-                ((ConnectorOptions) connector.getApplied("options")).getURI());
+        assertEquals(location, order.getLocation());
         assertEquals(
                 "Data sent",
                 data,
@@ -99,8 +89,8 @@ public class OrderWithConnectorTest {
      */
     @Test
     public void testFetch() throws Exception {
-        order.setLocation(new URI("http://klarna.com/foo/bar/15"));
-        URI location = order.getLocation();
+        URI location = new URI("http://klarna.com/foo/bar/15");
+        order.setLocation(location);
 
         order.fetch();
 
@@ -118,11 +108,14 @@ public class OrderWithConnectorTest {
      */
     @Test
     public void testUpdate() throws Exception {
-        order.setLocation(new URI("http://klarna.com/foo/bar/17"));
-        URI location = order.getLocation();
+        URI location = new URI("http://klarna.com/foo/bar/17");
+        order.setLocation(location);
 
-        Map<String, Object> data = new HashMap<String, Object>();
-        data.put("foo", "boo");
+        Map<String, Object> data = new HashMap<String, Object>() {
+            {
+                put("foo", "boo");
+            }
+        };
 
         order.update(data);
 
@@ -146,10 +139,11 @@ public class OrderWithConnectorTest {
      */
     @Test
     public void testCreateAlternateEntryPoint() throws Exception {
-        URI base = new URI("https://checkout.klarna.com/beta/checkout/orders");
-        Order.setBaseUri(base);
+        URI base = new URI("https://example.com".concat(Order.PATH));
 
+        connector.setBaseUri("https://example.com");
         Order o = new Order(connector);
+
         o.create(new HashMap<String, Object>());
         assertEquals(
                 "New Base",

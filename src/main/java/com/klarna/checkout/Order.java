@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Klarna AB
+ * Copyright 2015 Klarna AB
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,66 +12,24 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * File containing the Order object
  */
+
 package com.klarna.checkout;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Implementation of the Resource interface.
+ * Checkout order resource.
  */
-public class Order implements IResource {
+public class Order extends Resource
+        implements ICreatable, IFetchable, IUpdatable {
 
     /**
-     * Connector.
+     * Resource path.
      */
-    protected final IConnector connector;
-    /**
-     * The location of the resource.
-     */
-    private URI location;
-    /**
-     * Data of the order.
-     */
-    private final Map data;
-    /**
-     * Base URI used to create order resources.
-     */
-    private static URI baseUri = null;
-    /**
-     * Content type string.
-     */
-    private static String contentType = "";
-
-    /**
-     * @return the set BaseURI
-     */
-    public static URI getBaseUri() {
-        return Order.baseUri;
-    }
-
-    /**
-     * Set a base URI.
-     *
-     * @param uri URI to set
-     */
-    public static void setBaseUri(final URI uri) {
-        Order.baseUri = uri;
-    }
-
-    /**
-     * Set the content type to be used.
-     *
-     * @param type content type to set
-     */
-    public static void setContentType(final String type) {
-        Order.contentType = type;
-    }
+    public static final String PATH = "/checkout/orders";
 
     /**
      * Constructor.
@@ -86,109 +44,39 @@ public class Order implements IResource {
      * Constructor.
      *
      * @param conn IConnector implementation
-     * @param uri URI
+     * @param uri  Resource URI
      */
     public Order(final IConnector conn, final URI uri) {
-        this.data = new HashMap<String, Object>();
-        this.connector = conn;
-        if (uri != null) {
-            this.location = uri;
-        }
+        super(conn, uri);
+        this.setContentType(
+                "application/vnd.klarna.checkout.aggregated-order-v2+json");
+        this.setAccept(this.getContentType());
     }
 
-    /**
-     * @return the URL of the resource.
-     */
-    public URI getLocation() {
-        return location;
-    }
-
-    /**
-     * Set the URL of the resource.
-     *
-     * @param uri URI object pointing to the resource
-     */
-    public void setLocation(final URI uri) {
-        this.location = uri;
-    }
-
-    /**
-     * Return content type of the resource.
-     *
-     * @return Content type
-     */
-    public String getContentType() {
-        return Order.contentType;
-    }
-
-    /**
-     * Update resource with new data.
-     *
-     * @param newData new data to update the resource with
-     */
-    public void parse(final Map<String, Object> newData) {
-        this.data.clear();
-        this.data.putAll(newData);
-    }
-
-    /**
-     * @return Basic representation of the object.
-     */
-    public Map marshal() {
-        return this.data;
-    }
-
-    /**
-     * Get an item from the data object.
-     *
-     * @param key key to get
-     *
-     * @return object matching the key.
-     */
-    public Object get(final String key) {
-        return this.data.get(key);
-    }
-
-    /**
-     * Create a new order.
-     *
-     * @see Order#baseUri
-     *
-     * @param datum Data to create with
-     *
-     * @throws IOException in case of an I/O error
-     */
-    public void create(final Map<String, Object> datum)
-            throws IOException {
+    @Override
+    public void create(final Map<String, Object> datum) throws IOException {
         ConnectorOptions options = new ConnectorOptions();
-        options.setURI(Order.baseUri);
+
+        options.setURI(URI.create(connector.getBaseUri().concat(PATH)));
         options.setData(datum);
 
         connector.apply("POST", this, options);
     }
 
-    /**
-     * Fetch order data.
-     *
-     * @throws IOException in case of an I/O error
-     */
+    @Override
     public void fetch() throws IOException {
         ConnectorOptions options = new ConnectorOptions();
-        options.setURI(this.location);
+
+        options.setURI(this.getLocation());
 
         connector.apply("GET", this, options);
     }
 
-    /**
-     * Update order data.
-     *
-     * @param datum Data to create with
-     *
-     * @throws IOException in case of an I/O error
-     */
+    @Override
     public void update(final Map<String, Object> datum) throws IOException {
         ConnectorOptions options = new ConnectorOptions();
-        options.setURI(this.location);
+
+        options.setURI(this.getLocation());
         options.setData(datum);
 
         connector.apply("POST", this, options);

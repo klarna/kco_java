@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Klarna AB
+ * Copyright 2015 Klarna AB
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,15 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * File containing the Fetch example.
  */
-// [[examples-fetch]]
+
 package examples;
 
 import com.klarna.checkout.Connector;
+import com.klarna.checkout.ErrorResponseException;
 import com.klarna.checkout.IConnector;
 import com.klarna.checkout.Order;
+import org.json.simple.JSONObject;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -29,26 +30,43 @@ import java.security.NoSuchAlgorithmException;
 /**
  * The fetch checkout example.
  */
-public final class Fetch {
+final class Fetch {
 
     /**
-     * The example.
+     * Empty constructor.
      */
-    public void example()
+    private Fetch() {
+
+    }
+
+    /**
+     * Runs the example code.
+     *
+     * @param args Command line arguments
+     * @throws URISyntaxException       If URIs are incorrect
+     * @throws NoSuchAlgorithmException If connector couldn't be created
+     * @throws IOException              If api call failed
+     */
+    public static void main(final String[] args)
             throws URISyntaxException, NoSuchAlgorithmException, IOException {
 
         final String secret = "sharedSecret";
 
-        Order.setContentType(
-                "application/vnd.klarna.checkout.aggregated-order-v2+json");
-
         URI resourceURI = new URI(
-                "https://checkout.testdrive.klarna.com/checkout/orders/ABC123");
+                "https://checkout.testdrive.klarna.com/checkout/orders/123");
 
-        IConnector connector = Connector.create(secret);
+        IConnector connector = Connector.create(
+                secret, IConnector.TEST_BASE_URL);
 
         Order order = new Order(connector, resourceURI);
-        order.fetch();
+
+        try {
+            order.fetch();
+        } catch (ErrorResponseException e) {
+            JSONObject json = e.getJson();
+
+            System.out.println(json.get("http_status_message"));
+            System.out.println(json.get("internal_message"));
+        }
     }
 }
-// [[examples-fetch]]

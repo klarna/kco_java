@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Klarna AB
+ * Copyright 2015 Klarna AB
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,13 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * File containing the IConnector interface
  */
+
 package com.klarna.checkout;
 
-import java.io.IOException;
 import org.apache.http.HttpResponse;
+
+import java.io.IOException;
 
 /**
  * Interface for the Connector object.
@@ -26,14 +26,36 @@ import org.apache.http.HttpResponse;
 public interface IConnector {
 
     /**
+     * Live host.
+     */
+    String BASE_URL = "https://checkout.klarna.com";
+
+    /**
+     * Test host.
+     */
+    String TEST_BASE_URL = "https://checkout.testdrive.klarna.com";
+
+    /**
+     * Get connector base URI string.
+     *
+     * @return Connector Base URI string
+     */
+    String getBaseUri();
+
+    /**
+     * Set connector base URI string.
+     *
+     * @param uri Connector Base URI string
+     */
+    void setBaseUri(final String uri);
+
+    /**
      * Applying the method on the specific resource.
      *
-     * @param method HTTP Method
+     * @param method   HTTP Method
      * @param resource IResource implementation
-     * @param options Options for Connector
-     *
+     * @param options  Options for Connector
      * @return a HTTP Response
-     *
      * @throws IOException in case of an I/O Error
      */
     HttpResponse apply(
@@ -43,11 +65,9 @@ public interface IConnector {
     /**
      * Applying the method on the specific resource. No options.
      *
-     * @param method HTTP Method
+     * @param method   HTTP Method
      * @param resource IResource implementation
-     *
      * @return a HTTP Response
-     *
      * @throws IOException in case of an I/O Error
      */
     HttpResponse apply(

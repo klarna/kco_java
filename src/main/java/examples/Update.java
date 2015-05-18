@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Klarna AB
+ * Copyright 2015 Klarna AB
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,15 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * File containing the Create example.
  */
-// [[examples-create]]
+
 package examples;
 
 import com.klarna.checkout.Connector;
+import com.klarna.checkout.ErrorResponseException;
 import com.klarna.checkout.IConnector;
 import com.klarna.checkout.Order;
+import org.json.simple.JSONObject;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -30,15 +31,37 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The create checkout example.
+ * The update checkout example.
  */
-public final class Create {
+final class Update {
 
     /**
-     * The example.
+     * Empty constructor.
      */
-    public void example()
-            throws URISyntaxException, NoSuchAlgorithmException, IOException {
+    private Update() {
+
+    }
+
+    /**
+     * Runs the example code.
+     *
+     * @param args Command line arguments
+     * @throws URISyntaxException       If URIs are incorrect
+     * @throws NoSuchAlgorithmException If connector couldn't be created
+     * @throws IOException              If api call failed
+     */
+    public static void main(final String[] args)
+            throws URISyntaxException,
+            NoSuchAlgorithmException,
+            IOException {
+
+        final String secret = "sharedSecret";
+
+        IConnector connector = Connector.create(secret);
+
+        URI resourceURI = new URI(
+                "https://checkout.testdrive.klarna.com/checkout/orders/123");
+        Order order = new Order(connector, resourceURI);
 
         final Map<String, Object> cart = new HashMap<String, Object>() {
             {
@@ -69,50 +92,19 @@ public final class Create {
             }
         };
 
-        // Merchant ID
-        final String eid = "0";
-        final String secret = "sharedSecret";
-
-        Order.setContentType(
-                "application/vnd.klarna.checkout.aggregated-order-v2+json");
-        URI uri = new URI(
-                "https://checkout.testdrive.klarna.com/checkout/orders");
-
-        Order.setBaseUri(uri);
-        IConnector connector = Connector.create(secret);
-
-        Order order = null;
-
-        // Start a new session.
-        final Map<String, Object> merchant;
-        merchant = new HashMap<String, Object>() {
-            {
-                put("id", eid);
-                put("terms_uri", "http://example.com/terms.html");
-                put("checkout_uri", "http://example.com/checkout.jsp");
-                put("confirmation_uri",
-                        "http://example.com/thank-you.jsp"
-                        + "?sid=123&klarna_order={checkout.order.uri}");
-                // You can not receive push notification on a
-                // non-publicly available uri.
-                put("push_uri",
-                        "http://example.com/push.jsp"
-                        + "?sid=123&klarna_order={checkout.order.uri}");
-            }
-        };
-
         Map<String, Object> data = new HashMap<String, Object>() {
             {
-                put("purchase_country", "SE");
-                put("purchase_currency", "SEK");
-                put("locale", "sv-se");
-                put("merchant", merchant);
                 put("cart", cart);
             }
         };
 
-        order = new Order(connector);
-        order.create(data);
+        try {
+            order.update(data);
+        } catch (ErrorResponseException e) {
+            JSONObject json = e.getJson();
+
+            System.out.println(json.get("http_status_message"));
+            System.out.println(json.get("internal_message"));
+        }
     }
 }
-// [[examples-create]]

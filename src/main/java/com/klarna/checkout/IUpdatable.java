@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Klarna AB
+ * Copyright 2015 Klarna AB
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,22 +12,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * File containing the KlarnaException exception
  */
+
 package com.klarna.checkout;
 
+import java.io.IOException;
+import java.util.Map;
+
 /**
- * KlarnaCheckoutException.
+ * Interface for resources that makes them updatable.
  */
-public class KlarnaException extends Exception {
+public interface IUpdatable {
 
     /**
-     * Constructor.
+     * Update resource with the given fields.
      *
-     * @param message Error message to display.
+     * @param updateData Data to update the resource with
+     * @throws IOException in case of an I/O error
      */
-    public KlarnaException(final String message) {
-        super(message);
-    }
+    void update(final Map<String, Object> updateData) throws IOException;
 }

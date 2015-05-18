@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Klarna AB
+ * Copyright 2015 Klarna AB
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,16 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * File containing the unit tests for BasicConnector.
  */
+
 package com.klarna.checkout;
 
-import java.io.UnsupportedEncodingException;
 import org.apache.http.params.HttpConnectionParams;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.UnsupportedEncodingException;
+
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -33,14 +34,11 @@ public class ConnectorTest {
      * Resource mock.
      */
     private IResource resource;
+
     /**
      * Connector object.
      */
     private BasicConnector conn;
-    /**
-     * Digest mock.
-     */
-    private Digest digest;
 
     /**
      * Set up tests.
@@ -50,10 +48,10 @@ public class ConnectorTest {
     @Before
     public void setUp() throws UnsupportedEncodingException {
         this.resource = mock(IResource.class);
-        this.digest = mock(Digest.class);
-        this.conn = new BasicConnector(this.digest);
+        Digest digest = mock(Digest.class);
+        this.conn = new BasicConnector(digest);
 
-        when(this.digest.create(anyString())).thenReturn("bob");
+        when(digest.create(anyString())).thenReturn("bob");
     }
 
     /**
@@ -139,6 +137,6 @@ public class ConnectorTest {
                 "Timeout wasn't set",
                 3000,
                 HttpConnectionParams.getSoTimeout(
-                    connector.getClient().getParams()));
+                        connector.getClient().getParams()));
     }
 }

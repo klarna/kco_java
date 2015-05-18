@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Klarna AB
+ * Copyright 2015 Klarna AB
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,15 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * File containing the Digest unit tests.
  */
+
 package com.klarna.checkout;
+
+import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import static org.junit.Assert.*;
-import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Unit Tests for Digest.
@@ -36,6 +37,7 @@ public class DigestTest {
             + "\"currency\":\"SEK\","
             + "\"country\":\"SWE\","
             + "\"language\":\"SV\"}";
+
     /**
      * Expected digest.
      */

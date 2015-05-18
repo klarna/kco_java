@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Klarna AB
+ * Copyright 2015 Klarna AB
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,9 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * File containing the UserAgent class
  */
+
 package com.klarna.checkout;
 
 import java.util.ArrayList;
@@ -28,9 +27,76 @@ import java.util.logging.Logger;
 public class UserAgent {
 
     /**
+     * Fields associated to the UserAgent.
+     */
+    private final List<UserAgent.Field> fields;
+
+    /**
+     * Constructor.
+     */
+    public UserAgent() {
+        this.fields = new ArrayList<UserAgent.Field>();
+
+        this.addField(
+                new UserAgent.Field(
+                        "Library",
+                        "Klarna.ApiWrapper",
+                        "2.0.0"));
+        this.addField(
+                new UserAgent.Field(
+                        "OS",
+                        System.getProperty("os.name"),
+                        System.getProperty("os.version")));
+        this.addField(
+                new UserAgent.Field(
+                        "Language",
+                        "Java",
+                        System.getProperty("java.version"),
+                        "Vendor/" + System.getProperty("java.vendor")
+                                .replace(" ", "-"),
+                        "VM/" + System.getProperty("java.vm.name")
+                                .replace(" ", "-")));
+    }
+
+    /**
+     * Add a field to the UserAgent.
+     *
+     * @param field The UserAgentField to add.
+     * @throws RuntimeException If the key already exists.
+     */
+    public final void addField(final UserAgent.Field field) {
+        for (UserAgent.Field object : this.fields) {
+            if (object.key.compareTo(field.key) == 0) {
+                Logger.getLogger(UserAgent.class.getName()).log(
+                        Level.SEVERE, "Unable to redefine field " + field.key);
+                return;
+            }
+        }
+        this.fields.add(field);
+    }
+
+    /**
+     * Get the string representation of UserAgent.
+     *
+     * @return String
+     */
+    @Override
+    public final String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(this.fields.remove(0));
+
+        for (UserAgent.Field field : this.fields) {
+            builder.append(" ");
+            builder.append(field);
+        }
+
+        return builder.toString();
+    }
+
+    /**
      * UserAgentField.
      */
-    protected static class Field {
+    public static class Field {
 
         /**
          * Key of the field.
@@ -52,8 +118,8 @@ public class UserAgent {
         /**
          * Constructor.
          *
-         * @param fieldKey Key of the field.
-         * @param fieldName Name of the field.
+         * @param fieldKey     Key of the field.
+         * @param fieldName    Name of the field.
          * @param fieldVersion Version of the field.
          */
         public Field(
@@ -69,8 +135,8 @@ public class UserAgent {
         /**
          * Constructor with optional values.
          *
-         * @param fieldKey Key of the field.
-         * @param fieldName Name of the field.
+         * @param fieldKey     Key of the field.
+         * @param fieldName    Name of the field.
          * @param fieldVersion Version of the field.
          * @param fieldOptions Options for the field.
          */
@@ -114,76 +180,5 @@ public class UserAgent {
 
             return builder.toString();
         }
-    }
-    /**
-     * Fields associated to the UserAgent.
-     */
-    private final List<UserAgent.Field> fields;
-
-    /**
-     * Constructor.
-     */
-    public UserAgent() {
-        this.fields = new ArrayList<UserAgent.Field>();
-        try {
-            this.addField(
-                    new UserAgent.Field(
-                            "Library",
-                            "Klarna.ApiWrapper",
-                            "1.1.3"));
-            this.addField(
-                    new UserAgent.Field(
-                            "OS",
-                            System.getProperty("os.name"),
-                            System.getProperty("os.version")));
-            this.addField(
-                    new UserAgent.Field(
-                            "Language",
-                            "Java",
-                            System.getProperty("java.version"),
-                            "Vendor/" + System.getProperty("java.vendor")
-                                    .replace(" ", "-"),
-                            "VM/" + System.getProperty("java.vm.name")
-                                    .replace(" ", "-")));
-        } catch (KlarnaException ex) {
-            Logger.getLogger(
-                    UserAgent.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    /**
-     * Add a field to the UserAgent.
-     *
-     * @param field The UserAgentField to add.
-     *
-     * @throws KlarnaException If the key already exists.
-     */
-    public final void addField(final UserAgent.Field field)
-            throws KlarnaException {
-        for (UserAgent.Field object : this.fields) {
-            if (object.key.compareTo(field.key) == 0) {
-                throw new KlarnaException(
-                        "Unable to redefine field " + field.key);
-            }
-        }
-        this.fields.add(field);
-    }
-
-    /**
-     * Get the string representation of UserAgent.
-     *
-     * @return String
-     */
-    @Override
-    public final String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(this.fields.remove(0));
-
-        for (UserAgent.Field field : this.fields) {
-            builder.append(" ");
-            builder.append(field);
-        }
-
-        return builder.toString();
     }
 }

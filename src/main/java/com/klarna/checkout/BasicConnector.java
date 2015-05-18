@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Klarna AB
+ * Copyright 2015 Klarna AB
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,25 +12,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * File containing the BasicConnector class.
  */
+
 package com.klarna.checkout;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.HashSet;
-import java.util.Map;
-import org.apache.http.Header;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpResponseInterceptor;
-import org.apache.http.HttpStatus;
+import org.apache.http.*;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -44,6 +30,13 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.json.simple.JSONObject;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashSet;
+import java.util.Map;
+
 /**
  * Implementation of the connector interface.
  */
@@ -55,17 +48,24 @@ public class BasicConnector implements IConnector {
     public static final int DEFAULT_TIMEOUT = 10000;
 
     /**
-     * HttpClient implementation.
-     */
-    protected IHttpClient client;
-    /**
      * Digest instance.
      */
     protected final Digest digest;
+
     /**
      * ClientConnectionManager instance.
      */
     private final ClientConnectionManager manager;
+
+    /**
+     * HttpClient implementation.
+     */
+    protected IHttpClient client;
+
+    /**
+     * Connector baseUri.
+     */
+    private String baseUri = IConnector.BASE_URL;
 
     /**
      * Constructor.
@@ -84,13 +84,23 @@ public class BasicConnector implements IConnector {
      */
     public BasicConnector(final Digest dig, final ClientConnectionManager ccm) {
         if (dig == null) {
-            throw new IllegalArgumentException(
-                    "Digest may not be null.");
+            throw new IllegalArgumentException("Digest may not be null.");
         }
 
         this.digest = dig;
         this.manager = ccm;
     }
+
+    @Override
+    public String getBaseUri() {
+        return this.baseUri;
+    }
+
+    @Override
+    public void setBaseUri(final String base) {
+        this.baseUri = base;
+    }
+
     /**
      * Create a HTTP Client.
      *
@@ -103,46 +113,24 @@ public class BasicConnector implements IConnector {
         return new HttpClientWrapper(this.manager, params);
     }
 
-    /**
-     * Specify a socket timeout to use.
-     *
-     * @param milliseconds Milliseconds to use as timeout.
-     */
+    @Override
     public void setTimeout(final int milliseconds) {
         HttpConnectionParams.setSoTimeout(
                 this.getClient().getParams(), milliseconds);
     }
 
-    /**
-     * Applying the method on the specific resource. No Options.
-     *
-     * @param method HTTP method
-     * @param resource Resource implementation
-     *
-     * @return A HttpResponse object
-     *
-     * @throws IOException In case of an I/O Error.
-     */
+    @Override
     public HttpResponse apply(final String method, final IResource resource)
             throws IOException {
         return apply(method, resource, new ConnectorOptions());
     }
 
-    /**
-     * Applying the method on the specific resource.
-     *
-     * @param method HTTP method
-     * @param resource Resource implementation
-     * @param options Connector Options
-     *
-     * @return A HttpResponse object
-     *
-     * @throws IOException In case of an I/O Error.
-     */
+    @Override
     public HttpResponse apply(
-            final String method, final IResource resource,
-            final ConnectorOptions options)
-            throws IOException {
+            final String method,
+            final IResource resource,
+            final ConnectorOptions options
+    ) throws IOException {
         if (resource == null) {
             throw new IllegalArgumentException(
                     "IResource implementation may not be null.");
@@ -165,9 +153,8 @@ public class BasicConnector implements IConnector {
     /**
      * Get a usable URI.
      *
-     * @param options Options for the Connector
+     * @param options  Options for the Connector
      * @param resource IResource implementation
-     *
      * @return URI to use
      */
     protected URI getUri(
@@ -179,15 +166,15 @@ public class BasicConnector implements IConnector {
         if (uri == null) {
             uri = resource.getLocation();
         }
+
         return uri;
     }
 
     /**
      * Get the data to use.
      *
-     * @param options Options for the Connector
+     * @param options  Options for the Connector
      * @param resource IResource implementation
-     *
      * @return Data to use
      */
     protected Map<String, Object> getData(
@@ -201,19 +188,18 @@ public class BasicConnector implements IConnector {
     /**
      * Create a HttpUriRequest object.
      *
-     * @param method HTTP Method
+     * @param method   HTTP Method
      * @param resource IResource implementation
-     * @param options Options for Connector
-     *
+     * @param options  Options for Connector
      * @return the appropriate HttpUriRequest
-     *
      * @throws UnsupportedEncodingException if the payloads encoding is not
-     * supported
+     *                                      supported
      */
     protected HttpUriRequest createRequest(
-            final String method, final IResource resource,
-            final ConnectorOptions options)
-            throws UnsupportedEncodingException {
+            final String method,
+            final IResource resource,
+            final ConnectorOptions options
+    ) throws UnsupportedEncodingException {
 
         URI uri = this.getUri(options, resource);
 
@@ -232,8 +218,8 @@ public class BasicConnector implements IConnector {
             req = post;
         }
 
-        req.setHeader("User-Agent", createtUserAgent().toString());
-        req.setHeader("Accept", resource.getContentType());
+        req.setHeader("User-Agent", createUserAgent().toString());
+        req.setHeader("Accept", resource.getAccept());
 
         return req;
     }
@@ -243,7 +229,7 @@ public class BasicConnector implements IConnector {
      *
      * @return User Agent information
      */
-    protected UserAgent createtUserAgent() {
+    protected UserAgent createUserAgent() {
         return new UserAgent();
     }
 
@@ -273,10 +259,9 @@ public class BasicConnector implements IConnector {
          * Process a response, update resource if MOVED_PERMANENTLY or CREATED.
          *
          * @param response A Response from the HTTP request
-         * @param context Http Context
-         *
+         * @param context  Http Context
          * @throws HttpException If the response location is invalid
-         * @throws IOException if an I/O error occurred
+         * @throws IOException   if an I/O error occurred
          */
         public void process(
                 final HttpResponse response, final HttpContext context)
@@ -328,9 +313,8 @@ public class BasicConnector implements IConnector {
          *
          * @param request HTTP Request object.
          * @param context HTTP Context holder.
-         *
          * @throws HttpException in case of an HTTP protocol violation
-         * @throws IOException in case of an I/O error
+         * @throws IOException   in case of an I/O error
          */
         public void process(
                 final HttpRequest request, final HttpContext context)

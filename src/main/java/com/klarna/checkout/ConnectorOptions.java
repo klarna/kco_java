@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Klarna AB
+ * Copyright 2015 Klarna AB
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,9 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * File containing the ConnectorOptions class.
  */
+
 package com.klarna.checkout;
 
 import java.net.URI;
@@ -31,6 +30,7 @@ public class ConnectorOptions {
      * URI option.
      */
     private URI uri;
+
     /**
      * Data option.
      */
@@ -46,17 +46,8 @@ public class ConnectorOptions {
     }
 
     /**
-     * Set the URI from a string.
+     * Get URI object.
      *
-     * @param newUri string to parse for new URI location
-     *
-     * @throws URISyntaxException if newUri could not be parsed.
-     */
-    public void setURI(final String newUri) throws URISyntaxException {
-        this.uri = new URI(newUri);
-    }
-
-    /**
      * @return the set URI.
      */
     public URI getURI() {
@@ -64,6 +55,18 @@ public class ConnectorOptions {
     }
 
     /**
+     * Set the URI from a string.
+     *
+     * @param newUri string to parse for new URI location
+     * @throws URISyntaxException if newUri could not be parsed.
+     */
+    public void setURI(final String newUri) throws URISyntaxException {
+        this.uri = new URI(newUri);
+    }
+
+    /**
+     * Get the data.
+     *
      * @return the set Data.
      */
     public Map<String, Object> getData() {

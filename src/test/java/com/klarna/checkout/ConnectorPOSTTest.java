@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Klarna AB
+ * Copyright 2015 Klarna AB
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,24 +12,26 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * File containing the unit tests for Connector POST calls.
  */
+
 package com.klarna.checkout;
 
 import com.klarna.checkout.stubs.HttpClientStub;
 import com.klarna.checkout.stubs.HttpClientStub.HTTPResponseStub;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpResponseException;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpResponseException;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 /**
@@ -41,26 +43,27 @@ public class ConnectorPOSTTest {
      * Resource mock.
      */
     private IResource resource;
+
     /**
      * Payload Map object.
      */
     private Map<String, Object> payloadMap;
+
     /**
      * Payload JSON string.
      */
     private String payloadJson;
+
     /**
      * Stubbed transport.
      */
     private HttpClientStub transport;
+
     /**
      * Digest mock.
      */
     private Digest digest;
-    /**
-     * Expected digestString.
-     */
-    private String digestString;
+
     /**
      * Connector object.
      */
@@ -78,8 +81,8 @@ public class ConnectorPOSTTest {
         this.payloadJson = "{\"flobadob\":[\"bobcat\",\"wookie\"]}";
         this.digest = mock(Digest.class);
 
-        this.digestString = "stnaeu\\eu2341aoaaoae==";
-        when(this.digest.create(anyString())).thenReturn(this.digestString);
+        String digestString = "stnaeu\\eu2341aoaaoae==";
+        when(this.digest.create(anyString())).thenReturn(digestString);
         this.conn = new BasicConnector(this.digest) {
             @Override
             protected IHttpClient createHttpClient() {
@@ -107,7 +110,7 @@ public class ConnectorPOSTTest {
     public void testApplyPost200() throws Exception {
         this.transport.addResponse(
                 new HTTPResponseStub(
-                200, new HashMap<String, String>(), payloadJson));
+                        200, new HashMap<String, String>(), payloadJson));
 
         when(this.resource.marshal()).thenReturn(payloadMap);
 
@@ -132,10 +135,10 @@ public class ConnectorPOSTTest {
         final URI expectedUri = new URI("http://www.foo.bar");
         conn.apply(
                 "POST", resource, new ConnectorOptions() {
-            {
-                setURI(expectedUri);
-            }
-        });
+                    {
+                        setURI(expectedUri);
+                    }
+                });
 
         assertEquals(expectedUri, transport.getHttpUriRequest().getURI());
     }
@@ -152,15 +155,15 @@ public class ConnectorPOSTTest {
 
         transport.addResponse(
                 new HTTPResponseStub(
-                303, new HashMap<String, String>() {
-            {
-                put("Location", "herp");
-            }
-        }, payloadJson));
+                        303, new HashMap<String, String>() {
+                    {
+                        put("Location", "herp");
+                    }
+                }, payloadJson));
 
         transport.addResponse(
                 new HTTPResponseStub(
-                200, new HashMap<String, String>(), payloadJson));
+                        200, new HashMap<String, String>(), payloadJson));
 
         when(resource.marshal()).thenReturn(payloadMap);
 
@@ -193,15 +196,15 @@ public class ConnectorPOSTTest {
 
         transport.addResponse(
                 new HTTPResponseStub(
-                303, new HashMap<String, String>() {
-            {
-                put("Location", redirect.toString());
-            }
-        }, payloadJson));
+                        303, new HashMap<String, String>() {
+                    {
+                        put("Location", redirect.toString());
+                    }
+                }, payloadJson));
 
         transport.addResponse(
                 new HTTPResponseStub(
-                503, new HashMap<String, String>(), ""));
+                        503, new HashMap<String, String>(), ""));
 
         Exception e = null;
         try {
@@ -229,11 +232,11 @@ public class ConnectorPOSTTest {
 
         transport.addResponse(
                 new HTTPResponseStub(
-                201, new HashMap<String, String>() {
-            {
-                put("Location", newLocation.toString());
-            }
-        }, ""));
+                        201, new HashMap<String, String>() {
+                    {
+                        put("Location", newLocation.toString());
+                    }
+                }, ""));
         ConnectorOptions options = new ConnectorOptions() {
             {
                 setURI("http://localhost");

@@ -75,6 +75,12 @@ final class CreateRecurring {
             }
         };
 
+        final Map<String, Object> merchantReference = new HashMap<String, Object>() {
+            {
+                put("orderid1", "Some unique id ...");
+            }
+        };
+
         /**
          * For testing purposes you can state either 'accept' or 'reject' at
          * the end of the email addresses to trigger different responses,
@@ -134,6 +140,7 @@ final class CreateRecurring {
                 put("purchase_currency", "SEK");
                 put("locale", "sv-se");
                 put("merchant", merchant);
+                put("merchant_reference", merchantReference);
                 put("billing_address", address);
                 put("shipping_address", address);
                 put("cart", cart);

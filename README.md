@@ -1,5 +1,5 @@
 ## Klarna Checkout Java library
-[![Build Status](https://travis-ci.org/klarna/kco_java.svg?branch=v1.1)](https://travis-ci.org/klarna/kco_java) [![Coverage Status](https://coveralls.io/repos/klarna/kco_java/badge.png?branch=v1.1)](https://coveralls.io/r/klarna/kco_java?branch=v1.1)
+[![Build Status](https://travis-ci.org/klarna/kco_java.svg?branch=v2.0)](https://travis-ci.org/klarna/kco_java) [![Coverage Status](https://coveralls.io/repos/klarna/kco_java/badge.png?branch=v2.0)](https://coveralls.io/r/klarna/kco_java?branch=v2.0)
 
 Klarna Checkout is a revolutionary new payment solution that is changing the way
 people shop online. First, consumers verify their purchase with a minimal

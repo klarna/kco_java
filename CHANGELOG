@@ -2,6 +2,13 @@
 Klarna Checkout Java library
 ===========================
 
+v2.0.0
+----------------
+Date: 2015-05-21
+
+    Klarna <support@klarna.com>
+        Adding support for recurring orders.
+
 v1.1.0
 ----------------
 Date: 2013-03-15

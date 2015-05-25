@@ -176,6 +176,12 @@
                         <format>html</format>
                         <format>xml</format>
                     </formats>
+                    <instrumentation>
+                        <excludes>
+                            <exclude>examples/**/*.class</exclude>
+                        </excludes>
+                    </instrumentation>
+                    <check/>
                 </configuration>
             </plugin>
             <plugin>

@@ -19,12 +19,12 @@ package com.klarna.checkout;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests for the Order class, basic functionality.
@@ -42,6 +42,7 @@ public class OrderTest {
     @Before
     public void setUp() {
         conn = mock(IConnector.class);
+        when(conn.getBaseUri()).thenReturn("https://stubs.com");
     }
 
     /**
@@ -63,12 +64,11 @@ public class OrderTest {
      */
     @Test
     public void testLocationURI() throws URISyntaxException {
-        URI uri = new URI("http://whatever.com");
-        Order order = new Order(conn, uri);
+        Order order = new Order(conn, "123");
 
         assertEquals(
                 "Location should have been set from the constructor",
-                uri,
-                order.getLocation());
+                "https://stubs.com/checkout/orders/123",
+                order.getLocation().toString());
     }
 }

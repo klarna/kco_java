@@ -58,7 +58,6 @@ final class CreateRecurring {
     public static void main(final String[] args)
             throws URISyntaxException, NoSuchAlgorithmException, IOException {
 
-        // Merchant ID
         final String eid = "0";
         final String secret = "sharedSecret";
         final String recurringToken = "ABC-123";

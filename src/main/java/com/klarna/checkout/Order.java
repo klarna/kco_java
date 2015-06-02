@@ -18,6 +18,7 @@ package com.klarna.checkout;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 
 /**
@@ -37,20 +38,24 @@ public class Order extends Resource
      * @param conn IConnector implementation
      */
     public Order(final IConnector conn) {
-        this(conn, null);
+        super(conn);
+        this.setContentType(
+                "application/vnd.klarna.checkout.aggregated-order-v2+json");
+        this.setAccept(this.getContentType());
     }
 
     /**
      * Constructor.
      *
      * @param conn IConnector implementation
-     * @param uri  Resource URI
+     * @param id   Resource URI
+     * @throws URISyntaxException If location could not be created from id.
      */
-    public Order(final IConnector conn, final URI uri) {
-        super(conn, uri);
-        this.setContentType(
-                "application/vnd.klarna.checkout.aggregated-order-v2+json");
-        this.setAccept(this.getContentType());
+    public Order(final IConnector conn, final String id)
+            throws URISyntaxException {
+        this(conn);
+        this.setLocation(
+                new URI(conn.getBaseUri().concat(PATH).concat("/").concat(id)));
     }
 
     @Override

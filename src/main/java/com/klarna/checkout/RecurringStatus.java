@@ -39,11 +39,12 @@ public class RecurringStatus extends Resource implements IFetchable {
      */
     public RecurringStatus(final IConnector conn, final String token)
             throws URISyntaxException {
-        super(conn, new URI(
-                conn.getBaseUri().concat(PATH.replace("TOKEN", token))));
+        super(conn);
         this.setContentType(
                 "application/vnd.klarna.checkout.recurring-status-v1+json");
         this.setAccept(this.getContentType());
+        this.setLocation(new URI(
+                conn.getBaseUri().concat(PATH.replace("TOKEN", token))));
     }
 
     @Override

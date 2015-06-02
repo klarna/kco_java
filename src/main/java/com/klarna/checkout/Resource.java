@@ -56,22 +56,8 @@ abstract class Resource implements IResource {
      * @param conn IConnector implementation
      */
     public Resource(final IConnector conn) {
-        this(conn, null);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param conn IConnector implementation
-     * @param uri  URI
-     */
-    public Resource(final IConnector conn, final URI uri) {
         this.data = new HashMap<String, Object>();
         this.connector = conn;
-
-        if (uri != null) {
-            this.setLocation(uri);
-        }
     }
 
     @Override

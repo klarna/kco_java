@@ -23,7 +23,6 @@ import com.klarna.checkout.Order;
 import org.json.simple.JSONObject;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -57,7 +56,6 @@ final class Checkout {
         // might be a javax.servlet.http.HttpSession for JSP for example.
         Map<String, Object> session = new HashMap<String, Object>();
 
-        // Merchant ID
         final String eid = "0";
         final String secret = "sharedSecret";
 
@@ -96,15 +94,15 @@ final class Checkout {
         try {
             Order order = null;
 
-            URI resourceURI = null;
+            String orderID = null;
             // Retrieve location from session object.
-            if (session.containsKey("klarna_checkout")) {
-                resourceURI = new URI((String) session.get("klarna_checkout"));
+            if (session.containsKey("klarna_order_id")) {
+                orderID = (String) session.get("klarna_order_id");
             }
 
-            if (resourceURI != null) {
+            if (orderID != null) {
                 try {
-                    order = new Order(connector, resourceURI);
+                    order = new Order(connector, orderID);
                     order.fetch();
 
                     // Reset cart
@@ -118,7 +116,7 @@ final class Checkout {
                 } catch (Exception e) {
                     // Reset session
                     order = null;
-                    session.remove("klarna_checkout");
+                    session.remove("klarna_order_id");
                 }
             }
 
@@ -131,12 +129,12 @@ final class Checkout {
                         put("checkout_uri", "http://example.com/checkout.jsp");
                         put("confirmation_uri",
                                 "http://example.com/thank-you.jsp"
-                                        + "?sid=123&klarna_order={checkout.order.uri}");
+                                        + "?klarna_order_id={checkout.order.id}");
                         // You can not receive push notification on a
                         // non-publicly available uri.
                         put("push_uri",
                                 "http://example.com/push.jsp"
-                                        + "?sid=123&klarna_order={checkout.order.uri}");
+                                        + "?klarna_order_id={checkout.order.id}");
                     }
                 };
 
@@ -158,6 +156,8 @@ final class Checkout {
                     }
                 };
 
+                //data.put("recurring", true);
+
                 order = new Order(connector);
                 order.create(data);
                 order.fetch();
@@ -166,7 +166,7 @@ final class Checkout {
             // Store checkout session.
             // JSP: session.setAttribute(
             //         "klarna_checkout", order.getLocation());
-            session.put("klarna_checkout", order.getLocation());
+            session.put("klarna_order_id", order.get("id"));
 
             // Display checkout
             Map<String, Object> gui = (Map<String, Object>) order.get("gui");

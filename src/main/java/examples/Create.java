@@ -52,7 +52,6 @@ final class Create {
     public static void main(final String[] args)
             throws URISyntaxException, NoSuchAlgorithmException, IOException {
 
-        // Merchant ID
         final String eid = "0";
         final String secret = "sharedSecret";
 
@@ -70,12 +69,12 @@ final class Create {
                 put("checkout_uri", "http://example.com/checkout.jsp");
                 put("confirmation_uri",
                         "http://example.com/thank-you.jsp"
-                                + "?sid=123&klarna_order={checkout.order.uri}");
+                                + "?klarna_order_id={checkout.order.id}");
                 // You can not receive push notification on a
                 // non-publicly available uri.
                 put("push_uri",
                         "http://example.com/push.jsp"
-                                + "?sid=123&klarna_order={checkout.order.uri}");
+                                + "?klarna_order_idr={checkout.order.id}");
             }
         };
 
@@ -125,6 +124,8 @@ final class Create {
                 put("gui", gui);
             }
         };
+
+        //data.put("recurring", true);
 
         try {
             order.create(data);

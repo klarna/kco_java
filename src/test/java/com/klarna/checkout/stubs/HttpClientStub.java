@@ -146,7 +146,7 @@ public class HttpClientStub implements IHttpClient {
      * @throws ClientProtocolException if a client protocol violation happened
      */
     public HttpResponse execute(final HttpUriRequest hur)
-            throws IOException, ClientProtocolException {
+            throws IOException {
         this.httpUriReq = hur;
         this.lastResponse = this.getResponse();
         return this.lastResponse;
@@ -180,7 +180,7 @@ public class HttpClientStub implements IHttpClient {
      * @throws ClientProtocolException never
      */
     public HttpResponse execute(final HttpUriRequest hur, final HttpContext hc)
-            throws IOException, ClientProtocolException {
+            throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -195,7 +195,7 @@ public class HttpClientStub implements IHttpClient {
      */
     public HttpResponse execute(
             final HttpHost hh, final HttpRequest hr)
-            throws IOException, ClientProtocolException {
+            throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -211,7 +211,7 @@ public class HttpClientStub implements IHttpClient {
      */
     public HttpResponse execute(
             final HttpHost hh, final HttpRequest hr, final HttpContext hc)
-            throws IOException, ClientProtocolException {
+            throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -344,7 +344,7 @@ public class HttpClientStub implements IHttpClient {
             final HttpHost hh,
             final HttpRequest hr,
             final ResponseHandler<? extends T> rh)
-            throws IOException, ClientProtocolException {
+            throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -365,7 +365,7 @@ public class HttpClientStub implements IHttpClient {
             final HttpRequest hr,
             final ResponseHandler<? extends T> rh,
             final HttpContext hc)
-            throws IOException, ClientProtocolException {
+            throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -449,7 +449,7 @@ public class HttpClientStub implements IHttpClient {
     public <T> T execute(
             final HttpUriRequest hur,
             final ResponseHandler<? extends T> rh)
-            throws IOException, ClientProtocolException {
+            throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

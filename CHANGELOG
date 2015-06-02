@@ -2,6 +2,13 @@
 Klarna Checkout Java library
 ===========================
 
+v3.0.0
+----------------
+Date: 2015-06-02
+
+    Klarna <support@klarna.com>
+        Update resource constructors. Only allow creation with IDs instead of full URIs
+
 v2.0.0
 ----------------
 Date: 2015-05-21

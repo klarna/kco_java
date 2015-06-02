@@ -23,7 +23,6 @@ import com.klarna.checkout.Order;
 import org.json.simple.JSONObject;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 
@@ -51,14 +50,12 @@ final class Fetch {
             throws URISyntaxException, NoSuchAlgorithmException, IOException {
 
         final String secret = "sharedSecret";
-
-        URI resourceURI = new URI(
-                "https://checkout.testdrive.klarna.com/checkout/orders/123");
+        final String orderID = "ABC123";
 
         IConnector connector = Connector.create(
                 secret, IConnector.TEST_BASE_URL);
 
-        Order order = new Order(connector, resourceURI);
+        Order order = new Order(connector, orderID);
 
         try {
             order.fetch();

@@ -1,5 +1,5 @@
 ## Klarna Checkout Java library
-![Maven Version][maven-shield]
+[![Maven Version][maven-shield]](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22java-checkout%22)
 [![Build Status][travis-shield]](https://travis-ci.org/klarna/kco_java)
 [![Coverage Status][coveralls-shield]](https://coveralls.io/r/klarna/kco_java)
 
@@ -57,5 +57,5 @@ The Klarna Checkout Java library is released under
 [Apache License, Version 2.0](http://www.apache.org/LICENSE-2.0)
 
 [maven-shield]: https://img.shields.io/maven-central/v/com.klarna/java-checkout.svg?style=flat
-[travis-shield]: https://img.shields.io/travis/klarna/kco_java/v2.0.svg?style=flat
-[coveralls-shield]: https://img.shields.io/coveralls/klarna/kco_java/v2.0.svg?style=flat
+[travis-shield]: https://img.shields.io/travis/klarna/kco_java/v3.0.svg?style=flat
+[coveralls-shield]: https://img.shields.io/coveralls/klarna/kco_java/v3.0.svg?style=flat

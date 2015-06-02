@@ -23,7 +23,6 @@ import com.klarna.checkout.Order;
 import org.json.simple.JSONObject;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -51,17 +50,15 @@ final class Update {
      * @throws IOException              If api call failed
      */
     public static void main(final String[] args)
-            throws URISyntaxException,
-            NoSuchAlgorithmException,
-            IOException {
+            throws URISyntaxException, NoSuchAlgorithmException, IOException {
 
         final String secret = "sharedSecret";
+        final String orderID = "ABC123";
 
-        IConnector connector = Connector.create(secret);
+        IConnector connector = Connector.create(
+                secret, IConnector.TEST_BASE_URL);
 
-        URI resourceURI = new URI(
-                "https://checkout.testdrive.klarna.com/checkout/orders/123");
-        Order order = new Order(connector, resourceURI);
+        Order order = new Order(connector, orderID);
 
         final Map<String, Object> cart = new HashMap<String, Object>() {
             {

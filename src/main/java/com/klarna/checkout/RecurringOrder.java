@@ -40,12 +40,13 @@ public class RecurringOrder extends Resource implements ICreatable {
      */
     public RecurringOrder(final IConnector conn, final String token)
             throws URISyntaxException {
-        super(conn, new URI(
-                conn.getBaseUri().concat(PATH.replace("TOKEN", token))));
+        super(conn);
         this.setContentType(
                 "application/vnd.klarna.checkout.recurring-order-v1+json");
         this.setAccept(
                 "application/vnd.klarna.checkout.recurring-order-accepted-v1+json");
+        this.setLocation(new URI(
+                conn.getBaseUri().concat(PATH.replace("TOKEN", token))));
     }
 
     @Override

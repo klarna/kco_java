@@ -21,7 +21,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.entity.StringEntity;
-import org.json.simple.parser.ParseException;
 import org.junit.Before;
 import org.junit.Test;
 

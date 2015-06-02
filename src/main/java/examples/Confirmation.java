@@ -23,7 +23,6 @@ import com.klarna.checkout.Order;
 import org.json.simple.JSONObject;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
@@ -51,19 +50,16 @@ final class Confirmation {
     public static void main(final String[] args)
             throws URISyntaxException, NoSuchAlgorithmException, IOException {
 
-        // Shared secret.
         final String secret = "sharedSecret";
+        // This is just a placeholder for the example.
+        // For example in jsp you could do
+        //      request.getParameter("klarna_order_id");
+        final String orderID = "ABC123";
 
         IConnector connector = Connector.create(
                 secret, IConnector.TEST_BASE_URL);
 
-        // This is just a placeholder for the example.
-        // For example in jsp you could do
-        //      request.getParameter("checkout_uri");
-        URI checkoutId = new URI(
-                "https://checkout.testdrive.klarna.com/checkout/orders/123");
-
-        Order order = new Order(connector, checkoutId);
+        Order order = new Order(connector, orderID);
 
         try {
             order.fetch();

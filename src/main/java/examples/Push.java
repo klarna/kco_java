@@ -23,7 +23,6 @@ import com.klarna.checkout.Order;
 import org.json.simple.JSONObject;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -53,24 +52,21 @@ final class Push {
     public static void main(final String[] args)
             throws NoSuchAlgorithmException, URISyntaxException, IOException {
 
-        // Shared secret.
         final String secret = "sharedSecret";
+        // This is just a placeholder for the example.
+        // For example in jsp you could do
+        //      request.getParameter("klarna_order_id");
+        final String orderID = "ABC123";
 
         IConnector connector = Connector.create(
                 secret, IConnector.TEST_BASE_URL);
 
-        // This is just a placeholder for the example.
-        // For example in jsp you could do
-        //      request.getParameter("checkout_uri");
-        URI resourceURI = new URI(
-                "https://checkout.testdrive.klarna.com/checkout/orders/123");
-
-        Order order = new Order(connector, resourceURI);
+        Order order = new Order(connector, orderID);
 
         try {
             order.fetch();
         } catch (ErrorResponseException e) {
-            JSONObject json = (JSONObject) e.getJson();
+            JSONObject json = e.getJson();
 
             System.out.println(json.get("http_status_message"));
             System.out.println(json.get("internal_message"));

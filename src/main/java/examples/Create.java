@@ -74,7 +74,7 @@ final class Create {
                 // non-publicly available uri.
                 put("push_uri",
                         "http://example.com/push.jsp"
-                                + "?klarna_order_idr={checkout.order.id}");
+                                + "?klarna_order_id={checkout.order.id}");
             }
         };
 

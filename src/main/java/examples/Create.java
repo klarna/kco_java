@@ -129,8 +129,11 @@ final class Create {
 
         try {
             order.create(data);
+            order.fetch();
 
-            System.out.println(order.getLocation());
+            String orderID = (String) order.get("id");
+
+            System.out.println(orderID);
         } catch (ErrorResponseException e) {
             JSONObject json = e.getJson();
 

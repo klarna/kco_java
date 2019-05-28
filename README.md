@@ -1,15 +1,12 @@
-## Klarna Checkout Java library
+## Klarna Checkout Java library (DEPRECATED)
 [![Maven Version][maven-shield]](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22java-checkout%22)
 [![Build Status][travis-shield]](https://travis-ci.org/klarna/kco_java)
 [![Coverage Status][coveralls-shield]](https://coveralls.io/r/klarna/kco_java)
 
-Klarna Checkout is a revolutionary new payment solution that is changing the way
-people shop online. First, consumers verify their purchase with a minimal
-amount of information through intelligent identification, securing your order
-immediately, and then complete their payment afterwards - separating buying
-from paying and dramatically increasing conversion. Klarna Checkout also allows
-merchants to offer all payment methods through one supplier, minimizing
-administration, costs and integration time.
+# Deprecation notice
+
+This repo has been marked as deprecated. The SDK is not longer supported.
+Please use https://github.com/klarna/kco_rest_java SDK instead.
 
 ## About Klarna
 Klarna was founded in Stockholm in 2005 with the idea of providing a
@@ -21,6 +18,14 @@ fastest growing companies. In just 8 years, we've grown to 800 employees
 operating in 7 European countries with over 8 million consumers. But we are not
 satisfied with that. Our goal is to become market leaders within invoice-based
 payments worldwide and change the way the world shops online.
+
+Klarna Checkout is a revolutionary new payment solution that is changing the way
+people shop online. First, consumers verify their purchase with a minimal
+amount of information through intelligent identification, securing your order
+immediately, and then complete their payment afterwards - separating buying
+from paying and dramatically increasing conversion. Klarna Checkout also allows
+merchants to offer all payment methods through one supplier, minimizing
+administration, costs and integration time.
 
 ## Documentation
 Documentation and more examples can be found at
